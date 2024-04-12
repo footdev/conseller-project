@@ -1,11 +1,12 @@
 package com.conseller.conseller.utils;
 
 import com.conseller.conseller.utils.dto.EmailResponse;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,11 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
+    @Value("${spring.servlet.mail.username}")
+    private String email;
+
     @Async
-    public boolean sendEmail(EmailResponse emailResponse) throws Exception {
+    public void sendEmail(EmailResponse emailResponse) throws Exception {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
 
@@ -32,18 +36,17 @@ public class EmailService {
         mimeMessageHelper.setTo(emailResponse.getUserEmail());
         mimeMessageHelper.setText(info, true);
         mimeMessageHelper.setSubject("임시 비밀번호 발급");
-        mimeMessageHelper.setFrom("ekclstkfka@gmail.com");
+        mimeMessageHelper.setFrom(email);
 
         log.info("send email to " + emailResponse.getUserName());
 
         try {
             javaMailSender.send(message);
-            log.info("successfully sent email to " + emailResponse.getUserName());
         } catch (Exception e) {
             log.info(e.getMessage());
-            return false;
         }
-        return true;
+
+        log.info("successfully sent email to " + emailResponse.getUserName());
     }
 
 }
