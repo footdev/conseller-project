@@ -1,4 +1,4 @@
-package com.conseller.conseller.utils;
+package com.conseller.conseller.email;
 
 import com.conseller.conseller.utils.dto.EmailResponse;
 

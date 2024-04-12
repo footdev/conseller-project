@@ -9,7 +9,7 @@ import com.conseller.conseller.store.dto.response.StoreItemData;
 import com.conseller.conseller.user.dto.request.*;
 import com.conseller.conseller.user.dto.response.*;
 import com.conseller.conseller.user.service.UserService;
-import com.conseller.conseller.utils.EmailService;
+import com.conseller.conseller.email.EmailService;
 import com.conseller.conseller.utils.dto.CommonResponse;
 import com.conseller.conseller.utils.dto.EmailResponse;
 import com.conseller.conseller.utils.jwt.JwtTokenProvider;
@@ -241,7 +241,7 @@ public class UserController {
     //회원 탈퇴
     @DeleteMapping("/{userIdx}")
     public ResponseEntity<Object> deleteUser(@PathVariable long userIdx, HttpServletRequest request) {
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+        String token = jwtTokenProvider.resolveToken(request);
 
         userService.deleteUser(userIdx, token);
         return ResponseEntity.ok().build();
