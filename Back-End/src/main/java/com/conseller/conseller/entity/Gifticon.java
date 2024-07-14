@@ -1,13 +1,14 @@
 package com.conseller.conseller.entity;
 
 import com.conseller.conseller.gifticon.dto.response.GifticonResponse;
-import com.conseller.conseller.utils.DateTimeConverter;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Entity
 @Builder
@@ -66,8 +67,8 @@ public class Gifticon {
                 .gifticonName(this.gifticonName)
                 .gifticonAllImageUrl(this.gifticonAllImageUrl)
                 .gifticonDataImageUrl(this.gifticonDataImageUrl)
-                .gifticonStartDate(DateTimeConverter.getInstance().convertString(this.gifticonStartDate))
-                .gifticonEndDate(DateTimeConverter.getInstance().convertString(this.gifticonEndDate))
+                .gifticonStartDate(convertString(this.gifticonStartDate))
+                .gifticonEndDate(convertString(this.gifticonEndDate))
                 .gifticonStatus(this.gifticonStatus)
                 .userIdx(this.user.getUserIdx())
                 .subCategoryIdx(this.subCategory.getSubCategoryIdx())

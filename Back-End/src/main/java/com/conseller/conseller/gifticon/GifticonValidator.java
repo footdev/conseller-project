@@ -5,11 +5,12 @@ import com.conseller.conseller.exception.CustomExceptionStatus;
 import com.conseller.conseller.gifticon.dto.request.GifticonRegisterRequest;
 import com.conseller.conseller.gifticon.repository.GifticonRepository;
 import com.conseller.conseller.gifticon.repository.UsedGifticonRepository;
-import com.conseller.conseller.utils.DateTimeConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class GifticonValidator {
             throw new CustomException(CustomExceptionStatus.ALREADY_REGIST_GIFTICON);
         }
 
-        if (DateTimeConverter.getInstance().convertLocalDateTime(request.getGifticonEndDate()).isBefore(LocalDateTime.now())) {
+        if (convertLocalDateTime(request.getGifticonEndDate()).isBefore(LocalDateTime.now())) {
             throw new CustomException(CustomExceptionStatus.EXPIRED_GIFTICON);
         }
     }
