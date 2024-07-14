@@ -17,6 +17,10 @@ import org.mapstruct.factory.Mappers;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.conseller.conseller.utils.DateTimeConverter.*;
+
+import static com.conseller.conseller.utils.DateTimeConverter.convertString;
+
 @Mapper(componentModel="spring")
 public interface StoreMapper {
     StoreMapper INSTANCE = Mappers.getMapper(StoreMapper.class);
@@ -38,8 +42,8 @@ public interface StoreMapper {
         response.setStoreIdx(store.getStoreIdx());
         response.setGifticonDataImageName(store.getGifticon().getGifticonDataImageUrl());
         response.setGifticonName(store.getGifticon().getGifticonName());
-        response.setGifticonEndDate(DateTimeConverter.getInstance().convertString(store.getGifticon().getGifticonEndDate()));
-        response.setStoreEndDate(DateTimeConverter.getInstance().convertString(store.getStoreEndDate()));
+        response.setGifticonEndDate(convertString(store.getGifticon().getGifticonEndDate()));
+        response.setStoreEndDate(convertString(store.getStoreEndDate()));
         response.setDeposit(false);
         response.setStorePrice(store.getStorePrice());
 
@@ -54,8 +58,8 @@ public interface StoreMapper {
         itemData.setStoreIdx(store.getStoreIdx());
         itemData.setGifticonDataImageName(store.getGifticon().getGifticonDataImageUrl());
         itemData.setGifticonName(store.getGifticon().getGifticonName());
-        itemData.setGifticonEndDate(DateTimeConverter.getInstance().convertString(store.getGifticon().getGifticonEndDate()));
-        itemData.setStoreEndDate(DateTimeConverter.getInstance().convertString(store.getStoreEndDate()));
+        itemData.setGifticonEndDate(convertString(store.getGifticon().getGifticonEndDate()));
+        itemData.setStoreEndDate(convertString(store.getStoreEndDate()));
         itemData.setStoreStatus(store.getStoreStatus());
         itemData.setDeposit(false);
         itemData.setStorePrice(store.getStorePrice());
@@ -71,7 +75,7 @@ public interface StoreMapper {
         StoreConfirmResponse response = new StoreConfirmResponse();
 
         response.setGifticonDataImageName(store.getGifticon().getGifticonDataImageUrl());
-        response.setNotificationCreatedDate(DateTimeConverter.getInstance().convertString(LocalDateTime.now()));
+        response.setNotificationCreatedDate(convertString(LocalDateTime.now()));
         response.setGiftconName(store.getGifticon().getGifticonName());
         response.setStorePrice(store.getStorePrice());
         response.setPostContent(store.getStoreText());

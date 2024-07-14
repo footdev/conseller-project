@@ -6,7 +6,6 @@ import com.conseller.conseller.barter.barter.barterDto.response.BarterItemData;
 import com.conseller.conseller.barter.barter.barterDto.response.MyBarterResponseDto;
 import com.conseller.conseller.entity.*;
 import com.conseller.conseller.gifticon.dto.response.GifticonResponse;
-import com.conseller.conseller.utils.DateTimeConverter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Mapper(componentModel = "spring")
 public interface BarterMapper {
@@ -55,8 +56,8 @@ public interface BarterMapper {
         barterItemData.setBarterIdx(barter.getBarterIdx());
         barterItemData.setGifticonDataImageName(gifticon.getGifticonDataImageUrl());
         barterItemData.setGifticonName(gifticon.getGifticonName());
-        barterItemData.setGifticonEndDate(DateTimeConverter.getInstance().convertString(gifticon.getGifticonEndDate()));
-        barterItemData.setBarterEndDate(DateTimeConverter.getInstance().convertString(barter.getBarterEndDate()));
+        barterItemData.setGifticonEndDate(convertString(gifticon.getGifticonEndDate()));
+        barterItemData.setBarterEndDate(convertString(barter.getBarterEndDate()));
         barterItemData.setDeposit(deposit);
         barterItemData.setPreper(preferSubCategory);
         barterItemData.setBarterName(barter.getBarterName());
@@ -71,8 +72,8 @@ public interface BarterMapper {
                 .barterName(barter.getBarterName())
                 .barterText(barter.getBarterText())
                 .barterStatus(barter.getBarterStatus())
-                .barterCreatedDate(DateTimeConverter.getInstance().convertString(barter.getBarterCreatedDate()))
-                .barterEndDate(DateTimeConverter.getInstance().convertString(barter.getBarterEndDate()))
+                .barterCreatedDate(convertString(barter.getBarterCreatedDate()))
+                .barterEndDate(convertString(barter.getBarterEndDate()))
                 .barterHostIdx(barter.getBarterHost().getUserIdx())
                 .subCategory(String.valueOf(barter.getSubCategory().getSubCategoryIdx()));
 

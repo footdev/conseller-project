@@ -6,7 +6,6 @@ import com.conseller.conseller.entity.Auction;
 import com.conseller.conseller.entity.AuctionBid;
 import com.conseller.conseller.entity.Gifticon;
 import com.conseller.conseller.entity.User;
-import com.conseller.conseller.utils.DateTimeConverter;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,6 +14,8 @@ import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Mapper(componentModel="spring")
 public interface AuctionMapper {
@@ -35,12 +36,12 @@ public interface AuctionMapper {
         response.setAuctionUserDeposit(auction.getUser().getUserDeposit());
         response.setAuctionUserNickname(auction.getUser().getUserNickname());
         response.setDeposit(false);
-        response.setAuctionEndDate(DateTimeConverter.getInstance().convertString(auction.getAuctionEndDate()));
+        response.setAuctionEndDate(convertString(auction.getAuctionEndDate()));
         response.setAuctionHighestBid(auction.getAuctionHighestBid());
         response.setAuctionUserProfileUrl(auction.getUser().getUserProfileUrl());
         response.setGifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl());
         response.setGifticonName(auction.getGifticon().getGifticonName());
-        response.setGifticonEndDate(DateTimeConverter.getInstance().convertString(auction.getGifticon().getGifticonEndDate()));
+        response.setGifticonEndDate(convertString(auction.getGifticon().getGifticonEndDate()));
         response.setPostContent(auction.getAuctionText());
         response.setLowerPrice(auction.getLowerPrice());
         response.setUpperPrice(auction.getUpperPrice());
@@ -55,8 +56,8 @@ public interface AuctionMapper {
         itemData.setAuctionIdx(auction.getAuctionIdx());
         itemData.setGifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl());
         itemData.setGifticonName(auction.getGifticon().getGifticonName());
-        itemData.setGifticonEndDate(DateTimeConverter.getInstance().convertString(auction.getGifticon().getGifticonEndDate()));
-        itemData.setAuctionEndDate(DateTimeConverter.getInstance().convertString(auction.getAuctionEndDate()));
+        itemData.setGifticonEndDate(convertString(auction.getGifticon().getGifticonEndDate()));
+        itemData.setAuctionEndDate(convertString(auction.getAuctionEndDate()));
         itemData.setAuctionStatus(auction.getAuctionStatus());
         itemData.setDeposit(false);
         itemData.setUpperPrice(auction.getUpperPrice());
@@ -76,7 +77,7 @@ public interface AuctionMapper {
 
         itemData.setAuctionBidIdx(auctionBid.getAuctionBidIdx());
         itemData.setAuctionBidPrice(auctionBid.getAuctionBidPrice());
-        itemData.setAuctionRegistedDate(DateTimeConverter.getInstance().convertString(auctionBid.getAuctionRegistedDate()));
+        itemData.setAuctionRegistedDate(convertString(auctionBid.getAuctionRegistedDate()));
         itemData.setAuctionBidStatus(auctionBid.getAuctionBidStatus());
         itemData.setUserIdx(auctionBid.getUser().getUserIdx());
         itemData.setAuctionIdx(auctionBid.getAuction().getAuctionIdx());
@@ -92,7 +93,7 @@ public interface AuctionMapper {
         AuctionConfirmResponse response = new AuctionConfirmResponse();
 
         response.setGifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl());
-        response.setNotificationCreatedDate(DateTimeConverter.getInstance().convertString(LocalDateTime.now()));
+        response.setNotificationCreatedDate(convertString(LocalDateTime.now()));
         response.setGiftconName(auction.getGifticon().getGifticonName());
         response.setAuctionPrice(auction.getAuctionHighestBid());
         response.setPostContent(auction.getAuctionText());

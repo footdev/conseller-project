@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.conseller.conseller.utils.DateTimeConverter.*;
+
 @Slf4j
 @Service
 @Transactional
@@ -57,7 +59,6 @@ public class UserServiceImpl implements UserService {
     private final UserValidator userValidator;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final DateTimeConverter dateTimeConverter;
     private final GifticonRepository gifticonRepository;
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -217,7 +218,7 @@ public class UserServiceImpl implements UserService {
                     .auctionBidIdx(bid.getAuctionBidIdx())
                     .auctionBidPrice(bid.getAuctionBidPrice())
                     .auctionBidStatus(bid.getAuctionBidStatus())
-                    .auctionRegistedDate(dateTimeConverter.convertString(bid.getAuctionRegistedDate()))
+                    .auctionRegistedDate(convertString(bid.getAuctionRegistedDate()))
                     .auctionItemData(AuctionMapper.INSTANCE.auctionToItemData(bid.getAuction()))
                     .build();
 
@@ -322,7 +323,7 @@ public class UserServiceImpl implements UserService {
                     .gifticonIdx(gifticon.getGifticonIdx())
                     .gifticonImageName(gifticon.getGifticonDataImageUrl())
                     .gifticonName(gifticon.getGifticonName())
-                    .gifticonEndDate(DateTimeConverter.getInstance().convertString(gifticon.getGifticonEndDate()))
+                    .gifticonEndDate(convertString(gifticon.getGifticonEndDate()))
                     .build();
 
             gifticonDataList.add(gifticonData);

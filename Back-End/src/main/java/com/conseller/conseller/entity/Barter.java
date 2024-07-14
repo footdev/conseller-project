@@ -7,7 +7,6 @@ import com.conseller.conseller.barter.barter.barterDto.response.BarterResponseDT
 import com.conseller.conseller.barter.barter.enums.BarterStatus;
 import com.conseller.conseller.barter.barterRequest.barterRequestDto.BarterRequestResponseDto;
 import com.conseller.conseller.user.dto.response.UserInfoResponse;
-import com.conseller.conseller.utils.DateTimeConverter;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Entity
 @Getter
@@ -121,8 +121,8 @@ public class Barter {
                 .barterIdx(barter.getBarterIdx())
                 .barterName(barter.getBarterName())
                 .barterText(barter.getBarterText())
-                .barterCreatedDate(DateTimeConverter.getInstance().convertString(barter.getBarterCreatedDate()))
-                .barterEndDate(DateTimeConverter.getInstance().convertString(barter.getBarterEndDate()))
+                .barterCreatedDate(convertString(barter.getBarterCreatedDate()))
+                .barterEndDate(convertString(barter.getBarterEndDate()))
                 .subCategory(barter.getSubCategory().getSubCategoryContent())
                 .preferSubCategory(barter.getPreferSubCategory().getSubCategoryContent())
                 .barterHost(hostUserInfoResponse)
@@ -144,8 +144,8 @@ public class Barter {
                 .barterIdx(barter.getBarterIdx())
                 .gifticonDataImageName(gifticon.getGifticonDataImageUrl())
                 .gifticonName(gifticon.getGifticonName())
-                .gifticonEndDate(DateTimeConverter.getInstance().convertString(gifticon.getGifticonEndDate()))
-                .barterEndDate(DateTimeConverter.getInstance().convertString(barter.getBarterEndDate()))
+                .gifticonEndDate(convertString(gifticon.getGifticonEndDate()))
+                .barterEndDate(convertString(barter.getBarterEndDate()))
                 .deposit(deposit)
                 .preper(barter.getPreferSubCategory().getSubCategoryContent())
                 .barterName(barter.getBarterName())

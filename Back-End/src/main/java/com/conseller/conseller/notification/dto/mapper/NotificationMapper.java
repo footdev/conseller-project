@@ -10,6 +10,8 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+import static com.conseller.conseller.utils.DateTimeConverter.*;
+
 @Mapper(componentModel="spring")
 public interface NotificationMapper {
     NotificationMapper INSTANCE = Mappers.getMapper(NotificationMapper.class);
@@ -21,7 +23,7 @@ public interface NotificationMapper {
 
         itemData.setNotificationIdx(notification.getNotificationIdx());
         itemData.setNotificationType(notification.getNotificationType());
-        itemData.setNotificationCreatedDate(DateTimeConverter.getInstance().convertString(notification.getNotificationCreatedDate()));
+        itemData.setNotificationCreatedDate(convertString(notification.getNotificationCreatedDate()));
         itemData.setNotificationStatus(notification.getNotificationContent());
 
         return itemData;

@@ -2,44 +2,58 @@ package com.conseller.conseller.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ThreadLocalRandom;
 
-@Component
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateTimeConverter {
 
-    private static final DateTimeConverter INSTANCE = new DateTimeConverter();
+    public static LocalDateTime convertDateTime(String date) {
 
-    public static DateTimeConverter getInstance() {
-        return INSTANCE;
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            LocalDate localDate = LocalDate.parse(date, formatter);
+            return localDate.atTime(23, 59, 59);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    public LocalDateTime convertDateTime(String date) {
-
-        // 문자열을 LocalDate로 변환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        LocalDate localDate = LocalDate.parse(date, formatter);
-
-        // LocalDate를 LocalDateTime으로 변환 (시간을 23:59:59로 설정)
-        return localDate.atTime(23, 59, 59);
+    public static LocalDateTime convertLocalDateTime(String dateTime) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            return LocalDateTime.parse(dateTime, formatter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public LocalDateTime convertLocalDateTime(String dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        LocalDateTime date = LocalDateTime.parse(dateTime, formatter);
-
-        return date;
+    public static String convertString(LocalDateTime dateTime) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            return dateTime.format(formatter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public String convertString(LocalDateTime dateTime) {
+    public static Timestamp convertTimestamp(String date) {
+        try {
+            LocalDateTime localDateTime = convertLocalDateTime(date);
+            return Timestamp.valueOf(localDateTime);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        //LocaldateTime 포맷터 설정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
-        return dateTime.format(formatter);
+    public static LocalDateTime generateRandomDate() {
+        return LocalDateTime.now().minusDays(ThreadLocalRandom.current().nextInt(365));
     }
 }

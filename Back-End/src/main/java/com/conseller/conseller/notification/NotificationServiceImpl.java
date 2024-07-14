@@ -14,7 +14,6 @@ import com.conseller.conseller.notification.dto.response.NotificationItemData;
 import com.conseller.conseller.notification.dto.response.NotificationListResponse;
 import com.conseller.conseller.store.StoreRepository;
 import com.conseller.conseller.user.UserRepository;
-import com.conseller.conseller.utils.DateTimeConverter;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -26,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.conseller.conseller.utils.DateTimeConverter.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,7 +35,6 @@ public class NotificationServiceImpl implements NotificationService{
     private final AuctionRepository auctionRepository;
     private final StoreRepository storeRepository;
     private final NotificationRepository notificationRepository;
-    private final DateTimeConverter dateTimeConverter;
     private final UserRepository userRepository;
     private final BarterRequestRepository barterRequestRepository;
     private final BarterRepository barterRepository;
@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(user.getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -127,7 +127,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(user.getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -185,7 +185,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(user.getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -238,7 +238,7 @@ public class NotificationServiceImpl implements NotificationService{
             Message message = Message.builder()
                     .setNotification(notification)
                     .setToken(br.getUser().getFcm())
-                    .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                    .putData("timestamp", convertString(LocalDateTime.now()))
                     .build();
 
             try{
@@ -282,7 +282,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(barter.getBarterHost().getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -324,7 +324,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(barterRequest.getUser().getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -367,7 +367,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(barter.getBarterHost().getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -390,12 +390,15 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
+    @Transactional
     public void sendGifticonNotification(Long userIdx, Integer remainDay, String gifticionName, Long gifticonCount, Integer type) {
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
 
-        if(user.getFcm() == null)
+        if(user.getFcm() == null) {
+            log.info(user.getUserId() + ": fcm token is empty");
             return;
+        }
 
         String title = "기프티콘 알림";
         String body = " ";
@@ -414,7 +417,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(user.getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
@@ -430,6 +433,7 @@ public class NotificationServiceImpl implements NotificationService{
 
             notificationRepository.save(notificationEntity);
 
+            log.info(user.getUserId() + ": notification saved");
 
         }catch (Exception e){
             log.warn(user.getUserId() + ": 알림 전송에 실패하였습니다.");
@@ -450,7 +454,7 @@ public class NotificationServiceImpl implements NotificationService{
         Message message = Message.builder()
                 .setNotification(notification)
                 .setToken(user.getFcm())
-                .putData("timestamp", dateTimeConverter.convertString(LocalDateTime.now()))
+                .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{

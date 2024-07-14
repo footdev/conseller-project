@@ -6,7 +6,9 @@ import com.conseller.conseller.utils.DateTimeConverter;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigInteger;
+import com.conseller.conseller.utils.DateTimeConverter.*;
+
+import static com.conseller.conseller.utils.DateTimeConverter.convertString;
 
 @Entity
 @Getter
@@ -41,8 +43,8 @@ public class BarterGuestItem {
                 .gifticonStatus(gifticon.getGifticonStatus())
                 .gifticonAllImageUrl(gifticon.getGifticonAllImageUrl())
                 .gifticonDataImageUrl(gifticon.getGifticonDataImageUrl())
-                .gifticonStartDate(DateTimeConverter.getInstance().convertString(gifticon.getGifticonStartDate()))
-                .gifticonEndDate(DateTimeConverter.getInstance().convertString(gifticon.getGifticonEndDate()))
+                .gifticonStartDate(convertString(gifticon.getGifticonStartDate()))
+                .gifticonEndDate(convertString(gifticon.getGifticonEndDate()))
                 .mainCategoryIdx(gifticon.getMainCategory().getMainCategoryIdx())
                 .subCategoryIdx(gifticon.getSubCategory().getSubCategoryIdx())
                 .userIdx(gifticon.getUser().getUserIdx())

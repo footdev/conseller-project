@@ -18,7 +18,6 @@ import com.conseller.conseller.exception.CustomExceptionStatus;
 import com.conseller.conseller.gifticon.enums.GifticonStatus;
 import com.conseller.conseller.gifticon.repository.GifticonRepository;
 import com.conseller.conseller.user.UserRepository;
-import com.conseller.conseller.utils.DateTimeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.time.LocalDateTime.now;
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Slf4j
 @Service
@@ -86,7 +86,7 @@ public class BarterServiceImpl implements BarterService{
             BarterConfirmList barterConfirmList = BarterConfirmList.builder()
                     .gifticonDataImageName(gifticon.getGifticonDataImageUrl())
                     .gifticonName(gifticon.getGifticonName())
-                    .gifticonEndDate(DateTimeConverter.getInstance().convertString(gifticon.getGifticonEndDate()))
+                    .gifticonEndDate(convertString(gifticon.getGifticonEndDate()))
                     .build();
             barterGifticonList.add(barterConfirmList);
         }
@@ -123,9 +123,7 @@ public class BarterServiceImpl implements BarterService{
         SubCategory preferSubCategory = subCategoryRepository.findById(barterCreateDto.getSubCategory()).orElseThrow(() -> new RuntimeException("존재하지 않는 분류입니다."));
         SubCategory subCategory = null;
 
-        String date = barterCreateDto.getBarterEndDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        LocalDateTime endDate = LocalDateTime.parse(date, formatter);
+        LocalDateTime endDate = convertLocalDateTime(barterCreateDto.getBarterEndDate());
 
         Barter barter = BarterMapper.INSTANCE.registBarterCreateToBarter(barterCreateDto, user, endDate, subCategory, preferSubCategory);
         barterRepository.save(barter);
@@ -321,7 +319,7 @@ public class BarterServiceImpl implements BarterService{
             BarterConfirmList barterConfirmList = BarterConfirmList.builder()
                     .gifticonDataImageName(bhi.getGifticon().getGifticonDataImageUrl())
                     .gifticonName(bhi.getGifticon().getGifticonName())
-                    .gifticonEndDate(DateTimeConverter.getInstance().convertString(bhi.getGifticon().getGifticonEndDate()))
+                    .gifticonEndDate(convertString(bhi.getGifticon().getGifticonEndDate()))
                     .build();
             hostGifticons.add(barterConfirmList);
         }
@@ -335,7 +333,7 @@ public class BarterServiceImpl implements BarterService{
                 BarterConfirmList barterConfirmList = BarterConfirmList.builder()
                         .gifticonDataImageName(bgi.getGifticon().getGifticonDataImageUrl())
                         .gifticonName(bgi.getGifticon().getGifticonName())
-                        .gifticonEndDate(DateTimeConverter.getInstance().convertString(bgi.getGifticon().getGifticonEndDate()))
+                        .gifticonEndDate(convertString(bgi.getGifticon().getGifticonEndDate()))
                         .build();
                 barterConfirmLists.add(barterConfirmList);
             }
