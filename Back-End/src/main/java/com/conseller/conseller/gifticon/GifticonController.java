@@ -23,9 +23,12 @@ public class GifticonController {
     private final S3Service s3Service;
 
     @PostMapping(value = "/{userIdx}", consumes = "multipart/form-data")
-    public ResponseEntity<Void> registGifticon(@PathVariable long userIdx, @RequestPart(name = "gifticonPostRequest") GifticonRegisterRequest gifticonRequest
-            ,@RequestPart(name = "originalFile") MultipartFile originalFile
-            ,@RequestPart(name = "cropFile") MultipartFile cropFile) throws IOException {
+    public ResponseEntity<Void> registGifticon(
+            @PathVariable long userIdx,
+            @RequestPart(name = "gifticonPostRequest") GifticonRegisterRequest gifticonRequest,
+            @RequestPart(name = "originalFile") MultipartFile originalFile,
+            @RequestPart(name = "cropFile") MultipartFile cropFile
+    ) throws IOException {
 
         log.info("기프티콘 등록 호출");
 
