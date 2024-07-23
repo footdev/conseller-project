@@ -16,7 +16,6 @@ import com.conseller.conseller.gifticon.repository.GifticonRepositoryImpl;
 import com.conseller.conseller.gifticon.repository.UsedGifticonRepository;
 import com.conseller.conseller.notification.NotificationService;
 import com.conseller.conseller.user.UserRepository;
-import com.conseller.conseller.utils.DateTimeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -26,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static com.conseller.conseller.utils.DateTimeConverter.*;
 
 @Slf4j
 @Service
@@ -45,7 +47,7 @@ public class GifticonServiceImpl implements GifticonService {
 
     private final NotificationService notificationService;
 
-    private final DateTimeConverter dateTimeConverter;
+
 
     public GifticonResponse getGifticonResponse(long gifticonIdx) {
         Gifticon gifticon = gifticonRepository.findByGifticonIdx(gifticonIdx)
@@ -55,8 +57,8 @@ public class GifticonServiceImpl implements GifticonService {
                 .gifticonIdx(gifticon.getGifticonIdx())
                 .gifticonBarcode(gifticon.getGifticonBarcode())
                 .gifticonName(gifticon.getGifticonName())
-                .gifticonStartDate(dateTimeConverter.convertString(gifticon.getGifticonStartDate()))
-                .gifticonEndDate(dateTimeConverter.convertString(gifticon.getGifticonEndDate()))
+                .gifticonStartDate(convertString(gifticon.getGifticonStartDate()))
+                .gifticonEndDate(convertString(gifticon.getGifticonEndDate()))
                 .gifticonAllImageUrl(gifticon.getGifticonAllImageUrl())
                 .gifticonDataImageUrl(gifticon.getGifticonDataImageUrl())
                 .gifticonStatus(gifticon.getGifticonStatus())
@@ -71,7 +73,7 @@ public class GifticonServiceImpl implements GifticonService {
     public void registGifticon(long userIdx, GifticonRegisterRequest gifticonRegisterRequest, String allImageUrl, String dataImageUrl) {
 
         //예외처리
-//        gifticonValidator.isValidGiftion(gifticonRegisterRequest);
+        gifticonValidator.isValidGiftion(gifticonRegisterRequest);
 
 
         //카테고리 엔티티를 가져온다.
@@ -91,7 +93,7 @@ public class GifticonServiceImpl implements GifticonService {
                 .gifticonDataImageUrl(dataImageUrl)
                 .subCategory(subCategory)
                 .mainCategory(mainCategory)
-                .gifticonEndDate(dateTimeConverter.convertDateTime(gifticonRegisterRequest.getGifticonEndDate()))
+                .gifticonEndDate(convertDateTime(gifticonRegisterRequest.getGifticonEndDate()))
                 .user(user)
                 .build();
 
@@ -117,21 +119,40 @@ public class GifticonServiceImpl implements GifticonService {
         gifticon.setGifticonStatus(GifticonStatus.USED.getStatus());
     }
 
-    @Async
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void checkGifticonEndDate() {
+//    @Scheduled(cron = "0 0 0 * * ?")
+    public String checkGifticonEndDate() {
 
         log.info(LocalDateTime.now() + " 기프티콘 유효기간 알림 작업 시작");
+        long beforeTime = System.currentTimeMillis();
 
         //쿼리 dsl로 불러온다.
         List<ExpiringGifticonResponse> gifticons = gifticonRepositoryImpl.getUserIdxAndExpiringGifticonCount();
 
         //해당 유저에 대해 notification 서비스에 알림 요청을 보낸다.
+        //동기
+//        gifticons.forEach(
+//                item -> notificationService.sendGifticonNotification(
+//                        item.getUserIdx(), item.getExpiryDay(), item.getGifticonName(), item.getGifticonCnt(), 1
+//                )
+//        );
+
+        //비동기
+        gifticons.forEach(
+                item -> CompletableFuture.runAsync(() -> notificationService.sendGifticonNotification(
+                        item.getUserIdx(), item.getExpiryDay(), item.getGifticonName(), item.getGifticonCnt(), 1
+                )).exceptionally(throwable -> {
+                    log.error("Exception occurred : " + throwable.getMessage());
+                    return null;
+                })
+        );
+
         for (ExpiringGifticonResponse item : gifticons) {
             notificationService.sendGifticonNotification(item.getUserIdx(), item.getExpiryDay(), item.getGifticonName(), item.getGifticonCnt(), 1);
         }
 
+        long afterTime = System.currentTimeMillis();
         log.info(LocalDateTime.now() + " 기프티콘 유효기간 알림 작업 종료");
+        return String.valueOf(afterTime - beforeTime) + "ms";
     }
 }
 

@@ -13,6 +13,6 @@ public interface GifticonService {
     public void deleteGifticon(long gifticonIdx);
 
     //정각에 기프티콘 유효기간 알람을 보내주는 기능
-    public void checkGifticonEndDate();
+    public String checkGifticonEndDate();
 
 }
