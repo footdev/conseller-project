@@ -65,7 +65,7 @@ ConSeller는 기프티콘 중고거래 플랫폼은 빠르게 성장하는 기�
 
 <div align="center">
   <br />
-  <img src="gif/sys.PNG" width="100%"/>
+  <img src="gif/스크린샷 2024-07-23 오후 8.51.24.png" width="100%"/>
   <br />
 </div>
 
