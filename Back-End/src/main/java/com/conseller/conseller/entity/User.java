@@ -118,7 +118,7 @@ public class User extends BaseTime implements UserDetails {
     private List<Store> stores = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "notificationUser")
     private List<NotificationEntity> notificationEntities = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)

@@ -10,26 +10,23 @@ import com.conseller.conseller.gifticon.dto.response.ExpiringGifticonResponse;
 import com.conseller.conseller.gifticon.repository.GifticonRepository;
 import com.conseller.conseller.gifticon.dto.response.GifticonResponse;
 import com.conseller.conseller.gifticon.dto.request.GifticonRegisterRequest;
-import com.conseller.conseller.gifticon.dto.response.ImageUrlsResponse;
 import com.conseller.conseller.gifticon.enums.GifticonStatus;
 import com.conseller.conseller.gifticon.repository.GifticonRepositoryImpl;
 import com.conseller.conseller.gifticon.repository.UsedGifticonRepository;
 import com.conseller.conseller.notification.NotificationService;
 import com.conseller.conseller.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static com.conseller.conseller.utils.DateTimeConverter.*;
 
-@Slf4j
+@Log4j2
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -119,40 +116,8 @@ public class GifticonServiceImpl implements GifticonService {
         gifticon.setGifticonStatus(GifticonStatus.USED.getStatus());
     }
 
-//    @Scheduled(cron = "0 0 0 * * ?")
-    public String checkGifticonEndDate() {
-
-        log.info(LocalDateTime.now() + " 기프티콘 유효기간 알림 작업 시작");
-        long beforeTime = System.currentTimeMillis();
-
-        //쿼리 dsl로 불러온다.
-        List<ExpiringGifticonResponse> gifticons = gifticonRepositoryImpl.getUserIdxAndExpiringGifticonCount();
-
-        //해당 유저에 대해 notification 서비스에 알림 요청을 보낸다.
-        //동기
-//        gifticons.forEach(
-//                item -> notificationService.sendGifticonNotification(
-//                        item.getUserIdx(), item.getExpiryDay(), item.getGifticonName(), item.getGifticonCnt(), 1
-//                )
-//        );
-
-        //비동기
-        gifticons.forEach(
-                item -> CompletableFuture.runAsync(() -> notificationService.sendGifticonNotification(
-                        item.getUserIdx(), item.getExpiryDay(), item.getGifticonName(), item.getGifticonCnt(), 1
-                )).exceptionally(throwable -> {
-                    log.error("Exception occurred : " + throwable.getMessage());
-                    return null;
-                })
-        );
-
-        for (ExpiringGifticonResponse item : gifticons) {
-            notificationService.sendGifticonNotification(item.getUserIdx(), item.getExpiryDay(), item.getGifticonName(), item.getGifticonCnt(), 1);
-        }
-
-        long afterTime = System.currentTimeMillis();
-        log.info(LocalDateTime.now() + " 기프티콘 유효기간 알림 작업 종료");
-        return String.valueOf(afterTime - beforeTime) + "ms";
+    public List<ExpiringGifticonResponse> getGifticonExpirationDates() {
+        return gifticonRepositoryImpl.getUserIdxAndExpiringGifticonCount();
     }
 }
 

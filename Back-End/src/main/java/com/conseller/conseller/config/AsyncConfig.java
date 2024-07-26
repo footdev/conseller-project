@@ -2,6 +2,7 @@ package com.conseller.conseller.config;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -19,10 +20,18 @@ import java.util.concurrent.Executor;
 @EnableScheduling
 public class AsyncConfig implements AsyncConfigurer, SchedulingConfigurer {
 
+    @Bean(name = "notificationThreadPoolExecutor")
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(Runtime.getRuntime().availableProcessors() * 2);
+        executor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 2);
+        return executor;
+    }
+
     public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(Runtime.getRuntime().availableProcessors() * 2);
-        scheduler.setThreadNamePrefix("MY-SCHEDULER-");
+        scheduler.setThreadNamePrefix("NOTIFICATION-THREAD-");
         scheduler.initialize();
         return scheduler;
     }
