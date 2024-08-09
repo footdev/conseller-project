@@ -9,8 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Getter @Builder
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,13 +30,37 @@ public class NotificationEntity {
     private LocalDateTime notificationCreatedDate;
 
     @Column(name = "notification_type")
-    private Integer notificationType;
+    private int notificationType;
 
     @Column(name = "seller", nullable = false)
-    private Boolean seller;
+    private boolean notificationSeller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User user;
+    private User notificationUser;
 
+    public static NotificationEntity from(String title, String contents, int type, boolean seller, User user) {
+        return NotificationEntity.builder()
+                .notificationTitle(title)
+                .notificationContent(contents)
+                .notificationType(type)
+                .notificationSeller(seller)
+                .notificationUser(user)
+                .build();
+    }
+
+    public static NotificationEntity from(String title, String contents, LocalDateTime dateTime, int type, boolean seller, User user) {
+        return NotificationEntity.builder()
+               .notificationTitle(title)
+               .notificationContent(contents)
+               .notificationType(type)
+                .notificationCreatedDate(dateTime)
+               .notificationSeller(seller)
+               .notificationUser(user)
+               .build();
+    }
+
+    public void updateType(int type) {
+        this.notificationType = type;
+    }
 }
