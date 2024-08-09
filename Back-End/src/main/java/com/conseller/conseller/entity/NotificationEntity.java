@@ -41,9 +41,20 @@ public class NotificationEntity {
 
     public static NotificationEntity from(String title, String contents, int type, boolean seller, User user) {
         return NotificationEntity.builder()
+                .notificationTitle(title)
+                .notificationContent(contents)
+                .notificationType(type)
+                .notificationSeller(seller)
+                .notificationUser(user)
+                .build();
+    }
+
+    public static NotificationEntity from(String title, String contents, LocalDateTime dateTime, int type, boolean seller, User user) {
+        return NotificationEntity.builder()
                .notificationTitle(title)
                .notificationContent(contents)
                .notificationType(type)
+                .notificationCreatedDate(dateTime)
                .notificationSeller(seller)
                .notificationUser(user)
                .build();

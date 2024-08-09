@@ -39,6 +39,7 @@ public class NotificationServiceImpl implements NotificationService{
     private final UserRepository userRepository;
     private final BarterRequestRepository barterRequestRepository;
     private final BarterRepository barterRepository;
+    private final NotificationJdbcRepository notificationJdbcRepository;
 
     @Override
     public void sendAuctionNotification(Long auctionIdx, String title, String body, Integer index, Integer type) {
@@ -343,17 +344,14 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    @Transactional
-    // Spring에서 제공하는 메서드 레벨의 비동기 처리 방식
-    @Async("notificationThreadPoolExecutor")
-    public void sendGifticonNotification(Long userIdx, Integer remainDay, String gifticionName, Long gifticonCount, Integer type) {
+    public NotificationEntity createGifticonNotification(Long userIdx, Integer remainDay, String gifticionName, Long gifticonCount, Integer type) {
         User user = userRepository.findById(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
 
-        if(user.getFcm() == null) {
-            log.info(user.getUserId() + ": fcm token is empty");
-            return;
-        }
+//        if(user.getFcm() == null) {
+//            log.info(user.getUserId() + ": fcm token is empty");
+//            return;
+//        }
 
         String title = "기프티콘 알림";
         String body = " ";
@@ -369,19 +367,28 @@ public class NotificationServiceImpl implements NotificationService{
                 .setBody(body)
                 .build();
 
-        Message message = Message.builder()
-                .setNotification(notification)
-                .setToken(user.getFcm())
-                .putData("timestamp", convertString(LocalDateTime.now()))
-                .build();
+//        Message message = Message.builder()
+//                .setNotification(notification)
+//                .setToken(user.getFcm())
+//                .putData("timestamp", convertString(LocalDateTime.now()))
+//                .build();
 
-        try {
-            String response = FirebaseMessaging.getInstance().send(message);
-            NotificationEntity notificationEntity = NotificationEntity.from(title, body, type, false, user);
-            notificationRepository.save(notificationEntity);
-        } catch (Exception e){
-            log.warn(user.getUserId() + ": 알림 전송에 실패하였습니다.");
-        }
+//        try {
+//            String response = FirebaseMessaging.getInstance().send(message);
+//        } catch (Exception e){
+//            log.warn(user.getUserId() + ": 알림 전송에 실패하였습니다.");
+//        }
+
+        return NotificationEntity.from(title, body, LocalDateTime.now(), type, false, user);
+    }
+
+    public void insertAll(List<NotificationEntity> notificationEntities)  {
+        notificationJdbcRepository.batchInsertExpirationDateNotifications(notificationEntities);
+    }
+
+    @Override
+    public void saveAll(List<NotificationEntity> notificationEntities) {
+        notificationRepository.saveAll(notificationEntities);
     }
 
 
