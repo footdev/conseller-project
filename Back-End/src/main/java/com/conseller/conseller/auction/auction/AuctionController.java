@@ -28,6 +28,8 @@ public class AuctionController {
     public ResponseEntity<AuctionListResponse> getAuctionList(@RequestBody AuctionListRequest request) {
         AuctionListResponse response = auctionService.getAuctionList(request);
 
+        log.info("[POST] /auction called");
+
         return ResponseEntity.ok()
                 .body(response);
     }
