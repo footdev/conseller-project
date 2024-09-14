@@ -51,13 +51,9 @@ public class AuctionServiceImpl implements AuctionService{
 
         List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctions.getContent());
 
-        log.info("auctionItemDataList : " + auctionItemDataList.toString());
-
         AuctionListResponse response = new AuctionListResponse(auctionItemDataList,
                 auctions.getTotalElements(),
                 auctions.getTotalPages());
-
-        log.info("response : " + response);
 
         return response;
     }
@@ -137,19 +133,17 @@ public class AuctionServiceImpl implements AuctionService{
             if (!auction.getUser().getUserIdx().equals(userIdx)) { //즉시 구매자 라면
                 log.info("immediate");
 
-                auction.setAuctionHighestBid(auction.getUpperPrice());
-                auction.setHighestBidUser(user);
 
                 boolean isExist = false;
                 Long bidIdx = 0L;
 
                 // 이미 입찰이 있고 그 입찰이 지금 경매라면
-                for (AuctionBid bid : auction.getAuctionBidList()) {
-                    if (bid.getUser().getUserIdx().equals(userIdx)) {
-                        isExist = true;
-                        bidIdx = bid.getAuctionBidIdx();
-                    }
-                }
+//                for (AuctionBid bid : auction.getAuctionBidList()) {
+//                    if (bid.getUser().getUserIdx().equals(userIdx)) {
+//                        isExist = true;
+//                        bidIdx = bid.getAuctionBidIdx();
+//                    }
+//                }
 
                 if (isExist) {
                     AuctionBid auctionBid = auctionBidRepository.findById(bidIdx)
@@ -170,10 +164,10 @@ public class AuctionServiceImpl implements AuctionService{
             auction.setAuctionStatus(AuctionStatus.IN_TRADE.getStatus());
 
             //입찰 상태를 낙찰 예정으로 변경
-            AuctionBid bid = auctionBidRepository.findByUser_UserIdxAndAuction_AuctionIdx(auction.getHighestBidUser().getUserIdx(), auctionIdx)
-                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_BID_INVALID));
+//            AuctionBid bid = auctionBidRepository.findByUser_UserIdxAndAuction_AuctionIdx(auction.getHighestBidUser().getUserIdx(), auctionIdx)
+//                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_BID_INVALID));
 
-            bid.setAuctionBidStatus(BidStatus.EXPECTED.getStatus());
+//            bid.setAuctionBidStatus(BidStatus.EXPECTED.getStatus());
 
             // 판매자의 계좌번호와 은행 전달
             response = new AuctionTradeResponse(auction.getUser().getUsername() ,auction.getUser().getUserAccount(),
@@ -201,13 +195,13 @@ public class AuctionServiceImpl implements AuctionService{
                 .findByAuctionIdxOrderByAuctionBidPriceDesc(auction.getAuctionIdx());
 
         //입잘자가 혼자라면 초기화
-        if(auctionBidList.size() == 1){
-            auction.setAuctionHighestBid(0);
-            auction.setHighestBidUser(null);
-        }else { //입찰자보다 바로 아래 입찰금액으로 갱신
-            auction.setAuctionHighestBid(auctionBidList.get(1).getAuctionBidPrice());
-            auction.setHighestBidUser(auctionBidList.get(1).getUser());
-        }
+//        if(auctionBidList.size() == 1){
+//            auction.setAuctionHighestBid(0);
+//            auction.setHighestBidUser(null);
+//        }else { //입찰자보다 바로 아래 입찰금액으로 갱신
+//            auction.setAuctionHighestBid(auctionBidList.get(1).getAuctionBidPrice());
+//            auction.setHighestBidUser(auctionBidList.get(1).getUser());
+//        }
 
         auctionBidRepository.deleteByUser_UserIdxAndAuction_AuctionIdx(auctionBidList.get(0).getUser().getUserIdx(), auctionIdx);
         log.info("거래 취소 완료");
@@ -220,7 +214,7 @@ public class AuctionServiceImpl implements AuctionService{
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
         Gifticon gifticon = gifticonRepository.findById(auction.getGifticon().getGifticonIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
-        User user = userRepository.findById(auction.getHighestBidUser().getUserIdx())
+        User user = userRepository.findById(0L)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         auction.setAuctionStatus(AuctionStatus.AWARDED.getStatus());
