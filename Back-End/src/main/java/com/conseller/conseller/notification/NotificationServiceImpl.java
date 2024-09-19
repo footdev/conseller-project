@@ -43,59 +43,59 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public void sendAuctionNotification(Long auctionIdx, String title, String body, Integer index, Integer type) {
-        Auction auction = auctionRepository.findById(auctionIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
-
-        User user = null;
-        String contents = null;
-
-        if(index == 1) { // 구매자
-            if(auction.getHighestBidUser().getFcm() == null)
-                return;
-
-            user = auction.getHighestBidUser();
-
-            contents = auction.getUser().getUserNickname() + " " + body;
-        } else if( index == 2) { // 판매자
-            if(auction.getUser().getFcm() == null)
-                return;
-
-            user = auction.getUser();
-
-            contents = auction.getHighestBidUser().getUserNickname() + " " + body;
-        } else {
-            throw new CustomException(CustomExceptionStatus.INVALID_NOTI_TYPE);
-        }
-
-
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(contents)
-                .build();
-
-        Message message = Message.builder()
-                .setNotification(notification)
-                .setToken(user.getFcm())
-                .putData("timestamp", convertString(LocalDateTime.now()))
-                .build();
-
-        try{
-            String response = FirebaseMessaging.getInstance().send(message);
-
-            log.info(response);
-
-            NotificationEntity notificationEntity;
-
-            if(index == 1) {
-                notificationEntity = NotificationEntity.from(title, contents, type, false, auction.getHighestBidUser());
-            }else {
-                notificationEntity = NotificationEntity.from(title, contents, type, true, auction.getUser());
-            }
-
-            notificationRepository.save(notificationEntity);
-        }catch (Exception e){
-            log.warn(auction.getUser().getUserId() + ": 알림 전송에 실패하였습니다.");
-        }
+//        Auction auction = auctionRepository.findById(auctionIdx)
+//                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
+//
+//        User user = null;
+//        String contents = null;
+//
+//        if(index == 1) { // 구매자
+//            if(auction.getHighestBidUser().getFcm() == null)
+//                return;
+//
+//            user = auction.getHighestBidUser();
+//
+//            contents = auction.getUser().getUserNickname() + " " + body;
+//        } else if( index == 2) { // 판매자
+//            if(auction.getUser().getFcm() == null)
+//                return;
+//
+//            user = auction.getUser();
+//
+//            contents = auction.getHighestBidUser().getUserNickname() + " " + body;
+//        } else {
+//            throw new CustomException(CustomExceptionStatus.INVALID_NOTI_TYPE);
+//        }
+//
+//
+//        Notification notification = Notification.builder()
+//                .setTitle(title)
+//                .setBody(contents)
+//                .build();
+//
+//        Message message = Message.builder()
+//                .setNotification(notification)
+//                .setToken(user.getFcm())
+//                .putData("timestamp", convertString(LocalDateTime.now()))
+//                .build();
+//
+//        try{
+//            String response = FirebaseMessaging.getInstance().send(message);
+//
+//            log.info(response);
+//
+//            NotificationEntity notificationEntity;
+//
+//            if(index == 1) {
+//                notificationEntity = NotificationEntity.from(title, contents, type, false, auction.getHighestBidUser());
+//            }else {
+//                notificationEntity = NotificationEntity.from(title, contents, type, true, auction.getUser());
+//            }
+//
+//            notificationRepository.save(notificationEntity);
+//        }catch (Exception e){
+//            log.warn(auction.getUser().getUserId() + ": 알림 전송에 실패하였습니다.");
+//        }
     }
 
     @Override

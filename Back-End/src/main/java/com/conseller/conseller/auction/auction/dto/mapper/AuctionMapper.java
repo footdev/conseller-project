@@ -37,7 +37,7 @@ public interface AuctionMapper {
         response.setAuctionUserNickname(auction.getUser().getUserNickname());
         response.setDeposit(false);
         response.setAuctionEndDate(convertString(auction.getAuctionEndDate()));
-        response.setAuctionHighestBid(auction.getAuctionHighestBid());
+        response.setAuctionHighestBid(auction.getHighestBid().getAuctionBidPrice());
         response.setAuctionUserProfileUrl(auction.getUser().getUserProfileUrl());
         response.setGifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl());
         response.setGifticonName(auction.getGifticon().getGifticonName());
@@ -62,7 +62,6 @@ public interface AuctionMapper {
         itemData.setDeposit(false);
         itemData.setUpperPrice(auction.getUpperPrice());
         itemData.setLowerPrice(auction.getLowerPrice());
-        itemData.setAuctionHighestBid(auction.getAuctionHighestBid());
 
         return itemData;
     }
@@ -95,11 +94,7 @@ public interface AuctionMapper {
         response.setGifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl());
         response.setNotificationCreatedDate(convertString(LocalDateTime.now()));
         response.setGiftconName(auction.getGifticon().getGifticonName());
-        response.setAuctionPrice(auction.getAuctionHighestBid());
         response.setPostContent(auction.getAuctionText());
-        response.setBuyUserImageUrl(auction.getHighestBidUser().getUserProfileUrl());
-        response.setBuyUserNickname(auction.getHighestBidUser().getUserNickname());
-        response.setBuyUserIdx(auction.getHighestBidUser().getUserIdx());
 
         return response;
     }
@@ -110,15 +105,10 @@ public interface AuctionMapper {
 
         response.setGifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl());
         response.setGiftconName(auction.getGifticon().getGifticonName());
-        response.setAuctionPrice(auction.getAuctionHighestBid());
         response.setPostContent(auction.getAuctionText());
         response.setUserName(auction.getUser().getUsername());
         response.setUserAccount(auction.getUser().getUserAccount());
         response.setUserAccountBank(auction.getUser().getUserAccountBank());
-        response.setBuyUserImageUrl(auction.getHighestBidUser().getUserProfileUrl());
-        response.setBuyUserNickname(auction.getHighestBidUser().getUserNickname());
-        response.setBuyUserName(auction.getHighestBidUser().getUsername());
-        response.setBuyUserIdx(auction.getHighestBidUser().getUserIdx());
 
         return response;
     }

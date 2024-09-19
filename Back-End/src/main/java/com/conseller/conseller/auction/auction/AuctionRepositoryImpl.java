@@ -73,7 +73,7 @@ public class AuctionRepositoryImpl{
         } else if (status == 1) {
             return new OrderSpecifier(Order.ASC, auction.gifticon.gifticonEndDate);
         } else if(status == 2) {
-            return new OrderSpecifier(Order.ASC, auction.auctionHighestBid);
+            return new OrderSpecifier(Order.ASC, auction.highestBid);
         } else  {
             return new OrderSpecifier(Order.ASC, auction.upperPrice);
         }

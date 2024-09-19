@@ -55,8 +55,12 @@ public class Auction {
     @JoinColumn(name = "user_idx")
     private User user;
 
-    @OneToMany(mappedBy = "auction", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<AuctionBid> auctionBidList;
+    // TODO: 유저가 아니라 최고 입찰을 넣어야함.
+    @ManyToOne
+    @JoinColumn(name = "auction_bid_idx")
+    private AuctionBid highestBid;
 
+    @OneToMany(mappedBy = "auction")
+    private List<AuctionBid> auctionBidList;
 }
 
