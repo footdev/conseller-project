@@ -27,6 +27,7 @@ public class AuctionRepositoryImpl {
         return factory
                 .selectFrom(auction)
                 .innerJoin(auction.gifticon)
+                .fetchJoin()
                 .where(
                         eqCategory(req.getMainCategory(), req.getSubCategory()),
                         auction.auctionStatus.eq(AuctionStatus.IN_PROGRESS.getStatus()),

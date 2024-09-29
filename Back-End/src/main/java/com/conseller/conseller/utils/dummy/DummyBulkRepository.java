@@ -1,5 +1,6 @@
 package com.conseller.conseller.utils.dummy;
 
+import com.conseller.conseller.entity.Auction;
 import com.conseller.conseller.gifticon.dto.response.GifticonResponse;
 import com.conseller.conseller.user.dto.request.SignUpRequest;
 import com.conseller.conseller.user.enums.UserStatus;
@@ -91,5 +92,45 @@ public class DummyBulkRepository {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public void saveAllAuctions(List<Auction> auctions) {
+        String sql = "INSERT INTO auction (" +
+                "auction_end_date, " +
+                "auction_start_date, " +
+                "auction_status, " +
+                "auction_text, " +
+                "lower_price, " +
+                "upper_price, " +
+                "gifticon_idx, " +
+                "user_idx" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            jdbcTemplate.batchUpdate(
+                    sql,
+                    new BatchPreparedStatementSetter() {
+                        @Override
+                        public void setValues(PreparedStatement ps, int i) throws SQLException {
+                            ps.setTimestamp(1, convertTimestamp(convertString(auctions.get(i).getAuctionEndDate())));
+                            ps.setTimestamp(2, convertTimestamp(convertString(auctions.get(i).getAuctionStartDate())));
+                            ps.setString(3, auctions.get(i).getAuctionStatus());
+                            ps.setString(4, auctions.get(i).getAuctionText());
+                            ps.setInt(5, auctions.get(i).getLowerPrice());
+                            ps.setInt(6, auctions.get(i).getUpperPrice());
+                            ps.setLong(7, auctions.get(i).getGifticon().getGifticonIdx());
+                            ps.setLong(8, auctions.get(i).getUser().getUserIdx());
+                        }
+
+                        @Override
+                        public int getBatchSize() {
+                            return auctions.size();
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 }

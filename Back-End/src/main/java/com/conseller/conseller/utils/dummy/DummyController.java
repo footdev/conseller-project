@@ -25,4 +25,10 @@ public class DummyController {
         dummyService.createDummyGifticonsAndSaveAll();
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/auctions")
+    public ResponseEntity<Object> createDummyAuctions() {
+        dummyService.createDummyAuctionsAndSaveAll();
+        return ResponseEntity.ok().build();
+    }
 }
