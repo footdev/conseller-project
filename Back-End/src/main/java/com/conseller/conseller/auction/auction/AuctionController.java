@@ -24,11 +24,11 @@ public class AuctionController {
     private final NotificationService notificationService;
 
     // 경매 목록
-    @PostMapping
-    public ResponseEntity<AuctionListResponse> getAuctionList(@RequestBody AuctionListRequest request) {
-        AuctionListResponse response = auctionService.getAuctionList(request);
-
+    @PostMapping("/{auctionId}")
+    public ResponseEntity<AuctionListResponse> getAuctionList(@PathVariable long auctionId, @RequestBody AuctionListRequest request) {
         log.info("[POST] /auction called");
+
+        AuctionListResponse response = auctionService.getAuctionList(auctionId, request);
 
         return ResponseEntity.ok()
                 .body(response);

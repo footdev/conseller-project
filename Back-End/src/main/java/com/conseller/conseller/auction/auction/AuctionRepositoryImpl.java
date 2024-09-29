@@ -20,12 +20,27 @@ import static com.conseller.conseller.entity.QAuction.auction;
 
 @Repository
 @RequiredArgsConstructor
-public class AuctionRepositoryImpl{
+public class AuctionRepositoryImpl {
     private final JPAQueryFactory factory;
+
+    public List<Auction> findAuctionListByCursor(Auction cursor, AuctionListRequest req) {
+        return factory
+                .selectFrom(auction)
+                .innerJoin(auction.gifticon)
+                .where(
+                        eqCategory(req.getMainCategory(), req.getSubCategory()),
+                        auction.auctionStatus.eq(AuctionStatus.IN_PROGRESS.getStatus()),
+                        cursorFieldAndIdx(cursor, req)
+                )
+                .orderBy(orderSpecifier(req.getStatus()), auction.auctionIdx.asc())
+                .limit(10)
+                .fetch();
+    }
 
     public Page<Auction> findAuctionList(AuctionListRequest request, Pageable pageable) {
         List<Auction> content = factory
                 .selectFrom(auction)
+                .innerJoin(auction.gifticon)
                 .where(
                         eqCategory(request.getMainCategory(), request.getSubCategory()),
                         eqSearch(request.getSearchQuery()),
@@ -67,9 +82,11 @@ public class AuctionRepositoryImpl{
         return auction.gifticon.gifticonName.containsIgnoreCase(searchQuery);
     }
 
+
+
     private OrderSpecifier orderSpecifier(Integer status) {
         if(status == 0) {
-            return new OrderSpecifier(Order.DESC, auction.auctionStartDate);
+            return new OrderSpecifier(Order.ASC, auction.auctionStartDate);
         } else if (status == 1) {
             return new OrderSpecifier(Order.ASC, auction.gifticon.gifticonEndDate);
         } else if(status == 2) {
@@ -77,5 +94,35 @@ public class AuctionRepositoryImpl{
         } else  {
             return new OrderSpecifier(Order.ASC, auction.upperPrice);
         }
+    }
+
+    private BooleanExpression cursorFieldAndIdx(Auction cursor, AuctionListRequest req) {
+        if (cursor == null || req.getStatus() == null) {
+            return null;
+        }
+
+        switch (AuctionOrderStatus.findByStatus(req.getStatus())) {
+            case START_DATE:
+                return auction.auctionStartDate.eq(cursor.getAuctionStartDate())
+                        .and(auction.auctionIdx.gt(cursor.getAuctionIdx()))
+                        .or(auction.auctionStartDate.gt(cursor.getAuctionStartDate()));
+
+            case END_DATE:
+                return auction.gifticon.gifticonEndDate.eq(cursor.getGifticon().getGifticonEndDate())
+                        .and(auction.auctionIdx.gt(cursor.getAuctionIdx()))
+                        .or(auction.gifticon.gifticonEndDate.gt(cursor.getGifticon().getGifticonEndDate()));
+
+            case HIGHEST_BID:
+                return auction.highestBid.eq(cursor.getHighestBid())
+                        .and(auction.auctionIdx.gt(cursor.getAuctionIdx()))
+                        .or(auction.highestBid.auctionBidPrice.gt(cursor.getHighestBid().getAuctionBidPrice()));
+
+            case UPPER_PRICE:
+                return auction.upperPrice.eq(cursor.getUpperPrice())
+                        .and(auction.auctionIdx.gt(cursor.getAuctionIdx()))
+                        .or(auction.upperPrice.gt(cursor.getUpperPrice()));
+        }
+
+        return null;
     }
 }

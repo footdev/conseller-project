@@ -44,18 +44,13 @@ public class AuctionServiceImpl implements AuctionService{
     // 경매 목록
     @Override
     @Transactional(readOnly = true)
-    public AuctionListResponse getAuctionList(AuctionListRequest request) {
-        Pageable pageable = PageRequest.of(request.getPage() - 1, 10);
+    public AuctionListResponse getAuctionList(long auctionId, AuctionListRequest request) {
+        Auction cursor = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        Page<Auction> auctions = auctionImplRepository.findAuctionList(request, pageable);
+        List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctionImplRepository.findAuctionListByCursor(cursor, request));
 
-        List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctions.getContent());
-
-        AuctionListResponse response = new AuctionListResponse(auctionItemDataList,
-                auctions.getTotalElements(),
-                auctions.getTotalPages());
-
-        return response;
+        return new AuctionListResponse(auctionItemDataList);
     }
 
     // 경매 글 등록
@@ -90,9 +85,7 @@ public class AuctionServiceImpl implements AuctionService{
 
         List<AuctionBidItemData> auctionBidItemDataList = AuctionMapper.INSTANCE.bidsToItemDatas(auction.getAuctionBidList());
 
-        DetailAuctionResponse detailAuctionResponse = AuctionMapper.INSTANCE.entityToDetailAuctionResponse(auction, auctionBidItemDataList);
-
-        return detailAuctionResponse;
+        return AuctionMapper.INSTANCE.entityToDetailAuctionResponse(auction, auctionBidItemDataList);
     }
 
     // 경매 글 수정

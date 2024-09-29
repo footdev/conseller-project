@@ -47,16 +47,15 @@ public class Auction {
     @Column(name = "notification_created_date")
     private LocalDateTime notificationCreatedDate;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gifticon_idx")
     private Gifticon gifticon;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
 
-    // TODO: 유저가 아니라 최고 입찰을 넣어야함.
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_bid_idx")
     private AuctionBid highestBid;
 
