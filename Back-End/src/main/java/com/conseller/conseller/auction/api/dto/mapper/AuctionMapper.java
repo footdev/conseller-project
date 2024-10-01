@@ -2,7 +2,6 @@ package com.conseller.conseller.auction.api.dto.mapper;
 
 import com.conseller.conseller.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.auction.api.dto.response.*;
-import com.conseller.conseller.auction.auction.dto.response.*;
 import com.conseller.conseller.auction.infrastructure.Auction;
 import com.conseller.conseller.entity.AuctionBid;
 import com.conseller.conseller.entity.Gifticon;
