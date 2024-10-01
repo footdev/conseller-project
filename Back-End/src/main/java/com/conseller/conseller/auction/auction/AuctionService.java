@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AuctionService {
 
-    public AuctionListResponse getAuctionList(AuctionListRequest request);
+    public AuctionListResponse getAuctionList(long auctionId, AuctionListRequest request);
 
     public Long registAuction(RegistAuctionRequest request);
 

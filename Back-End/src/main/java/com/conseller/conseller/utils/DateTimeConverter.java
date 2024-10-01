@@ -56,4 +56,9 @@ public class DateTimeConverter {
     public static LocalDateTime generateRandomDate() {
         return LocalDateTime.now().minusDays(ThreadLocalRandom.current().nextInt(365));
     }
+
+    //현재 날짜 ~ 약 10개월 전 까지의 일 단위의 날짜를 랜덤하게 생성
+    public static LocalDateTime generateRandomDate10Month() {
+        return LocalDateTime.now().minusDays(ThreadLocalRandom.current().nextInt(300));
+    }
 }

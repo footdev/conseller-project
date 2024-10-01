@@ -90,7 +90,7 @@ public class User extends BaseTime implements UserDetails {
     private String userPattern;
 
     @Builder.Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Auction> auctions = new ArrayList<>();
 
     @Builder.Default
