@@ -1,6 +1,6 @@
 package com.conseller.conseller.entity;
 
-import com.conseller.conseller.gifticon.dto.response.GifticonResponse;
+import com.conseller.conseller.gifticon.api.dto.response.GifticonResponse;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

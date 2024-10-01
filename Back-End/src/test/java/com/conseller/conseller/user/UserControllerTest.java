@@ -1,7 +1,7 @@
 //package com.conseller.conseller.user;
 //
 //import com.conseller.conseller.user.dto.request.SignUpRequest;
-//import com.conseller.conseller.user.service.UserService;
+//import com.conseller.conseller.user.domain.UserService;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

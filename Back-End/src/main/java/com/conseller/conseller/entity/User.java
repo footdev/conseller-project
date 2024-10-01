@@ -1,8 +1,11 @@
 package com.conseller.conseller.entity;
 
-import com.conseller.conseller.user.dto.request.UserInfoRequest;
-import com.conseller.conseller.user.enums.Authority;
-import com.conseller.conseller.user.enums.UserStatus;
+import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.barter.infrastructure.Barter;
+import com.conseller.conseller.barter.infrastructure.BarterRequest;
+import com.conseller.conseller.user.api.dto.request.UserInfoRequest;
+import com.conseller.conseller.user.domain.enums.Authority;
+import com.conseller.conseller.user.domain.enums.UserStatus;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

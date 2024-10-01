@@ -1,10 +1,9 @@
 package com.conseller.conseller.utils.dummy;
 
-import com.conseller.conseller.entity.Auction;
-import com.conseller.conseller.gifticon.dto.response.GifticonResponse;
-import com.conseller.conseller.user.dto.request.SignUpRequest;
-import com.conseller.conseller.user.enums.UserStatus;
-import com.conseller.conseller.utils.DateTimeConverter;
+import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.gifticon.api.dto.response.GifticonResponse;
+import com.conseller.conseller.user.api.dto.request.SignUpRequest;
+import com.conseller.conseller.user.domain.enums.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import static com.conseller.conseller.utils.DateTimeConverter.*;

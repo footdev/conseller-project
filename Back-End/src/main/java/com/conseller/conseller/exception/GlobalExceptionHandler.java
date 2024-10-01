@@ -1,6 +1,6 @@
 package com.conseller.conseller.exception;
 
-import com.conseller.conseller.utils.dto.CommonResponse;
+import com.conseller.conseller.globalApi.dto.CommonResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

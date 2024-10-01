@@ -1,6 +1,7 @@
 package com.conseller.conseller.entity;
 
-import com.conseller.conseller.auction.bid.enums.BidStatus;
+import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.bid.domain.enums.BidStatus;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;

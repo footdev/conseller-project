@@ -2,9 +2,12 @@ package com.conseller.conseller.notification.facade;
 
 import com.conseller.conseller.entity.NotificationEntity;
 import com.conseller.conseller.exception.CustomException;
-import com.conseller.conseller.gifticon.dto.response.ExpiringGifticonResponse;
-import com.conseller.conseller.gifticon.service.GifticonService;
-import com.conseller.conseller.notification.NotificationService;
+
+import com.conseller.conseller.gifticon.api.dto.response.ExpiringGifticonResponse;
+
+import com.conseller.conseller.gifticon.domain.GifticonService;
+import com.conseller.conseller.notification.domain.NotificationService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

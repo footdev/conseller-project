@@ -1,6 +1,5 @@
 package com.conseller.conseller.utils.dummy;
 
-import com.conseller.conseller.utils.dto.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

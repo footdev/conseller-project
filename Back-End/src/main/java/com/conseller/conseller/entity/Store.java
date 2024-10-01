@@ -1,6 +1,6 @@
 package com.conseller.conseller.entity;
 
-import com.conseller.conseller.store.enums.StoreStatus;
+import com.conseller.conseller.store.domain.enums.StoreStatus;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;

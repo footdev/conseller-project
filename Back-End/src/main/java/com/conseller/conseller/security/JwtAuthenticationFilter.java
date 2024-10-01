@@ -1,7 +1,5 @@
 package com.conseller.conseller.security;
 
-import com.conseller.conseller.utils.jwt.BlackListRepository;
-import com.conseller.conseller.utils.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

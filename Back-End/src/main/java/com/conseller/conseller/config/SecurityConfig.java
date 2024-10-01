@@ -1,8 +1,8 @@
 package com.conseller.conseller.config;
 
 import com.conseller.conseller.security.JwtAuthenticationFilter;
-import com.conseller.conseller.utils.jwt.BlackListRepository;
-import com.conseller.conseller.utils.jwt.JwtTokenProvider;
+import com.conseller.conseller.security.BlackListRepository;
+import com.conseller.conseller.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

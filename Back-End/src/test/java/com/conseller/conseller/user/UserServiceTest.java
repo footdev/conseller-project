@@ -7,7 +7,7 @@
 //import com.conseller.conseller.user.dto.response.PartialHiddenUserIdResponse;
 //import com.conseller.conseller.user.enums.AccountBanks;
 //import com.conseller.conseller.user.enums.UserStatus;
-//import com.conseller.conseller.user.service.UserServiceImpl;
+//import com.conseller.conseller.user.domain.UserServiceImpl;
 //import org.junit.jupiter.api.BeforeAll;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
