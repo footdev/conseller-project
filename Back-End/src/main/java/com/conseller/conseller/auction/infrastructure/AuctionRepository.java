@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
-    boolean existsByGifticon_GifticonIdx(Long gifticonIdx);
-
     @Query("select a from Auction a where a.auctionStatus = '거래 중' and current_timestamp - a.notificationCreatedDate >= 14 * 60 * 1000")
     List<Auction> findByAuctionListConfirm();
 
