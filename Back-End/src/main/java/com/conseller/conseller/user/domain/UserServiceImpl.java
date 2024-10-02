@@ -21,6 +21,7 @@ import com.conseller.conseller.store.api.dto.mapper.StoreMapper;
 import com.conseller.conseller.store.api.dto.response.StoreItemData;
 import com.conseller.conseller.user.api.dto.request.*;
 import com.conseller.conseller.user.api.dto.response.*;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.user.infrastructure.UserRepository;
 import com.conseller.conseller.user.api.dto.UserMapper;
 import com.conseller.conseller.user.domain.enums.Login;
@@ -64,37 +65,37 @@ public class UserServiceImpl implements UserService {
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
-    public User register(SignUpRequest signUpRequest) {
+    public UserEntity register(SignUpRequest signUpRequest) {
 
         userValidator.signUpDtoValidate(signUpRequest);
 
-        User user = UserMapper.INSTANCE.SignUpDtoToUser(signUpRequest);
+        UserEntity userEntity = UserMapper.INSTANCE.signUpDtoToUser(signUpRequest);
 
         //비밀번호 암호화 및 유저 권한 설정
-        user.encryptPassword(new BCryptPasswordEncoder());
-        user.addUserRole();
+        userEntity.encryptPassword(new BCryptPasswordEncoder());
+        userEntity.addUserRole();
 
-        return userRepository.save(user);
+        return userRepository.save(userEntity);
     }
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
 
         //유저 검증 및 반환
-        User user = userValidator.validateLogin(loginRequest);
+        UserEntity userEntity = userValidator.validateLogin(loginRequest);
 
         //해당 유저가 사용 가능한 유지인지 검증
-        userValidator.validateUser(user);
+        userValidator.validateUser(userEntity);
 
-       return authenticateAndGetToken(user, Login.GENERAL, loginRequest);
+       return authenticateAndGetToken(userEntity, Login.GENERAL, loginRequest);
     }
 
     @Override
     public void updateUserInfo(long userIdx, UserInfoRequest userInfoRequest) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        user.updateUserInfo(userInfoRequest);
+        userEntity.updateUserInfo(userInfoRequest);
     }
 
     @Override
@@ -104,11 +105,11 @@ public class UserServiceImpl implements UserService {
         String tempPassword = TemporaryValueGenerator.generateTemporaryValue();
 
         // 2. 해당 이메일과 ID를 가진 유저 불러오기
-        User user = userRepository.findByUserEmailAndUserId(emailAndIdRequest.getUserEmail(), emailAndIdRequest.getUserId())
+        UserEntity userEntity = userRepository.findByUserEmailAndUserId(emailAndIdRequest.getUserEmail(), emailAndIdRequest.getUserId())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         // 3. 임시 비밀번호로 변경
-        user.updatePassword(tempPassword);
+        userEntity.updatePassword(tempPassword);
 
         return TemporaryPasswordResponse.builder()
                 .temporaryPassword(tempPassword)
@@ -119,11 +120,11 @@ public class UserServiceImpl implements UserService {
     public PartialHiddenUserIdResponse getHiddenUserId(EmailAndNameRequest emailAndNameRequest) {
 
         //1. 이메일과 이름을 통해 유저 정보를 불러온다.
-        User user = userRepository.findByUserEmailAndUserName(emailAndNameRequest.getUserEmail(), emailAndNameRequest.getUserName())
+        UserEntity userEntity = userRepository.findByUserEmailAndUserName(emailAndNameRequest.getUserEmail(), emailAndNameRequest.getUserName())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         StringBuilder partialEncodeId = new StringBuilder();
-        String userId = user.getUserId();
+        String userId = userEntity.getUserId();
         int length = userId.length();
 
         partialEncodeId.append("*".repeat(length / 2));
@@ -137,45 +138,45 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoResponse getUserInfo(long userIdx) {
 
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        return UserMapper.INSTANCE.toUserInfoResponse(user);
+        return UserMapper.INSTANCE.toUserInfoResponse(userEntity);
     }
 
     @Override
     public void uploadProfile(long userIdx, String profileUrl) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        user.setUserProfileUrl(profileUrl);
+        userEntity.setUserProfileUrl(profileUrl);
     }
 
     //비밀번호 암호화 된걸 가져와야함.
     @Override
     public void checkUserPassword(UserCheckPasswordRequest userCheckPasswordRequest) {
         //유저의 idx와 비밀번호를 통해 해당 유저가 존재하는지 확인하는 쿼리를 짜야함.
-        User user = userRepository.findByUserIdx(userCheckPasswordRequest.getUserIdx())
+        UserEntity userEntity = userRepository.findByUserIdx(userCheckPasswordRequest.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        if (!user.checkPassword(new BCryptPasswordEncoder(), userCheckPasswordRequest.getUserPassword())) {
+        if (!userEntity.checkPassword(new BCryptPasswordEncoder(), userCheckPasswordRequest.getUserPassword())) {
             throw new CustomException(CustomExceptionStatus.USER_INVALID);
         }
     }
 
     @Override
-    public void deposit(long userIdx, Long deposit) {
-        User user = userRepository.findByUserIdx(userIdx)
+    public void deposit(long userIdx, long deposit) {
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
-        user.setUserDeposit(deposit);
+        userEntity.setUserDeposit(deposit);
     }
 
     @Override
     public List<GifticonResponse> getGifticons(long userIdx) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        return user.getGifticons()
+        return userEntity.getGifticons()
                 .stream()
                 .map(Gifticon::toResponseDto)
                 .collect(Collectors.toList());
@@ -183,10 +184,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<StoreItemData> getUserStores(long userIdx) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        return user.getStores().stream()
+        return userEntity.getStores().stream()
                 .map(StoreMapper.INSTANCE::storeToItemData)
                 .collect(Collectors.toList());
     }
@@ -202,25 +203,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<AuctionItemData> getUserAuctions(long userIdx) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        return AuctionMapper.INSTANCE.auctionsToItemDatas(user.getAuctions());
+        return AuctionMapper.INSTANCE.auctionsToItemDatas(userEntity.getAuctionEntities());
     }
 
     @Override
     public List<AuctionBidResponse> getUserAuctionBids(long userIdx) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
         List<AuctionBidResponse> auctionBidResponses = new ArrayList<>();
 
-        for (AuctionBid bid : user.getAuctionBids()) {
+        for (AuctionBid bid : userEntity.getAuctionBids()) {
             AuctionBidResponse bidResponse = AuctionBidResponse.builder()
                     .auctionBidIdx(bid.getAuctionBidIdx())
                     .auctionBidPrice(bid.getAuctionBidPrice())
                     .auctionBidStatus(bid.getAuctionBidStatus())
                     .auctionRegistedDate(convertString(bid.getAuctionRegistedDate()))
-                    .auctionItemData(AuctionMapper.INSTANCE.auctionToItemData(bid.getAuction()))
+                    .auctionItemData(AuctionMapper.INSTANCE.auctionToItemData(bid.getAuctionEntity()))
                     .build();
 
             auctionBidResponses.add(bidResponse);
@@ -231,22 +232,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<MyBarterResponseDto> getUserBarters(long userIdx) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        return user.getBarters().stream()
+        return userEntity.getBarters().stream()
                 .map(BarterMapper.INSTANCE::toMybarterResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<MyBarterRequestResponseDto> getUserBarterRequests(long userIdx) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         List<MyBarterRequestResponseDto> myBarterRequests = new ArrayList<>();
 
-        for (BarterRequest barterRequest : user.getBarterRequests()) {
+        for (BarterRequest barterRequest : userEntity.getBarterRequests()) {
 
             List<GifticonResponse> barterGuestItems = new ArrayList<>();
 
@@ -274,36 +275,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(long userIdx, String token) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         //블랙리스트에 토큰 저장
         BlackList blackList = BlackList.builder()
                 .accessToken(token)
-                .user(user)
+                .userEntity(userEntity)
                 .build();
         blackListRepository.save(blackList);
 
         //액세스 토큰과 리프레쉬 토큰을 모두 삭제해야함.
-        user.setRefreshToken(null);
-        user.setUserDeletedDate(LocalDateTime.now());
+        userEntity.setRefreshToken(null);
+        userEntity.setUserDeletedDate(LocalDateTime.now());
     }
 
     @Override
     public void setFirebaseToken(Long userIdx, FirebaseRequest request) {
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        user.setFcm(request.getFirebaseToken());
+        userEntity.setFcm(request.getFirebaseToken());
     }
 
     @Override
     public GifticonPageResponse getGifticonPage(GifticonRequestDTO gifticonRequestDTO) {
-        Pageable pageable = PageRequest.of(gifticonRequestDTO.getPage() - 1, 10);
         List<Gifticon> gifticonList = gifticonRepository.findAll();
         List<Gifticon> myGifticonList = new ArrayList<>();
         for(Gifticon gifticon: gifticonList) {
-            if(gifticon.getUser().getUserIdx() == gifticonRequestDTO.getUserIdx()
+            if(gifticon.getUserEntity().getUserIdx() == gifticonRequestDTO.getUserIdx()
                     && gifticon.getGifticonStatus().equals(GifticonStatus.KEEP.getStatus())){
                 myGifticonList.add(gifticon);
             }
@@ -346,7 +346,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public AccessTokenResponse reCreateAccessToken(HttpServletRequest request, long userIdx) {
         // 0.요청이 들어온 유저의 정보를 db에서 가져온다.
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         // 1. header에서 refresh token 추출
@@ -358,7 +358,7 @@ public class UserServiceImpl implements UserService {
         // 3. 토큰의 유효성 검사
         if (refreshToken != null
                 && jwtTokenProvider.validateToken(refreshToken)
-                && refreshToken.equals(user.getRefreshToken())) {
+                && refreshToken.equals(userEntity.getRefreshToken())) {
             log.info("refresh token is valid.");
             // 3. access 토큰 재발급
             return AccessTokenResponse.builder()
@@ -442,60 +442,60 @@ public class UserServiceImpl implements UserService {
     public void patternRegister(UserPatternRequest userPatternRequest){
 
         // 입력 Idx 정보가 유효한지 확인
-        User user = userRepository.findByUserIdx(userPatternRequest.getUserIdx())
+        UserEntity userEntity = userRepository.findByUserIdx(userPatternRequest.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        user.setUserPattern(userPatternRequest.getPattern());
+        userEntity.setUserPattern(userPatternRequest.getPattern());
     }
 
     @Override
     public LoginResponse loginPattern(UserPatternRequest userPatternRequest){
 
         // 입력 Idx 정보가 유효한지 확인
-        User user = userRepository.findByUserIdx(userPatternRequest.getUserIdx())
+        UserEntity userEntity = userRepository.findByUserIdx(userPatternRequest.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         // 패턴이 맞는지 확인
-        if (!user.getUserPattern().equals(userPatternRequest.getPattern())) {
+        if (!userEntity.getUserPattern().equals(userPatternRequest.getPattern())) {
             throw new CustomException(CustomExceptionStatus.PATTERN_INVALID);
         }
 
         //사용이 가능한 유저인지 검증
-        userValidator.validateUser(user);
+        userValidator.validateUser(userEntity);
 
-        return authenticateAndGetToken(user, Login.PATTERN, null);
+        return authenticateAndGetToken(userEntity, Login.PATTERN, null);
     }
 
     @Override
     public LoginResponse loginFinger(long userIdx) {
         // 입력 Idx 정보가 유효한지 확인
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         //사용 가능한 유저인지 검증
-        userValidator.validateUser(user);
+        userValidator.validateUser(userEntity);
 
-        return authenticateAndGetToken(user, Login.FINGER, null);
+        return authenticateAndGetToken(userEntity, Login.FINGER, null);
     }
 
-    private LoginResponse authenticateAndGetToken(User user, Login loginType, LoginRequest loginRequest) {
+    private LoginResponse authenticateAndGetToken(UserEntity userEntity, Login loginType, LoginRequest loginRequest) {
 
         //로그인 방식에 따라 달라져야함.
 
         // 입력된 id, password 기반으로 인증 후 인가 관련 인터페이스 생성
-        String password = loginType.equals(Login.GENERAL) ? loginRequest.getUserPassword() : user.getUserPattern();
-        Authentication authentication = getAuthentication(user.getUserId(), password, loginType);
+        String password = loginType.equals(Login.GENERAL) ? loginRequest.getUserPassword() : userEntity.getUserPattern();
+        Authentication authentication = getAuthentication(userEntity.getUserId(), password, loginType);
 
         // 인증 정보를 기반으로 JWT 토큰 생성
         JwtToken jwtToken = jwtTokenProvider.createToken(authentication);
 
         //4. refresh token db 저장
-        user.setRefreshToken(jwtToken.getRefreshToken());
+        userEntity.setRefreshToken(jwtToken.getRefreshToken());
 
         // 5. 토큰 정보로 response 생성 후 리턴
         return LoginResponse.builder()
-                .userIdx(user.getUserIdx())
-                .userNickname(user.getUserNickname())
+                .userIdx(userEntity.getUserIdx())
+                .userNickname(userEntity.getUserNickname())
                 .accessToken(jwtToken.getAccessToken())
                 .refreshToken(jwtToken.getRefreshToken())
                 .build();

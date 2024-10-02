@@ -1,8 +1,9 @@
-package com.conseller.conseller.entity;
+package com.conseller.conseller.user.infrastructure;
 
-import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.barter.infrastructure.Barter;
 import com.conseller.conseller.barter.infrastructure.BarterRequest;
+import com.conseller.conseller.entity.*;
 import com.conseller.conseller.user.api.dto.request.UserInfoRequest;
 import com.conseller.conseller.user.domain.enums.Authority;
 import com.conseller.conseller.user.domain.enums.UserStatus;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userIdx", callSuper = false)
 @Table(name = "\"USER\"")
-public class User extends BaseTime implements UserDetails {
+public class UserEntity extends BaseTime implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -94,7 +95,7 @@ public class User extends BaseTime implements UserDetails {
 
     @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Auction> auctions = new ArrayList<>();
+    private List<AuctionEntity> auctionEntities = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "user")

@@ -4,7 +4,7 @@ import com.conseller.conseller.auction.api.dto.response.AuctionItemData;
 import com.conseller.conseller.bid.api.dto.response.AuctionBidResponse;
 import com.conseller.conseller.barter.api.dto.response.MyBarterResponseDto;
 import com.conseller.conseller.barter.api.dto.response.MyBarterRequestResponseDto;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.store.api.dto.response.StoreItemData;
 import com.conseller.conseller.user.api.dto.request.*;
@@ -17,7 +17,7 @@ import java.util.List;
 public interface UserService {
 
     // 회원가입
-    public User register(SignUpRequest signUpRequest);
+    public UserEntity register(SignUpRequest signUpRequest);
 
     //닉네임 중복체크
     public InfoValidationRequest checkNickname(String nickname);
@@ -56,8 +56,7 @@ public interface UserService {
     public void checkUserPassword(UserCheckPasswordRequest userCheckPasswordRequest);
 
     //보증금 입금
-//    public void deposit(long userIdx, int deposit);
-    void deposit(long userIdx, Long deposit);
+    public void deposit(long userIdx, long deposit);
 
     //내 기프티콘 불러오기
     public List<GifticonResponse> getGifticons(long userIdx);
