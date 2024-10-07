@@ -7,6 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CustomExceptionStatus {
     //로그인 관련
+    EXIST_NICKNAME(997, "이미 존재하는 닉네임입니다."),
+    EXIST_EMAIL(998, "이미 존재하는 이메일입니다."),
+    EXIST_PHONE_NUMBER(999, "이미 존재하는 휴대번호입니다."),
     WRONG_ID(1000, "잘못된 아이디입니다."),
     WRONG_PW(1001, "잘못된 비밀번호입니다."),
     RESTRICT(1002, "제한된 유저입니다."),
