@@ -1,6 +1,6 @@
 package com.conseller.conseller.notification.domain;
 
-import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.auction.infrastructure.AuctionRepository;
 import com.conseller.conseller.barter.infrastructure.Barter;
 import com.conseller.conseller.barter.infrastructure.BarterRepository;
@@ -18,6 +18,7 @@ import com.conseller.conseller.notification.api.dto.response.NotificationListRes
 import com.conseller.conseller.notification.infrastructure.NotificationJdbcRepository;
 import com.conseller.conseller.notification.infrastructure.NotificationRepository;
 import com.conseller.conseller.store.infrastructure.StoreRepository;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.user.infrastructure.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
@@ -104,15 +105,15 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public void sendAuctionBidNotification(Long auctionIdx, Long userIdx, String title, Integer type) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        User bidder = userRepository.findById(userIdx)
+        UserEntity bidder = userRepository.findById(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        User user = auction.getUser();
+        UserEntity userEntity = auctionEntity.getUserEntity();
 
-        if(user.getFcm() == null)
+        if(userEntity.getFcm() == null)
             return;
 
         String contents = bidder.getUserNickname() + " 님이 입찰하셨습니다.";
@@ -126,7 +127,7 @@ public class NotificationServiceImpl implements NotificationService{
 
         Message message = Message.builder()
                 .setNotification(notification)
-                .setToken(user.getFcm())
+                .setToken(userEntity.getFcm())
                 .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
@@ -136,12 +137,12 @@ public class NotificationServiceImpl implements NotificationService{
             log.info(response);
 
             //데이터베이스 저장
-            NotificationEntity notificationEntity = NotificationEntity.from(title, contents, type, false, auction.getUser());
+            NotificationEntity notificationEntity = NotificationEntity.from(title, contents, type, false, auctionEntity.getUserEntity());
 
             notificationRepository.save(notificationEntity);
 
         }catch (Exception e){
-            log.warn(auction.getUser().getUserId() + ": 알림 전송에 실패하였습니다.");
+            log.warn(auctionEntity.getUserEntity().getUserId() + ": 알림 전송에 실패하였습니다.");
         }
     }
 
@@ -150,21 +151,21 @@ public class NotificationServiceImpl implements NotificationService{
         Store store = storeRepository.findById(storeIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
 
-        User user = null;
+        UserEntity userEntity = null;
         String contents = null;
 
         if(index == 1) { // 구매자
             if(store.getConsumer().getFcm() == null)
                 return;
 
-            user = store.getConsumer();
+            userEntity = store.getConsumer();
 
-            contents = store.getUser().getUserNickname() + " " + body;
+            contents = store.getUserEntity().getUserNickname() + " " + body;
         } else if( index == 2) { // 판매자
-            if(store.getUser().getFcm() == null)
+            if(store.getUserEntity().getFcm() == null)
                 return;
 
-            user = store.getUser();
+            userEntity = store.getUserEntity();
 
             contents = store.getConsumer().getUserNickname() + " " + body;
         } else {
@@ -179,7 +180,7 @@ public class NotificationServiceImpl implements NotificationService{
 
         Message message = Message.builder()
                 .setNotification(notification)
-                .setToken(user.getFcm())
+                .setToken(userEntity.getFcm())
                 .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
@@ -196,7 +197,7 @@ public class NotificationServiceImpl implements NotificationService{
 
             notificationRepository.save(notificationEntity);
         }catch (Exception e){
-            log.warn(store.getUser().getUserId() + ": 알림 전송에 실패하였습니다.");
+            log.warn(store.getUserEntity().getUserId() + ": 알림 전송에 실패하였습니다.");
         }
     }
 
@@ -205,15 +206,15 @@ public class NotificationServiceImpl implements NotificationService{
         List<BarterRequest> requestList = barterRequestRepository.findByBarterIdx(barterIdx);
 
         for(BarterRequest barter : requestList) {
-            if(barter.getUser().getFcm() == null)
+            if(barter.getUserEntity().getFcm() == null)
                 return;
 
             String contents = null;
 
             if(barter.getBarterRequestStatus().equals(RequestStatus.ACCEPTED.getStatus())){
-                contents = barter.getUser().getUserNickname() + " 님의 요청이 수락되었습니다.";
+                contents = barter.getUserEntity().getUserNickname() + " 님의 요청이 수락되었습니다.";
             }else {
-                contents = barter.getUser().getUserNickname() + " 님의 요청이 거절되었습니다.";
+                contents = barter.getUserEntity().getUserNickname() + " 님의 요청이 거절되었습니다.";
             }
 
             Notification notification = Notification.builder()
@@ -223,7 +224,7 @@ public class NotificationServiceImpl implements NotificationService{
 
             Message message = Message.builder()
                     .setNotification(notification)
-                    .setToken(barter.getUser().getFcm())
+                    .setToken(barter.getUserEntity().getFcm())
                     .putData("timestamp", convertString(LocalDateTime.now()))
                     .build();
 
@@ -231,13 +232,13 @@ public class NotificationServiceImpl implements NotificationService{
                 String response = FirebaseMessaging.getInstance().send(message);
 
                 //데이터베이스 저장
-                NotificationEntity notificationEntity = NotificationEntity.from(title, contents, type, false, barter.getUser());
+                NotificationEntity notificationEntity = NotificationEntity.from(title, contents, type, false, barter.getUserEntity());
 
                 notificationRepository.save(notificationEntity);
 
 
             }catch (Exception e){
-                log.warn(barter.getUser().getUserId() + ": 알림 전송에 실패하였습니다.");
+                log.warn(barter.getUserEntity().getUserId() + ": 알림 전송에 실패하였습니다.");
             }
         }
     }
@@ -280,7 +281,7 @@ public class NotificationServiceImpl implements NotificationService{
         BarterRequest barterRequest = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 교환신청 입니다."));
 
-        if(barterRequest.getUser().getFcm() == null) return;
+        if(barterRequest.getUserEntity().getFcm() == null) return;
 
         String contents = null;
         if(barterRequest.getBarterRequestStatus().equals(RequestStatus.REJECTED)) {
@@ -294,19 +295,19 @@ public class NotificationServiceImpl implements NotificationService{
 
         Message message = Message.builder()
                 .setNotification(notification)
-                .setToken(barterRequest.getUser().getFcm())
+                .setToken(barterRequest.getUserEntity().getFcm())
                 .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try{
 //            String response = FirebaseMessaging.getInstance().send(message);
 
-            NotificationEntity expirationDateNotification = NotificationEntity.from(title, contents, type, false, barterRequest.getUser());
+            NotificationEntity expirationDateNotification = NotificationEntity.from(title, contents, type, false, barterRequest.getUserEntity());
 
             notificationRepository.save(expirationDateNotification);
 
         }catch (Exception e){
-            log.warn(barterRequest.getUser().getUserId() + ": 알림 전송에 실패하였습니다.");
+            log.warn(barterRequest.getUserEntity().getUserId() + ": 알림 전송에 실패하였습니다.");
         }
     }
 
@@ -349,7 +350,7 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public NotificationEntity createGifticonNotification(Long userIdx, Integer remainDay, String gifticionName, Long gifticonCount, Integer type) {
-        User user = userRepository.findById(userIdx)
+        UserEntity userEntity = userRepository.findById(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
 
 //        if(user.getFcm() == null) {
@@ -383,7 +384,7 @@ public class NotificationServiceImpl implements NotificationService{
 //            log.warn(user.getUserId() + ": 알림 전송에 실패하였습니다.");
 //        }
 
-        return NotificationEntity.from(title, body, LocalDateTime.now(), type, false, user);
+        return NotificationEntity.from(title, body, LocalDateTime.now(), type, false, userEntity);
     }
 
     public void insertAll(List<NotificationEntity> notificationEntities)  {
@@ -398,7 +399,7 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public void sendNotification(Long userIdx, String title, String body) {
-        User user = userRepository.findById(userIdx)
+        UserEntity userEntity = userRepository.findById(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         Notification notification = Notification.builder()
@@ -408,16 +409,16 @@ public class NotificationServiceImpl implements NotificationService{
 
         Message message = Message.builder()
                 .setNotification(notification)
-                .setToken(user.getFcm())
+                .setToken(userEntity.getFcm())
                 .putData("timestamp", convertString(LocalDateTime.now()))
                 .build();
 
         try {
             String response = FirebaseMessaging.getInstance().send(message);
-            NotificationEntity notificationEntity = NotificationEntity.from(title, body, 1, true, user);
+            NotificationEntity notificationEntity = NotificationEntity.from(title, body, 1, true, userEntity);
             notificationRepository.save(notificationEntity);
         } catch (Exception e){
-            log.warn(user.getUserId() + ": 알림 전송에 실패하였습니다.");
+            log.warn(userEntity.getUserId() + ": 알림 전송에 실패하였습니다.");
         }
     }
 

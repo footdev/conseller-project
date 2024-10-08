@@ -8,7 +8,7 @@ import com.conseller.conseller.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.barter.api.dto.response.BarterRequestResponseDto;
 import com.conseller.conseller.entity.Gifticon;
 import com.conseller.conseller.entity.SubCategory;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.user.api.dto.response.UserInfoResponse;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -55,11 +55,11 @@ public class Barter {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_idx")
-    private User barterHost;
+    private UserEntity barterHost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "complete_guest_idx")
-    private User barterCompleteGuest;
+    private UserEntity barterCompleteGuest;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_category_idx")
@@ -76,7 +76,7 @@ public class Barter {
     List<BarterHostItem> barterHostItemList = new ArrayList<>();
 
     @Builder
-    public Barter(String barterName, String barterText, LocalDateTime barterEndDate, User barterHost, SubCategory subCategory, SubCategory preferSubCategory) {
+    public Barter(String barterName, String barterText, LocalDateTime barterEndDate, UserEntity barterHost, SubCategory subCategory, SubCategory preferSubCategory) {
         this.barterName = barterName;
         this.barterText = barterText;
         this.barterCreatedDate = now();
@@ -99,8 +99,8 @@ public class Barter {
             barterRequestResponseDtoList.add(briDto);
         }
 
-        User host = barter.getBarterHost();
-        User guest = barter.getBarterCompleteGuest();
+        UserEntity host = barter.getBarterHost();
+        UserEntity guest = barter.getBarterCompleteGuest();
 
         UserInfoResponse hostUserInfoResponse = UserInfoResponse.builder()
                 .userId(host.getUserId())

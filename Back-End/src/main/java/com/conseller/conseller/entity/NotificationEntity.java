@@ -1,5 +1,6 @@
 package com.conseller.conseller.entity;
 
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,26 +38,26 @@ public class NotificationEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User notificationUser;
+    private UserEntity notificationUserEntity;
 
-    public static NotificationEntity from(String title, String contents, int type, boolean seller, User user) {
+    public static NotificationEntity from(String title, String contents, int type, boolean seller, UserEntity userEntity) {
         return NotificationEntity.builder()
                 .notificationTitle(title)
                 .notificationContent(contents)
                 .notificationType(type)
                 .notificationSeller(seller)
-                .notificationUser(user)
+                .notificationUserEntity(userEntity)
                 .build();
     }
 
-    public static NotificationEntity from(String title, String contents, LocalDateTime dateTime, int type, boolean seller, User user) {
+    public static NotificationEntity from(String title, String contents, LocalDateTime dateTime, int type, boolean seller, UserEntity userEntity) {
         return NotificationEntity.builder()
                .notificationTitle(title)
                .notificationContent(contents)
                .notificationType(type)
                 .notificationCreatedDate(dateTime)
                .notificationSeller(seller)
-               .notificationUser(user)
+               .notificationUserEntity(userEntity)
                .build();
     }
 

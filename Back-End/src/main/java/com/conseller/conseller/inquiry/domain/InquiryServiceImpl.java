@@ -1,7 +1,7 @@
 package com.conseller.conseller.inquiry.domain;
 
 import com.conseller.conseller.entity.Inquiry;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.exception.CustomException;
 import com.conseller.conseller.exception.CustomExceptionStatus;
 import com.conseller.conseller.inquiry.infrastructure.InquiryRepository;
@@ -29,12 +29,12 @@ public class InquiryServiceImpl implements InquiryService{
 
     @Override
     public void registInquiry(RegistInquiryRequest request) {
-        User user = userRepository.findById(request.getUserIdx())
+        UserEntity userEntity = userRepository.findById(request.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
-        User reportedUser = userRepository.findById(request.getReportedUserIdx())
+        UserEntity reportedUserEntity = userRepository.findById(request.getReportedUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        Inquiry inquiry = InquiryMapper.INSTANCE.registInquiryToInquiry(request, user, reportedUser);
+        Inquiry inquiry = InquiryMapper.INSTANCE.registInquiryToInquiry(request, userEntity, reportedUserEntity);
 
         inquiryRepository.save(inquiry);
     }
@@ -57,10 +57,10 @@ public class InquiryServiceImpl implements InquiryService{
         Inquiry inquiry = inquiryRepository.findById(inquiryIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.INQUIRY_INVALID));
 
-        User user = userRepository.findById(inquiry.getUser().getUserIdx())
+        UserEntity userEntity = userRepository.findById(inquiry.getUserEntity().getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        DetailInquiryResponse response = InquiryMapper.INSTANCE.entityToDetailInquiryResponse(user, inquiry);
+        DetailInquiryResponse response = InquiryMapper.INSTANCE.entityToDetailInquiryResponse(userEntity, inquiry);
 
         return response;
     }

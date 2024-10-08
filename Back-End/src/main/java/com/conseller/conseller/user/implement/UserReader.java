@@ -15,10 +15,9 @@ public class UserReader {
     private final UserRepository userRepository;
 
     public User readUser(long userId) {
-
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
-
-        return User.of(userEntity);
+        return User.of(
+                userRepository.findById(userId)
+                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID))
+        );
     }
 }

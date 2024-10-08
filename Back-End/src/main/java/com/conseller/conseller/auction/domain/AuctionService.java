@@ -1,9 +1,10 @@
-package com.conseller.conseller.auction.infrastructure;
+package com.conseller.conseller.auction.domain;
 
 import com.conseller.conseller.auction.api.dto.request.AuctionListRequest;
 import com.conseller.conseller.auction.api.dto.request.ModifyAuctionRequest;
 import com.conseller.conseller.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.auction.api.dto.response.*;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
 
 import java.util.List;
 
@@ -29,13 +30,13 @@ public interface AuctionService {
 
     public AuctionConfirmBuyResponse getConfirmBuyAuction(Long auctionIdx);
 
-    public List<Auction> getAuctionConfirmList();
+    public List<AuctionEntity> getAuctionConfirmList();
 
-    public List<Auction> getAuctionExpiredList();
+    public List<AuctionEntity> getAuctionExpiredList();
 
     public void rejectAuction(Long auctionIdx);
 
-    public List<Auction> getPopularAuction();
+    public List<AuctionEntity> getPopularAuction();
 
     public List<Integer> getMainCategory();
 

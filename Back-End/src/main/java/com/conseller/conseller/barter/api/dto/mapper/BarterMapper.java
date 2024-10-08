@@ -7,6 +7,7 @@ import com.conseller.conseller.barter.infrastructure.Barter;
 import com.conseller.conseller.barter.infrastructure.BarterHostItem;
 import com.conseller.conseller.entity.*;
 import com.conseller.conseller.gifticon.api.dto.response.GifticonResponse;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -28,7 +29,7 @@ public interface BarterMapper {
     @Mapping(source = "endDate", target = "barterEndDate")
     @Mapping(source = "subCategory", target = "subCategory")
     @Mapping(source = "preferCategory", target = "preferSubCategory")
-    Barter registBarterCreateToBarter(BarterCreateDto barterCreateDto, User user, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory);
+    Barter registBarterCreateToBarter(BarterCreateDto barterCreateDto, UserEntity userEntity, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory);
 
 
     default BarterItemData toBarterItemData(Barter barter) {

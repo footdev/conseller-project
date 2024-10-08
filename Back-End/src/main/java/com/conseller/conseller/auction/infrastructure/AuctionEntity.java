@@ -3,7 +3,7 @@ package com.conseller.conseller.auction.infrastructure;
 import com.conseller.conseller.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.entity.AuctionBid;
 import com.conseller.conseller.entity.Gifticon;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,13 +15,10 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @DynamicUpdate
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@EqualsAndHashCode(of = "auctionIdx")
-public class Auction {
+public class AuctionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionIdx;
@@ -56,7 +53,7 @@ public class Auction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User user;
+    private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_bid_idx")

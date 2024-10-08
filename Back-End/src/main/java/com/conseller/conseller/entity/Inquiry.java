@@ -1,6 +1,7 @@
 package com.conseller.conseller.entity;
 
 import com.conseller.conseller.inquiry.domain.enums.InquiryStatus;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,7 +26,7 @@ public class Inquiry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User user;
+    private UserEntity userEntity;
 
     @Column(nullable = false)
     private String inquiryTitle;
@@ -50,6 +51,6 @@ public class Inquiry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_user")
-    private User reportedUser;
+    private UserEntity reportedUserEntity;
 
 }

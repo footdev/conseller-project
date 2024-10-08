@@ -13,6 +13,7 @@ import com.conseller.conseller.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.gifticon.infrastructure.GifticonRepositoryImpl;
 import com.conseller.conseller.gifticon.infrastructure.UsedGifticonRepository;
 import com.conseller.conseller.notification.domain.NotificationService;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -57,7 +58,7 @@ public class GifticonServiceImpl implements GifticonService {
                 .gifticonAllImageUrl(gifticon.getGifticonAllImageUrl())
                 .gifticonDataImageUrl(gifticon.getGifticonDataImageUrl())
                 .gifticonStatus(gifticon.getGifticonStatus())
-                .userIdx(gifticon.getUser().getUserIdx())
+                .userIdx(gifticon.getUserEntity().getUserIdx())
                 .subCategoryIdx(gifticon.getSubCategory().getSubCategoryIdx())
                 .mainCategoryIdx(gifticon.getMainCategory().getMainCategoryIdx())
                 .build();
@@ -76,7 +77,7 @@ public class GifticonServiceImpl implements GifticonService {
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 서브 카테고리 입니다."));
         MainCategory mainCategory = mainCategoryRepository.findByMainCategoryIdx(gifticonRegisterRequest.getMainCategory())
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 메인 카테고리 입니다."));
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
 
@@ -89,7 +90,7 @@ public class GifticonServiceImpl implements GifticonService {
                 .subCategory(subCategory)
                 .mainCategory(mainCategory)
                 .gifticonEndDate(convertDateTime(gifticonRegisterRequest.getGifticonEndDate()))
-                .user(user)
+                .userEntity(userEntity)
                 .build();
 
         gifticonRepository.save(gifticon);

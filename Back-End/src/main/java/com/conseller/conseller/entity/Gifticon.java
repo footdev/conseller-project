@@ -1,6 +1,7 @@
 package com.conseller.conseller.entity;
 
 import com.conseller.conseller.gifticon.api.dto.response.GifticonResponse;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,7 +51,7 @@ public class Gifticon {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User user;
+    private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_category_idx")
@@ -70,7 +71,7 @@ public class Gifticon {
                 .gifticonStartDate(convertString(this.gifticonStartDate))
                 .gifticonEndDate(convertString(this.gifticonEndDate))
                 .gifticonStatus(this.gifticonStatus)
-                .userIdx(this.user.getUserIdx())
+                .userIdx(this.userEntity.getUserIdx())
                 .subCategoryIdx(this.subCategory.getSubCategoryIdx())
                 .mainCategoryIdx(this.mainCategory.getMainCategoryIdx())
                 .build();

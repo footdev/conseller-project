@@ -6,8 +6,8 @@ import com.conseller.conseller.auction.api.dto.request.AuctionListRequest;
 import com.conseller.conseller.auction.api.dto.request.ModifyAuctionRequest;
 import com.conseller.conseller.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.auction.api.dto.response.*;
-import com.conseller.conseller.auction.infrastructure.AuctionService;
-import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.auction.domain.AuctionService;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/auction")
+@RequestMapping("/api/v1/auction")
 public class AuctionApi {
     private final AuctionService auctionService;
     private final NotificationService notificationService;
@@ -47,8 +47,8 @@ public class AuctionApi {
     }
 
     // 경매 글 상세 보기
-    @GetMapping("/{auction_idx}")
-    public ResponseEntity<DetailAuctionResponse> detailAuction(@PathVariable("auction_idx") Long auctionIdx) {
+    @GetMapping("/{auctionIdx}")
+    public ResponseEntity<DetailAuctionResponse> detailAuction(@PathVariable long auctionIdx) {
         DetailAuctionResponse response =  auctionService.detailAuction(auctionIdx);
 
         return ResponseEntity.ok()
@@ -56,8 +56,8 @@ public class AuctionApi {
     }
 
     // 경매 글 수정
-    @PatchMapping("/{auction_idx}")
-    public ResponseEntity<Object> modifyAuction(@PathVariable("auction_idx") Long auctionIdx, @RequestBody ModifyAuctionRequest auctionRequest) {
+    @PatchMapping("/{auctionIdx}")
+    public ResponseEntity<Object> modifyAuction(@PathVariable long auctionIdx, @RequestBody ModifyAuctionRequest auctionRequest) {
         auctionService.modifyAuction(auctionIdx, auctionRequest);
 
         return ResponseEntity.ok()
@@ -65,8 +65,8 @@ public class AuctionApi {
     }
 
     // 경매 글 삭제
-    @DeleteMapping("/{auction_idx}")
-    public ResponseEntity<Object> deleteAuction(@PathVariable("auction_idx") Long auctionIdx) {
+    @DeleteMapping("/{auctionIdx}")
+    public ResponseEntity<Object> deleteAuction(@PathVariable long auctionIdx) {
         auctionService.deleteAuction(auctionIdx);
 
         return ResponseEntity.ok()
@@ -74,9 +74,8 @@ public class AuctionApi {
     }
 
     // 경매 거래 진행
-    @GetMapping("/trade/{auction_idx}/{user_idx}")
-    public ResponseEntity<AuctionTradeResponse> tradeAuction(@PathVariable("auction_idx") Long auctionIdx, @PathVariable("user_idx") Long userIdx) {
-        log.info(auctionIdx+" "+userIdx);
+    @GetMapping("/trade/{auctionIdx}/{userIdx}")
+    public ResponseEntity<AuctionTradeResponse> tradeAuction(@PathVariable long auctionIdx, @PathVariable long userIdx) {
         AuctionTradeResponse response = auctionService.tradeAuction(auctionIdx, userIdx);
 
         notificationService.sendAuctionNotification(auctionIdx, "경매 거래 진행", "님과의 경매가 진행 중 입니다.", 1, 1);
@@ -88,8 +87,8 @@ public class AuctionApi {
 
     // 경매 진행 취소
     // 없어도 될듯
-    @PatchMapping("/cancel/{auction_idx}")
-    public ResponseEntity<Object> cancelAuction(@PathVariable("auction_idx") Long auctionIdx) {
+    @PatchMapping("/cancel/{auctionIdx}")
+    public ResponseEntity<Object> cancelAuction(@PathVariable long auctionIdx) {
 
         // 거래 취소 알림
         notificationService.sendAuctionNotification(auctionIdx, "경매 거래 취소", "님이 경매를 취소하였습니다", 1, 1);
@@ -103,8 +102,8 @@ public class AuctionApi {
 
     // 입금 완료 버튼
     // 없어도 될듯
-    @PatchMapping("/complete/{auction_idx}")
-    public ResponseEntity<Object> completeAuction(@PathVariable("auction_idx") Long auctionIdx) {
+    @PatchMapping("/complete/{auctionIdx}")
+    public ResponseEntity<Object> completeAuction(@PathVariable long auctionIdx) {
         // 판매자에게 알림
         notificationService.sendAuctionNotification(auctionIdx, "경매 입금 완료", "님이 경매 입금을 완료하였습니다.", 2, 1);
 
@@ -113,20 +112,20 @@ public class AuctionApi {
     }
 
     // 거래 확정 버튼
-    @PatchMapping("/Confirm")
-    public  ResponseEntity<Object> confirmAuction(@RequestBody AuctionConfirmRequest request) {
-        if(request.getConfirm()) {
-            auctionService.confirmAuction(request.getAuctionIdx());
+    @PatchMapping("/confirm")
+    public  ResponseEntity<Object> confirmAuction(@RequestBody AuctionConfirmRequest auctionConfirmRequest) {
+        if(auctionConfirmRequest.getConfirm()) {
+            auctionService.confirmAuction(auctionConfirmRequest.getAuctionIdx());
 
-            notificationService.sendAuctionNotification(request.getAuctionIdx(), "경매 거래 완료", "님과의 경매가 완료되었습니다.", 1, 1);
-            notificationService.sendAuctionNotification(request.getAuctionIdx(), "경매 거래 완료", "님과의 경매가 완료되었습니다.", 2, 1);
+            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 완료", "님과의 경매가 완료되었습니다.", 1, 1);
+            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 완료", "님과의 경매가 완료되었습니다.", 2, 1);
         }
         else {
             // 거래 취소 알림
-            notificationService.sendAuctionNotification(request.getAuctionIdx(), "경매 거래 취소", "님과의 경매가 취소되었습니다.", 1, 1);
-            notificationService.sendAuctionNotification(request.getAuctionIdx(), "경매 거래 취소", "님과의 경매가 취소되었습니다.", 2, 1);
+            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 취소", "님과의 경매가 취소되었습니다.", 1, 1);
+            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 취소", "님과의 경매가 취소되었습니다.", 2, 1);
 
-            auctionService.cancelAuction(request.getAuctionIdx());
+            auctionService.cancelAuction(auctionConfirmRequest.getAuctionIdx());
         }
 
         return ResponseEntity.ok()
@@ -134,8 +133,8 @@ public class AuctionApi {
     }
 
     // 경매 판매자 입금 확인
-    @GetMapping("/Confirm/{auction_idx}")
-    public ResponseEntity<AuctionConfirmResponse> getConfirmAuction(@PathVariable("auction_idx") Long auctionIdx) {
+    @GetMapping("/Confirm/{auctionIdx}")
+    public ResponseEntity<AuctionConfirmResponse> getConfirmAuction(@PathVariable long auctionIdx) {
         AuctionConfirmResponse response = auctionService.getConfirmAuction(auctionIdx);
 
         return ResponseEntity.ok()
@@ -143,8 +142,8 @@ public class AuctionApi {
     }
 
     // 입금확인 페이지
-    @GetMapping("/ConfirmBuy/{auction_idx}")
-    public ResponseEntity<AuctionConfirmBuyResponse> getConfirmBuyAuction(@PathVariable("auction_idx") Long auctionIdx) {
+    @GetMapping("/confirm-buy/{auctionIdx}")
+    public ResponseEntity<AuctionConfirmBuyResponse> getConfirmBuyAuction(@PathVariable long auctionIdx) {
         AuctionConfirmBuyResponse response = auctionService.getConfirmBuyAuction(auctionIdx);
 
         return ResponseEntity.ok()
@@ -154,9 +153,9 @@ public class AuctionApi {
     //가장 입찰이 많은 경매
     @GetMapping("/popular")
     public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
-        List<Auction> auctionList = auctionService.getPopularAuction();
+        List<AuctionEntity> auctionEntityList = auctionService.getPopularAuction();
 
-        List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctionList);
+        List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctionEntityList);
 
         AuctionPopularResponse response = new AuctionPopularResponse(auctionItemDataList);
 

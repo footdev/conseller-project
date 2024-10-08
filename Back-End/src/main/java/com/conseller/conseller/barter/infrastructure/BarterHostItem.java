@@ -54,7 +54,7 @@ public class BarterHostItem {
                 .gifticonEndDate(convertString(gifticon.getGifticonEndDate()))
                 .mainCategoryIdx(gifticon.getMainCategory().getMainCategoryIdx())
                 .subCategoryIdx(gifticon.getSubCategory().getSubCategoryIdx())
-                .userIdx(gifticon.getUser().getUserIdx())
+                .userIdx(gifticon.getUserEntity().getUserIdx())
                 .build();
 
         return BarterHostItemDto.builder()

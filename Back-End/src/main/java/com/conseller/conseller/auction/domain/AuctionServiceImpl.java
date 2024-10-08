@@ -1,4 +1,4 @@
-package com.conseller.conseller.auction.infrastructure;
+package com.conseller.conseller.auction.domain;
 
 import com.conseller.conseller.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.auction.api.dto.request.AuctionListRequest;
@@ -6,12 +6,15 @@ import com.conseller.conseller.auction.api.dto.request.ModifyAuctionRequest;
 import com.conseller.conseller.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.auction.api.dto.response.*;
 import com.conseller.conseller.auction.domain.enums.AuctionStatus;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
+import com.conseller.conseller.auction.infrastructure.AuctionRepository;
+import com.conseller.conseller.auction.infrastructure.AuctionRepositoryImpl;
 import com.conseller.conseller.bid.infrastructure.AuctionBidRepository;
 import com.conseller.conseller.bid.api.dto.mapper.AuctionBidMapper;
 import com.conseller.conseller.bid.domain.enums.BidStatus;
 import com.conseller.conseller.entity.AuctionBid;
 import com.conseller.conseller.entity.Gifticon;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.exception.CustomException;
 import com.conseller.conseller.exception.CustomExceptionStatus;
 import com.conseller.conseller.gifticon.domain.enums.GifticonStatus;
@@ -41,7 +44,7 @@ public class AuctionServiceImpl implements AuctionService{
     @Override
     @Transactional(readOnly = true)
     public AuctionListResponse getAuctionList(long auctionId, AuctionListRequest request) {
-        Auction cursor = auctionRepository.findById(auctionId)
+        AuctionEntity cursor = auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
         List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctionImplRepository.findAuctionListByCursor(cursor, request));
@@ -52,7 +55,7 @@ public class AuctionServiceImpl implements AuctionService{
     // 경매 글 등록
     @Override
     public Long registAuction(RegistAuctionRequest request) {
-        User user = userRepository.findById(request.getUserIdx())
+        UserEntity userEntity = userRepository.findById(request.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
         Gifticon gifticon = gifticonRepository.findById(request.getGifticonIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
@@ -60,15 +63,15 @@ public class AuctionServiceImpl implements AuctionService{
         if(!gifticon.getGifticonStatus().equals(GifticonStatus.KEEP.getStatus())){
             throw new CustomException(CustomExceptionStatus.GIFTICON_NOT_KEEP);
         }else {
-            Auction auction = AuctionMapper.INSTANCE.registAuctionRequestToAuction(request, user, gifticon);
+            AuctionEntity auctionEntity = AuctionMapper.INSTANCE.registAuctionRequestToAuction(request, userEntity, gifticon);
 
-            auction.setAuctionEndDate(gifticon.getGifticonEndDate());
+            auctionEntity.setAuctionEndDate(gifticon.getGifticonEndDate());
 
             gifticon.setGifticonStatus(GifticonStatus.AUCTION.getStatus());
 
-            Auction saveAuction = auctionRepository.save(auction);
+            AuctionEntity saveAuctionEntity = auctionRepository.save(auctionEntity);
 
-            return saveAuction.getAuctionIdx();
+            return saveAuctionEntity.getAuctionIdx();
         }
     }
 
@@ -76,29 +79,29 @@ public class AuctionServiceImpl implements AuctionService{
     @Override
     @Transactional(readOnly = true)
     public DetailAuctionResponse detailAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        List<AuctionBidItemData> auctionBidItemDataList = AuctionMapper.INSTANCE.bidsToItemDatas(auction.getAuctionBidList());
+        List<AuctionBidItemData> auctionBidItemDataList = AuctionMapper.INSTANCE.bidsToItemDatas(auctionEntity.getAuctionBidList());
 
-        return AuctionMapper.INSTANCE.entityToDetailAuctionResponse(auction, auctionBidItemDataList);
+        return AuctionMapper.INSTANCE.entityToDetailAuctionResponse(auctionEntity, auctionBidItemDataList);
     }
 
     // 경매 글 수정
     @Override
     public void modifyAuction(Long auctionIdx, ModifyAuctionRequest auctionRequest) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        auction.setAuctionText(auctionRequest.getAuctionText());
+        auctionEntity.setAuctionText(auctionRequest.getAuctionText());
     }
 
     // 경매 글 삭제
     @Override
     public void deleteAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
-        Gifticon gifticon = gifticonRepository.findById(auction.getGifticon().getGifticonIdx())
+        Gifticon gifticon = gifticonRepository.findById(auctionEntity.getGifticon().getGifticonIdx())
                         .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
 
         gifticon.setGifticonStatus(GifticonStatus.KEEP.getStatus());
@@ -111,15 +114,15 @@ public class AuctionServiceImpl implements AuctionService{
     // 경매 거래 진행
     @Override
     public AuctionTradeResponse tradeAuction(Long auctionIdx, Long userIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
-        User user = userRepository.findById(userIdx)
+        UserEntity userEntity = userRepository.findById(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         AuctionTradeResponse response = null;
 
-        if(auction.getAuctionStatus().equals(AuctionStatus.IN_PROGRESS.getStatus())) {
-            if (!auction.getUser().getUserIdx().equals(userIdx)) { //즉시 구매자 라면
+        if(auctionEntity.getAuctionStatus().equals(AuctionStatus.IN_PROGRESS.getStatus())) {
+            if (!auctionEntity.getUserEntity().getUserIdx().equals(userIdx)) { //즉시 구매자 라면
                 log.info("immediate");
 
 
@@ -139,10 +142,10 @@ public class AuctionServiceImpl implements AuctionService{
                             .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_BID_INVALID));
 
                     // 입찰 정보 수정
-                    auctionBid.setAuctionBidPrice(auction.getUpperPrice());
-                    auctionBid.setAuction(auction);
+                    auctionBid.setAuctionBidPrice(auctionEntity.getUpperPrice());
+                    auctionBid.setAuctionEntity(auctionEntity);
                 } else { // 없으면
-                    AuctionBid auctionBid = AuctionBidMapper.INSTANCE.registImToAuctionBid(user, auction, auction.getUpperPrice());
+                    AuctionBid auctionBid = AuctionBidMapper.INSTANCE.registImToAuctionBid(userEntity, auctionEntity, auctionEntity.getUpperPrice());
 
                     // 새로 등록
                     auctionBidRepository.save(auctionBid);
@@ -150,7 +153,7 @@ public class AuctionServiceImpl implements AuctionService{
             }
 
             // 경매 상태 거래중으로 변경
-            auction.setAuctionStatus(AuctionStatus.IN_TRADE.getStatus());
+            auctionEntity.setAuctionStatus(AuctionStatus.IN_TRADE.getStatus());
 
             //입찰 상태를 낙찰 예정으로 변경
 //            AuctionBid bid = auctionBidRepository.findByUser_UserIdxAndAuction_AuctionIdx(auction.getHighestBidUser().getUserIdx(), auctionIdx)
@@ -159,8 +162,8 @@ public class AuctionServiceImpl implements AuctionService{
 //            bid.setAuctionBidStatus(BidStatus.EXPECTED.getStatus());
 
             // 판매자의 계좌번호와 은행 전달
-            response = new AuctionTradeResponse(auction.getUser().getUsername() ,auction.getUser().getUserAccount(),
-                    auction.getUser().getUserAccountBank());
+            response = new AuctionTradeResponse(auctionEntity.getUserEntity().getUsername() , auctionEntity.getUserEntity().getUserAccount(),
+                    auctionEntity.getUserEntity().getUserAccountBank());
         }
         else {
             throw new CustomException(CustomExceptionStatus.ALREADY_TRADE_AUCTION);
@@ -172,16 +175,16 @@ public class AuctionServiceImpl implements AuctionService{
     // 경매 거래 취소
     @Override
     public void cancelAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
         // 경매 상태 진행 중으로 변경
-        auction.setAuctionStatus(AuctionStatus.IN_PROGRESS.getStatus());
+        auctionEntity.setAuctionStatus(AuctionStatus.IN_PROGRESS.getStatus());
 
         //가장 높은 입찰 삭제
         // 입찰 목록을 입찰 금액에 내림차순으로 정렬해서 가져옴-
         List<AuctionBid> auctionBidList = auctionBidRepository
-                .findByAuctionIdxOrderByAuctionBidPriceDesc(auction.getAuctionIdx());
+                .findByAuctionIdxOrderByAuctionBidPriceDesc(auctionEntity.getAuctionIdx());
 
         //입잘자가 혼자라면 초기화
 //        if(auctionBidList.size() == 1){
@@ -192,24 +195,24 @@ public class AuctionServiceImpl implements AuctionService{
 //            auction.setHighestBidUser(auctionBidList.get(1).getUser());
 //        }
 
-        auctionBidRepository.deleteByUser_UserIdxAndAuction_AuctionIdx(auctionBidList.get(0).getUser().getUserIdx(), auctionIdx);
+        auctionBidRepository.deleteByUser_UserIdxAndAuction_AuctionIdx(auctionBidList.get(0).getUserEntity().getUserIdx(), auctionIdx);
         log.info("거래 취소 완료");
     }
 
     // 경매 거래 확정
     @Override
     public void confirmAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
-        Gifticon gifticon = gifticonRepository.findById(auction.getGifticon().getGifticonIdx())
+        Gifticon gifticon = gifticonRepository.findById(auctionEntity.getGifticon().getGifticonIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
-        User user = userRepository.findById(0L)
+        UserEntity userEntity = userRepository.findById(0L)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        auction.setAuctionStatus(AuctionStatus.AWARDED.getStatus());
+        auctionEntity.setAuctionStatus(AuctionStatus.AWARDED.getStatus());
 
-        for(AuctionBid bid : auction.getAuctionBidList()) {
-            if(bid.getUser().getUserIdx().equals(user.getUserIdx())){
+        for(AuctionBid bid : auctionEntity.getAuctionBidList()) {
+            if(bid.getUserEntity().getUserIdx().equals(userEntity.getUserIdx())){
                 bid.setAuctionBidStatus(BidStatus.AWARDED.getStatus());
             }
             else {
@@ -217,18 +220,18 @@ public class AuctionServiceImpl implements AuctionService{
             }
         }
 
-        gifticon.setUser(user);
+        gifticon.setUserEntity(userEntity);
         gifticon.setGifticonStatus(GifticonStatus.KEEP.getStatus());
-        auction.setAuctionCompletedDate(LocalDateTime.now());
+        auctionEntity.setAuctionCompletedDate(LocalDateTime.now());
     }
 
     @Override
     @Transactional(readOnly = true)
     public AuctionConfirmResponse getConfirmAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        AuctionConfirmResponse response = AuctionMapper.INSTANCE.auctionToConfirm(auction);
+        AuctionConfirmResponse response = AuctionMapper.INSTANCE.auctionToConfirm(auctionEntity);
 
         return response;
     }
@@ -236,64 +239,64 @@ public class AuctionServiceImpl implements AuctionService{
     @Override
     @Transactional(readOnly = true)
     public AuctionConfirmBuyResponse getConfirmBuyAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        auction.setNotificationCreatedDate(LocalDateTime.now());
+        auctionEntity.setNotificationCreatedDate(LocalDateTime.now());
 
-        AuctionConfirmBuyResponse response = AuctionMapper.INSTANCE.auctionToConfirmBuy(auction);
+        AuctionConfirmBuyResponse response = AuctionMapper.INSTANCE.auctionToConfirmBuy(auctionEntity);
 
         return response;
     }
 
 
-    public List<Auction> getAuctionConfirmList() {
-        List<Auction> auctions = auctionRepository.findByAuctionListConfirm();
+    public List<AuctionEntity> getAuctionConfirmList() {
+        List<AuctionEntity> auctionEntities = auctionRepository.findByAuctionListConfirm();
 
-        return auctions;
+        return auctionEntities;
     }
 
     @Override
-    public List<Auction> getAuctionExpiredList() {
+    public List<AuctionEntity> getAuctionExpiredList() {
         return auctionRepository.findAuctionAllExpired();
     }
 
     @Override
     public void rejectAuction(Long auctionIdx) {
-        Auction auction = auctionRepository.findById(auctionIdx)
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
-        Gifticon gifticon = gifticonRepository.findById(auction.getGifticon().getGifticonIdx())
+        Gifticon gifticon = gifticonRepository.findById(auctionEntity.getGifticon().getGifticonIdx())
                         .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
 
-        auction.setAuctionCompletedDate(auction.getAuctionEndDate());
-        auction.setAuctionStatus(AuctionStatus.EXPIRED.getStatus());
+        auctionEntity.setAuctionCompletedDate(auctionEntity.getAuctionEndDate());
+        auctionEntity.setAuctionStatus(AuctionStatus.EXPIRED.getStatus());
         gifticon.setGifticonStatus(GifticonStatus.KEEP.getStatus());
     }
 
     @Override
-    public List<Auction> getPopularAuction() {
-        List<Auction> auctions = auctionRepository.findAuctionList();
+    public List<AuctionEntity> getPopularAuction() {
+        List<AuctionEntity> auctionEntities = auctionRepository.findAuctionList();
 
-        List<Auction> auctionList = new ArrayList<>();
-        if(auctions.size() >= 1) {
-            auctionList.add(auctions.get(0));
+        List<AuctionEntity> auctionEntityList = new ArrayList<>();
+        if(auctionEntities.size() >= 1) {
+            auctionEntityList.add(auctionEntities.get(0));
         }
 
-        if(auctions.size() >= 2) {
-            auctionList.add(auctions.get(1));
+        if(auctionEntities.size() >= 2) {
+            auctionEntityList.add(auctionEntities.get(1));
         }
 
-        return auctionList;
+        return auctionEntityList;
     }
 
     @Override
     public List<Integer> getMainCategory() {
-        List<Auction> auctions = auctionRepository.findAwardedAuctionList();
+        List<AuctionEntity> auctionEntities = auctionRepository.findAwardedAuctionList();
 
         int[] mainCategoryCount = new int[6];
 
-        for(Auction auction : auctions) {
-            int idx = auction.getGifticon().getMainCategory().getMainCategoryIdx();
+        for(AuctionEntity auctionEntity : auctionEntities) {
+            int idx = auctionEntity.getGifticon().getMainCategory().getMainCategoryIdx();
             mainCategoryCount[idx]++;
         }
 
@@ -320,12 +323,12 @@ public class AuctionServiceImpl implements AuctionService{
 
     @Override
     public List<Integer> getSubCategory() {
-        List<Auction> auctions = auctionRepository.findAwardedAuctionList();
+        List<AuctionEntity> auctionEntities = auctionRepository.findAwardedAuctionList();
 
         int[] subCategoryCount = new int[14];
 
-        for(Auction auction : auctions) {
-            int idx = auction.getGifticon().getSubCategory().getSubCategoryIdx();
+        for(AuctionEntity auctionEntity : auctionEntities) {
+            int idx = auctionEntity.getGifticon().getSubCategory().getSubCategoryIdx();
             subCategoryCount[idx]++;
         }
 

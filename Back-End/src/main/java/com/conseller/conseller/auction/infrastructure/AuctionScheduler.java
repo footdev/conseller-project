@@ -1,5 +1,6 @@
 package com.conseller.conseller.auction.infrastructure;
 
+import com.conseller.conseller.auction.domain.AuctionService;
 import com.conseller.conseller.bid.domain.AuctionBidService;
 import com.conseller.conseller.entity.AuctionBid;
 import com.conseller.conseller.notification.domain.NotificationService;
@@ -20,26 +21,26 @@ public class AuctionScheduler {
     @Async
     @Scheduled(cron = "0 */15 * * * ?")
     public void autoAuctionConfirm() {
-        List<Auction> auctions = auctionService.getAuctionConfirmList();
+        List<AuctionEntity> auctionEntities = auctionService.getAuctionConfirmList();
 
-        for(Auction auction : auctions) {
-            auctionService.confirmAuction(auction.getAuctionIdx());
+        for(AuctionEntity auctionEntity : auctionEntities) {
+            auctionService.confirmAuction(auctionEntity.getAuctionIdx());
 
-            notificationService.sendAuctionNotification(auction.getAuctionIdx(),"경매 거래 확정", "님과의 거래가 자동으로 확정되었습니다.", 2,1);
+            notificationService.sendAuctionNotification(auctionEntity.getAuctionIdx(),"경매 거래 확정", "님과의 거래가 자동으로 확정되었습니다.", 2,1);
         }
     }
 
     @Async
     @Scheduled(cron = "0 0 0 * * ?")
     public void autoAuctionExpire() {
-        List<Auction> auctions = auctionService.getAuctionExpiredList();
+        List<AuctionEntity> auctionEntities = auctionService.getAuctionExpiredList();
 
-        for(Auction auction : auctions) {
-            List<AuctionBid> bids = auction.getAuctionBidList();
+        for(AuctionEntity auctionEntity : auctionEntities) {
+            List<AuctionBid> bids = auctionEntity.getAuctionBidList();
             for(AuctionBid bid : bids) {
                 auctionBidService.rejectAuctionBid(bid.getAuctionBidIdx());
             }
-            auctionService.rejectAuction(auction.getAuctionIdx());
+            auctionService.rejectAuction(auctionEntity.getAuctionIdx());
         }
     }
 

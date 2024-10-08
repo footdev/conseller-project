@@ -1,5 +1,6 @@
 package com.conseller.conseller.entity;
 
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -21,5 +22,5 @@ public class BlackList {
 
     @OneToOne
     @JoinColumn(name = "refresh_token", referencedColumnName = "refresh_token")
-    private User user;
+    private UserEntity userEntity;
 }

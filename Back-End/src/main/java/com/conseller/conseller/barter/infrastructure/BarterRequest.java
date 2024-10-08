@@ -3,7 +3,7 @@ package com.conseller.conseller.barter.infrastructure;
 import com.conseller.conseller.barter.api.dto.request.BarterGuestItemDto;
 import com.conseller.conseller.barter.api.dto.response.BarterRequestResponseDto;
 import com.conseller.conseller.barter.domain.enums.RequestStatus;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.user.api.dto.response.UserInfoResponse;
 import lombok.*;
 
@@ -31,28 +31,28 @@ public class BarterRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @OneToMany(mappedBy = "barterRequest")
     List<BarterGuestItem> barterGuestItemList = new ArrayList<>();
 
     @Builder
-    public BarterRequest(Barter barter, User user){
+    public BarterRequest(Barter barter, UserEntity userEntity){
         this.barterRequestStatus = RequestStatus.WAIT.getStatus();
         this.barter = barter;
-        this.user = user;
+        this.userEntity = userEntity;
     }
 
     public BarterRequestResponseDto toBarterRequestResponseDto(BarterRequest barterRequest) {
-        User user = barterRequest.getUser();
+        UserEntity userEntity = barterRequest.getUserEntity();
         UserInfoResponse userInfoResponse = UserInfoResponse.builder()
-                .userId(user.getUserId())
-                .userNickname(user.getUserNickname())
-                .userEmail(user.getUserEmail())
-                .userProfileUrl(user.getUserProfileUrl())
-                .userAccount(user.getUserAccount())
-                .userAccountBank(user.getUserAccountBank())
-                .userPhoneNumber(user.getUserPhoneNumber())
+                .userId(userEntity.getUserId())
+                .userNickname(userEntity.getUserNickname())
+                .userEmail(userEntity.getUserEmail())
+                .userProfileUrl(userEntity.getUserProfileUrl())
+                .userAccount(userEntity.getUserAccount())
+                .userAccountBank(userEntity.getUserAccountBank())
+                .userPhoneNumber(userEntity.getUserPhoneNumber())
                 .build();
 
         List<BarterGuestItemDto> barterGuestItemDtoList  = new ArrayList<>();

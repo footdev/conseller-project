@@ -1,7 +1,8 @@
 package com.conseller.conseller.entity;
 
-import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.bid.domain.enums.BidStatus;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -36,10 +37,10 @@ public class AuctionBid {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
-    private User user;
+    private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_idx")
-    private Auction auction;
+    private AuctionEntity auctionEntity;
 
 }

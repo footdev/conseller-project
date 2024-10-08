@@ -2,7 +2,7 @@ package com.conseller.conseller.store.domain;
 
 import com.conseller.conseller.entity.Gifticon;
 import com.conseller.conseller.entity.Store;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.exception.CustomException;
 import com.conseller.conseller.exception.CustomExceptionStatus;
 import com.conseller.conseller.gifticon.domain.enums.GifticonStatus;
@@ -54,7 +54,7 @@ public class StoreServiceImpl implements StoreService {
     // 스토어 글 등록
     public Long registStore(RegistStoreRequest request) {
 
-        User user = userRepository.findById(request.getUserIdx())
+        UserEntity userEntity = userRepository.findById(request.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
         Gifticon gifticon = gifticonRepository.findById(request.getGifticonIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
@@ -62,7 +62,7 @@ public class StoreServiceImpl implements StoreService {
         if(!gifticon.getGifticonStatus().equals(GifticonStatus.KEEP.getStatus())){
             throw new CustomException(CustomExceptionStatus.GIFTICON_NOT_KEEP);
         }else {
-            Store store = StoreMapper.INSTANCE.registStoreRequestToStore(request, user, gifticon);
+            Store store = StoreMapper.INSTANCE.registStoreRequestToStore(request, userEntity, gifticon);
 
             store.setStoreEndDate(gifticon.getGifticonEndDate());
 
@@ -116,7 +116,7 @@ public class StoreServiceImpl implements StoreService {
     public StoreTradeResponse tradeStore(Long storeIdx, Long consumerIdx) {
         Store store = storeRepository.findById(storeIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
-        User consumer = userRepository.findById(consumerIdx)
+        UserEntity consumer = userRepository.findById(consumerIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         StoreTradeResponse response = null;
@@ -128,8 +128,8 @@ public class StoreServiceImpl implements StoreService {
             // 거래 상태 거래중으로 변경
             store.setStoreStatus(StoreStatus.IN_TRADE.getStatus());
 
-            response = new StoreTradeResponse(store.getUser().getUsername() ,store.getUser().getUserAccount(),
-                    store.getUser().getUserAccountBank());
+            response = new StoreTradeResponse(store.getUserEntity().getUsername() ,store.getUserEntity().getUserAccount(),
+                    store.getUserEntity().getUserAccountBank());
         }
         else {
             throw new CustomException(CustomExceptionStatus.ALREADY_TRADE_STORE);
@@ -158,12 +158,12 @@ public class StoreServiceImpl implements StoreService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
         Gifticon gifticon = gifticonRepository.findById(store.getGifticon().getGifticonIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
-        User user = userRepository.findById(store.getConsumer().getUserIdx())
+        UserEntity userEntity = userRepository.findById(store.getConsumer().getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         store.setStoreStatus(StoreStatus.AWARDED.getStatus());
 
-        gifticon.setUser(user);
+        gifticon.setUserEntity(userEntity);
         gifticon.setGifticonStatus(GifticonStatus.KEEP.getStatus());
     }
 

@@ -1,6 +1,6 @@
 package com.conseller.conseller.utils.dummy;
 
-import com.conseller.conseller.auction.infrastructure.Auction;
+import com.conseller.conseller.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.user.api.dto.request.SignUpRequest;
 import com.conseller.conseller.user.domain.enums.UserStatus;
@@ -92,7 +92,7 @@ public class DummyBulkRepository {
 
     }
 
-    public void saveAllAuctions(List<Auction> auctions) {
+    public void saveAllAuctions(List<AuctionEntity> auctionEntities) {
         String sql = "INSERT INTO auction (" +
                 "auction_end_date, " +
                 "auction_start_date, " +
@@ -110,19 +110,19 @@ public class DummyBulkRepository {
                     new BatchPreparedStatementSetter() {
                         @Override
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
-                            ps.setTimestamp(1, convertTimestamp(convertString(auctions.get(i).getAuctionEndDate())));
-                            ps.setTimestamp(2, convertTimestamp(convertString(auctions.get(i).getAuctionStartDate())));
-                            ps.setString(3, auctions.get(i).getAuctionStatus());
-                            ps.setString(4, auctions.get(i).getAuctionText());
-                            ps.setInt(5, auctions.get(i).getLowerPrice());
-                            ps.setInt(6, auctions.get(i).getUpperPrice());
-                            ps.setLong(7, auctions.get(i).getGifticon().getGifticonIdx());
-                            ps.setLong(8, auctions.get(i).getUser().getUserIdx());
+                            ps.setTimestamp(1, convertTimestamp(convertString(auctionEntities.get(i).getAuctionEndDate())));
+                            ps.setTimestamp(2, convertTimestamp(convertString(auctionEntities.get(i).getAuctionStartDate())));
+                            ps.setString(3, auctionEntities.get(i).getAuctionStatus());
+                            ps.setString(4, auctionEntities.get(i).getAuctionText());
+                            ps.setInt(5, auctionEntities.get(i).getLowerPrice());
+                            ps.setInt(6, auctionEntities.get(i).getUpperPrice());
+                            ps.setLong(7, auctionEntities.get(i).getGifticon().getGifticonIdx());
+                            ps.setLong(8, auctionEntities.get(i).getUserEntity().getUserIdx());
                         }
 
                         @Override
                         public int getBatchSize() {
-                            return auctions.size();
+                            return auctionEntities.size();
                         }
                     }
             );

@@ -2,7 +2,7 @@ package com.conseller.conseller.barter.api.dto.request;
 
 import com.conseller.conseller.barter.infrastructure.Barter;
 import com.conseller.conseller.entity.SubCategory;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +32,7 @@ public class BarterCreateDto {
         this.userIdx = userIdx;
     }
 
-    public Barter toEntity(BarterCreateDto barterCreateDto, User host, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory) {
+    public Barter toEntity(BarterCreateDto barterCreateDto, UserEntity host, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory) {
         return Barter.builder()
                 .barterName(barterCreateDto.getBarterName())
                 .barterText(barterCreateDto.getBarterText())

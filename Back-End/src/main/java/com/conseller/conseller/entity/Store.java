@@ -1,6 +1,7 @@
 package com.conseller.conseller.entity;
 
 import com.conseller.conseller.store.domain.enums.StoreStatus;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -46,10 +47,10 @@ public class Store {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_user_idx")
-    private User user;
+    private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_consumer_idx")
-    private User consumer;
+    private UserEntity consumer;
 
 }

@@ -2,7 +2,7 @@ package com.conseller.conseller.store.api.dto.mapper;
 
 import com.conseller.conseller.entity.Gifticon;
 import com.conseller.conseller.entity.Store;
-import com.conseller.conseller.entity.User;
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import com.conseller.conseller.store.api.dto.request.RegistStoreRequest;
 import com.conseller.conseller.store.api.dto.response.DetailStoreResponse;
 import com.conseller.conseller.store.api.dto.response.StoreConfirmResponse;
@@ -25,17 +25,17 @@ public interface StoreMapper {
     //RegistSaleRequest -> Store 매핑
     @Mapping(source = "user", target = "user")
     @Mapping(source = "gifticon", target = "gifticon")
-    Store registStoreRequestToStore(RegistStoreRequest request, User user, Gifticon gifticon);
+    Store registStoreRequestToStore(RegistStoreRequest request, UserEntity userEntity, Gifticon gifticon);
 
     //User, Store -> DetailStoreResponse 매핑
     default DetailStoreResponse entityToDetailStoreResponse(Store store) {
         DetailStoreResponse response = new DetailStoreResponse();
 
         response.setPostContent(store.getStoreText());
-        response.setStoreUserIdx(store.getUser().getUserIdx());
-        response.setStoreUserNickname(store.getUser().getUserNickname());
-        response.setStoreUserProfileUrl(store.getUser().getUserProfileUrl());
-        response.setStoreUserDeposit(store.getUser().getUserDeposit());
+        response.setStoreUserIdx(store.getUserEntity().getUserIdx());
+        response.setStoreUserNickname(store.getUserEntity().getUserNickname());
+        response.setStoreUserProfileUrl(store.getUserEntity().getUserProfileUrl());
+        response.setStoreUserDeposit(store.getUserEntity().getUserDeposit());
         response.setStoreIdx(store.getStoreIdx());
         response.setGifticonDataImageName(store.getGifticon().getGifticonDataImageUrl());
         response.setGifticonName(store.getGifticon().getGifticonName());
@@ -79,7 +79,7 @@ public interface StoreMapper {
         response.setBuyUserImageUrl(store.getConsumer().getUserProfileUrl());
         response.setBuyUserNickname(store.getConsumer().getUserNickname());
         response.setBuyUserName(store.getConsumer().getUsername());
-        response.setBuyUserIdx(store.getUser().getUserIdx());
+        response.setBuyUserIdx(store.getUserEntity().getUserIdx());
 
         return response;
     }

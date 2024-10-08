@@ -45,7 +45,7 @@ public class NotificationJdbcRepository {
                         ps.setString(3, notificationEntities.get(i).getNotificationTitle());
                         ps.setInt(4, notificationEntities.get(i).getNotificationType());
                         ps.setBoolean(5, notificationEntities.get(i).isNotificationSeller());
-                        ps.setLong(6, notificationEntities.get(i).getNotificationUser().getUserIdx());
+                        ps.setLong(6, notificationEntities.get(i).getNotificationUserEntity().getUserIdx());
                     }
 
                     @Override

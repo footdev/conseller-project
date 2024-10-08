@@ -1,5 +1,6 @@
 package com.conseller.conseller.entity;
 
+import com.conseller.conseller.user.infrastructure.UserEntity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,10 +37,10 @@ public class Report {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_idx")
-    private User reporter;
+    private UserEntity reporter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_idx")
-    private User reported;
+    private UserEntity reported;
 
 }
