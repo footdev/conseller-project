@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+import static com.conseller.conseller.global.utils.DateTimeConverter.convertLocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class GifticonValidator {
