@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.barter.api;
 
-import com.conseller.conseller.barter.api.dto.request.*;
 import com.conseller.conseller.core.barter.api.dto.request.*;
 import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponseDTO;
 import com.conseller.conseller.core.barter.api.dto.response.BarterResponse;
