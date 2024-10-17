@@ -8,7 +8,7 @@ import com.conseller.conseller.core.gifticon.infrastructure.*;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.api.dto.response.ExpiringGifticonResponse;
-import com.conseller.conseller.gifticon.infrastructure.*;
+import com.conseller.conseller.core.gifticon.infrastructure.*;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.core.gifticon.api.dto.request.GifticonRegisterRequest;
 import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.conseller.conseller.global.utils.DateTimeConverter.*;
 
 @Log4j2
 @Service
