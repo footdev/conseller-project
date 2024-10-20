@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auction")
 public class AuctionApi {
@@ -27,10 +26,7 @@ public class AuctionApi {
     // 경매 목록
     @PostMapping("/{auctionId}")
     public ResponseEntity<AuctionListResponse> getAuctionList(@PathVariable long auctionId, @RequestBody AuctionListRequest request) {
-        log.info("[POST] /auction called");
-
         AuctionListResponse response = auctionService.getAuctionList(auctionId, request);
-
         return ResponseEntity.ok()
                 .body(response);
     }
@@ -39,9 +35,7 @@ public class AuctionApi {
     @PostMapping("/regist")
     public ResponseEntity<RegistAuctionResponse> registAuction(@RequestBody RegistAuctionRequest request) {
         Long auctionIdx = auctionService.registAuction(request);
-
         RegistAuctionResponse response = new RegistAuctionResponse(auctionIdx);
-
         return ResponseEntity.ok()
                 .body(response);
     }
@@ -50,7 +44,6 @@ public class AuctionApi {
     @GetMapping("/{auctionIdx}")
     public ResponseEntity<DetailAuctionResponse> detailAuction(@PathVariable long auctionIdx) {
         DetailAuctionResponse response =  auctionService.detailAuction(auctionIdx);
-
         return ResponseEntity.ok()
                 .body(response);
     }
@@ -59,7 +52,6 @@ public class AuctionApi {
     @PatchMapping("/{auctionIdx}")
     public ResponseEntity<Object> modifyAuction(@PathVariable long auctionIdx, @RequestBody ModifyAuctionRequest auctionRequest) {
         auctionService.modifyAuction(auctionIdx, auctionRequest);
-
         return ResponseEntity.ok()
                 .build();
     }
@@ -68,7 +60,6 @@ public class AuctionApi {
     @DeleteMapping("/{auctionIdx}")
     public ResponseEntity<Object> deleteAuction(@PathVariable long auctionIdx) {
         auctionService.deleteAuction(auctionIdx);
-
         return ResponseEntity.ok()
                 .build();
     }
@@ -77,10 +68,8 @@ public class AuctionApi {
     @GetMapping("/trade/{auctionIdx}/{userIdx}")
     public ResponseEntity<AuctionTradeResponse> tradeAuction(@PathVariable long auctionIdx, @PathVariable long userIdx) {
         AuctionTradeResponse response = auctionService.tradeAuction(auctionIdx, userIdx);
-
         notificationService.sendAuctionNotification(auctionIdx, "경매 거래 진행", "님과의 경매가 진행 중 입니다.", 1, 1);
         notificationService.sendAuctionNotification(auctionIdx, "경매 거래 진행", "님과의 경매가 진행 중 입니다.", 2, 1);
-
         return ResponseEntity.ok()
                 .body(response);
     }
@@ -150,7 +139,7 @@ public class AuctionApi {
                 .body(response);
     }
 
-    //가장 입찰이 많은 경매
+    // 가장 조회가 많이 된 경매
     @GetMapping("/popular")
     public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
         List<AuctionEntity> auctionEntityList = auctionService.getPopularAuction();

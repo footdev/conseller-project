@@ -4,7 +4,6 @@ import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.core.auction.api.dto.request.AuctionListRequest;
 import com.conseller.conseller.core.auction.api.dto.request.ModifyAuctionRequest;
 import com.conseller.conseller.core.auction.api.dto.request.RegistAuctionRequest;
-import com.conseller.conseller.auction.api.dto.response.*;
 import com.conseller.conseller.core.auction.api.dto.response.*;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
@@ -293,8 +292,8 @@ public class AuctionServiceImpl implements AuctionService{
         int[] mainCategoryCount = new int[6];
 
         for(AuctionEntity auctionEntity : auctionEntities) {
-            int idx = auctionEntity.getGifticonEntity().getMainCategoryEntity().getMainCategoryIdx();
-            mainCategoryCount[idx]++;
+            long idx = auctionEntity.getGifticonEntity().getMainCategoryEntity().getMainCategoryIdx();
+            mainCategoryCount[(int)idx]++;
         }
 
         int maxIdx = 1;
