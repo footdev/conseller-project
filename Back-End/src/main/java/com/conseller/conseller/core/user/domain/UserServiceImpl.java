@@ -16,15 +16,13 @@ import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonData;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.store.infrastructure.StoreEntity;
 import com.conseller.conseller.core.store.infrastructure.StoreRepository;
 import com.conseller.conseller.core.store.api.dto.mapper.StoreMapper;
 import com.conseller.conseller.core.store.api.dto.response.StoreItemData;
-import com.conseller.conseller.user.api.dto.request.*;
-import com.conseller.conseller.user.api.dto.response.*;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import com.conseller.conseller.core.user.api.dto.UserMapper;
@@ -48,6 +46,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
 
 @Slf4j
 @Service

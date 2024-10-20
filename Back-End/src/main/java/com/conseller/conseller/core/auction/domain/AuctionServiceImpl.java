@@ -18,7 +18,7 @@ import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
-import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -65,13 +65,9 @@ public class AuctionServiceImpl implements AuctionService{
             throw new CustomException(CustomExceptionStatus.GIFTICON_NOT_KEEP);
         }else {
             AuctionEntity auctionEntity = AuctionMapper.INSTANCE.registAuctionRequestToAuction(request, userEntity, gifticonEntity);
-
             auctionEntity.setAuctionEndDate(gifticonEntity.getGifticonEndDate());
-
             gifticonEntity.setGifticonStatus(GifticonStatus.AUCTION.getStatus());
-
             AuctionEntity saveAuctionEntity = auctionRepository.save(auctionEntity);
-
             return saveAuctionEntity.getAuctionIdx();
         }
     }
@@ -329,8 +325,8 @@ public class AuctionServiceImpl implements AuctionService{
         int[] subCategoryCount = new int[14];
 
         for(AuctionEntity auctionEntity : auctionEntities) {
-            int idx = auctionEntity.getGifticonEntity().getSubCategoryEntity().getSubCategoryIdx();
-            subCategoryCount[idx]++;
+            long idx = auctionEntity.getGifticonEntity().getSubCategoryEntity().getSubCategoryIdx();
+            subCategoryCount[(int)idx]++;
         }
 
         int maxIdx = 1;

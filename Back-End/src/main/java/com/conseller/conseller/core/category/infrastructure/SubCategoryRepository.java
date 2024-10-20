@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity, Integer> {
-    Optional<SubCategoryEntity> findBySubCategoryIdx(int subCategory);
-    Optional<List<SubCategoryEntity>> findByMainCategoryMainCategoryIdx(int mainCategoryIdx);
+    Optional<SubCategoryEntity> findBySubCategoryIdx(long subCategory);
+    Optional<List<SubCategoryEntity>> findByMainCategoryMainCategoryIdx(long mainCategoryIdx);
 }

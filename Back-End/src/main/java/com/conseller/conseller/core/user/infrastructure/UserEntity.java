@@ -5,6 +5,7 @@ import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
+import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
 import com.conseller.conseller.core.inquiry.infrastructure.InquiryEntity;
 import com.conseller.conseller.core.notification.infrastructure.NotificationEntity;
@@ -210,5 +211,55 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
         this.userEmail = userInfoRequest.getUserEmail();
         this.userAccount = userInfoRequest.getUserAccount();
         this.userAccountBank = userInfoRequest.getUserAccountBank();
+    }
+
+    public User toDomain() {
+        return User.builder()
+                .userIdx(this.userIdx)
+                .userId(this.userId)
+                .userPassword(this.userPassword)
+                .userEmail(this.userEmail)
+                .userPhoneNumber(this.userPhoneNumber)
+                .userNickname(this.userNickname)
+                .userGender(this.userGender)
+                .userAge(this.userAge)
+                .userDeposit(this.userDeposit)
+                .userDeletedDate(this.userDeletedDate)
+                .userName(this.userName)
+                .userAccount(this.userAccount)
+                .userAccountBank(this.userAccountBank)
+                .userStatus(this.userStatus)
+                .userRestrictEndDate(this.userRestrictEndDate)
+                .userRestrictCount(this.userRestrictCount)
+                .userProfileUrl(this.userProfileUrl)
+                .refreshToken(this.refreshToken)
+                .fcm(this.fcm)
+                .userPattern(this.userPattern)
+                .build();
+    }
+
+    public static UserEntity of(User user) {
+        return UserEntity.builder()
+                .userIdx(user.getUserIdx())
+                .userId(user.getUserId())
+                .userPassword(user.getUserPassword())
+                .userEmail(user.getUserEmail())
+                .userPhoneNumber(user.getUserPhoneNumber())
+                .userNickname(user.getUserNickname())
+                .userGender(user.getUserGender())
+                .userAge(user.getUserAge())
+                .userDeposit(user.getUserDeposit())
+                .userDeletedDate(user.getUserDeletedDate())
+                .userName(user.getUserName())
+                .userAccount(user.getUserAccount())
+                .userAccountBank(user.getUserAccountBank())
+                .userStatus(user.getUserStatus())
+                .userRestrictEndDate(user.getUserRestrictEndDate())
+                .userRestrictCount(user.getUserRestrictCount())
+                .userProfileUrl(user.getUserProfileUrl())
+                .refreshToken(user.getRefreshToken())
+                .fcm(user.getFcm())
+                .userPattern(user.getUserPattern())
+                .build();
     }
 }

@@ -5,7 +5,6 @@ import com.conseller.conseller.global.exception.CustomException;
 
 import com.conseller.conseller.core.gifticon.api.dto.response.ExpiringGifticonResponse;
 
-import com.conseller.conseller.core.gifticon.domain.GifticonService;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 
 import lombok.RequiredArgsConstructor;
