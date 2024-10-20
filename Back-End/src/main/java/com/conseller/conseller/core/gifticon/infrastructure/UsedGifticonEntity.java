@@ -20,4 +20,11 @@ public class UsedGifticonEntity {
 
     @Column(name = "used_gifticon_date")
     private LocalDateTime usedGifticonDate;
+
+    public static UsedGifticonEntity of(String usedGifticonBarcode) {
+        return UsedGifticonEntity.builder()
+                .usedGifticonBarcode(usedGifticonBarcode)
+                .usedGifticonDate(LocalDateTime.now())
+                .build();
+    }
 }

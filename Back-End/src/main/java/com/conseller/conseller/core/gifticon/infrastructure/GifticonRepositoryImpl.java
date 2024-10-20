@@ -7,7 +7,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,7 +18,6 @@ public class GifticonRepositoryImpl {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    //구현
     public List<ExpiringGifticonResponse> getUserIdxAndExpiringGifticonCount() {
         NumberExpression<Integer> daysLeft = gifticon.gifticonEndDate.dayOfYear().subtract(LocalDate.now().getDayOfYear());
 

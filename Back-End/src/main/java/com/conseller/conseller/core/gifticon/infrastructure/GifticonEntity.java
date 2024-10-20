@@ -3,6 +3,7 @@ package com.conseller.conseller.core.gifticon.infrastructure;
 import com.conseller.conseller.core.category.infrastructure.MainCategoryEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
+import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import static com.conseller.conseller.global.utils.DateTimeConverter.*;
 
 @Entity
 @Builder
@@ -76,5 +79,37 @@ public class GifticonEntity {
                 .mainCategoryIdx(this.mainCategoryEntity.getMainCategoryIdx())
                 .build();
 
+    }
+
+    public Gifticon toDomain() {
+        return Gifticon.builder()
+                .gifticonIdx(this.gifticonIdx)
+                .gifticonBarcode(this.gifticonBarcode)
+                .gifticonName(this.gifticonName)
+                .gifticonStartDate(this.gifticonStartDate)
+                .gifticonEndDate(this.gifticonEndDate)
+                .gifticonAllImageUrl(this.gifticonAllImageUrl)
+                .gifticonDataImageUrl(this.gifticonDataImageUrl)
+                .gifticonStatus(this.gifticonStatus)
+                .user(this.userEntity.toDomain())
+                .subCategory(this.subCategoryEntity.toDomain())
+                .mainCategory(this.mainCategoryEntity.toDomain())
+                .build();
+    }
+
+    public static GifticonEntity of(Gifticon gifticon) {
+        return GifticonEntity.builder()
+                .gifticonIdx(gifticon.getGifticonIdx())
+                .gifticonBarcode(gifticon.getGifticonBarcode())
+                .gifticonName(gifticon.getGifticonName())
+                .gifticonStartDate(gifticon.getGifticonStartDate())
+                .gifticonEndDate(gifticon.getGifticonEndDate())
+                .gifticonAllImageUrl(gifticon.getGifticonAllImageUrl())
+                .gifticonDataImageUrl(gifticon.getGifticonDataImageUrl())
+                .gifticonStatus(gifticon.getGifticonStatus())
+                .userEntity(UserEntity.of(gifticon.getUser()))
+                .subCategoryEntity(SubCategoryEntity.of(gifticon.getSubCategory()))
+                .mainCategoryEntity(MainCategoryEntity.of(gifticon.getMainCategory()))
+                .build();
     }
 }

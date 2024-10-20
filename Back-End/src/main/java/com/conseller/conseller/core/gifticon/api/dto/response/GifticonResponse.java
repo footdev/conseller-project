@@ -3,10 +3,9 @@ package com.conseller.conseller.core.gifticon.api.dto.response;
 import lombok.*;
 
 @Builder
-@Getter @Setter @ToString
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
-public class GifticonResponse {
+@Getter @ToString
+@RequiredArgsConstructor
+public final class GifticonResponse {
 
     private long gifticonIdx;
     private String gifticonBarcode;
@@ -17,6 +16,6 @@ public class GifticonResponse {
     private String gifticonDataImageUrl;
     private String gifticonStatus;
     private long userIdx;
-    private int subCategoryIdx;
-    private int mainCategoryIdx;
+    private long subCategoryIdx;
+    private long mainCategoryIdx;
 }
