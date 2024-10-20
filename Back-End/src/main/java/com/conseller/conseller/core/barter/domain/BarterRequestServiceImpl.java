@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemDto;
-import com.conseller.conseller.barter.infrastructure.*;
+import com.conseller.conseller.core.barter.infrastructure.*;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.barter.api.dto.request.BarterRequestRegistDto;
 import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponseDto;
@@ -11,7 +11,7 @@ import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
-import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,6 +83,7 @@ public class BarterRequestServiceImpl implements BarterRequestService{
     public void addBarterRequest(BarterRequestRegistDto barterRequestRegistDto, Long barterIdx) {
         BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
+
         String statusOfBarter = barterEntity.getBarterStatus();
         if(!statusOfBarter.equals(BarterStatus.EXCHANGEABLE.getStatus()) && !statusOfBarter.equals(BarterStatus.SUGGESTED.getStatus())){
             throw new CustomException(CustomExceptionStatus.BARTER_EXPIRED_INVALID);
@@ -97,8 +98,10 @@ public class BarterRequestServiceImpl implements BarterRequestService{
 
         UserEntity userEntity = userRepository.findByUserIdx(barterRequestRegistDto.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
-        BarterRequestEntity barterRequestEntity = barterRequestRegistDto.toEntity(barterEntity, userEntity);
+
+        BarterRequestEntity barterRequestEntity = BarterRequestEntity.of(barterEntity, userEntity);
         barterRequestRepository.save(barterRequestEntity);
+
         if(statusOfBarter.equals(BarterStatus.EXCHANGEABLE.getStatus())) {
             barterEntity.setBarterStatus(BarterStatus.SUGGESTED.getStatus());
             barterRepository.save(barterEntity);

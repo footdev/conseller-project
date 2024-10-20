@@ -1,7 +1,5 @@
 package com.conseller.conseller.core.barter.domain;
 
-import com.conseller.conseller.barter.infrastructure.*;
-import com.conseller.conseller.barter.api.dto.request.*;
 import com.conseller.conseller.core.barter.api.dto.request.*;
 import com.conseller.conseller.core.barter.api.dto.response.BarterConfirmList;
 import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponseDTO;
@@ -15,7 +13,7 @@ import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryRepository;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
-import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
@@ -34,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.conseller.conseller.global.utils.DateTimeConverter.*;
 import static java.time.LocalDateTime.now;
 
 @Slf4j
@@ -127,20 +126,19 @@ public class BarterServiceImpl implements BarterService{
 
         BarterEntity barterEntity = BarterMapper.INSTANCE.registBarterCreateToBarter(barterCreateDto, userEntity, endDate, subCategoryEntity, preferSubCategoryEntity);
         barterRepository.save(barterEntity);
-        Map<Integer, Integer> categoryMap = new HashMap<>();
+        Map<Long, Integer> categoryMap = new HashMap<>();
         for(Long gifticonIdx : barterCreateDto.getSelectedItemIndices()) {
             GifticonEntity gifticonEntity = gifticonRepository.findByGifticonIdx(gifticonIdx)
                     .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_NO_ITEM));
             if(categoryMap.containsKey(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx())) {
-                int k = categoryMap.get(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx());
-                categoryMap.put(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx(), k+1);
+                categoryMap.compute(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx(), (key, k) -> k + 1);
             } else {
                 categoryMap.put(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx(), 1);
             }
         }
         int max_count = 0;
-        int max_category = 0;
-        for(Integer key : categoryMap.keySet() ) {
+        long max_category = 0;
+        for(long key : categoryMap.keySet() ) {
             if(categoryMap.get(key) > max_count) {
                 max_count = categoryMap.get(key);
                 max_category = key;
