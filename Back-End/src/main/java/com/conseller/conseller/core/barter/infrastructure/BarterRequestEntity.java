@@ -43,6 +43,13 @@ public class BarterRequestEntity {
         this.userEntity = userEntity;
     }
 
+    public static BarterRequestEntity of(BarterEntity barterEntity, UserEntity userEntity) {
+        return BarterRequestEntity.builder()
+                .barterEntity(barterEntity)
+                .userEntity(userEntity)
+                .build();
+    }
+
     public BarterRequestResponseDto toBarterRequestResponseDto(BarterRequestEntity barterRequestEntity) {
         UserEntity userEntity = barterRequestEntity.getUserEntity();
         UserInfoResponse userInfoResponse = UserInfoResponse.builder()
