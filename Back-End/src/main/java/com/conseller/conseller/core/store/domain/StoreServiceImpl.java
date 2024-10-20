@@ -6,13 +6,12 @@ import com.conseller.conseller.core.store.infrastructure.StoreEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
-import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.store.api.dto.mapper.StoreMapper;
 import com.conseller.conseller.core.store.api.dto.request.ModifyStoreRequest;
 import com.conseller.conseller.core.store.api.dto.request.RegistStoreRequest;
 import com.conseller.conseller.core.store.api.dto.request.StoreListRequest;
-import com.conseller.conseller.store.api.dto.response.*;
 import com.conseller.conseller.core.store.domain.enums.StoreStatus;
 import com.conseller.conseller.core.store.infrastructure.StoreRepository;
 import com.conseller.conseller.core.store.infrastructure.StoreRepositoryImpl;
@@ -209,7 +208,7 @@ public class StoreServiceImpl implements StoreService {
         int[] mainCategoryCount = new int[6];
 
         for(StoreEntity storeEntity : storeEntities) {
-            int idx = storeEntity.getGifticonEntity().getMainCategoryEntity().getMainCategoryIdx();
+            int idx = (int) storeEntity.getGifticonEntity().getMainCategoryEntity().getMainCategoryIdx();
             mainCategoryCount[idx]++;
         }
 
@@ -241,7 +240,7 @@ public class StoreServiceImpl implements StoreService {
         int[] subCategoryCount = new int[14];
 
         for(StoreEntity storeEntity : storeEntities) {
-            int idx = storeEntity.getGifticonEntity().getSubCategoryEntity().getSubCategoryIdx();
+            int idx = (int) storeEntity.getGifticonEntity().getSubCategoryEntity().getSubCategoryIdx();
             subCategoryCount[idx]++;
         }
 
