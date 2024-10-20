@@ -1,5 +1,6 @@
 package com.conseller.conseller.core.notification.facade;
 
+import com.conseller.conseller.core.gifticon.domain.GifticonService;
 import com.conseller.conseller.core.notification.infrastructure.NotificationEntity;
 import com.conseller.conseller.global.exception.CustomException;
 

@@ -8,5 +8,5 @@ public final class ExpiringGifticonResponse {
     private final long userIdx;
     private final int expiryDay;
     private final String gifticonName;
-    private final int gifticonCnt;
+    private final long gifticonCnt;
 }
