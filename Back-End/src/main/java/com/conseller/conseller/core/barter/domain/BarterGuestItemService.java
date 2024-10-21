@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.barter.domain;
 
-import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 
 import java.util.List;
 

@@ -3,6 +3,9 @@ package com.conseller.conseller.core.barter.infrastructure;
 import com.conseller.conseller.core.barter.domain.BarterService;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.barter.domain.BarterRequestService;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
@@ -34,7 +37,7 @@ public class BarterScheduler {
             for(BarterRequestEntity bq : barterRequestEntityList) {
                 barterRequestService.rejectByTimeBarterRequest(bq.getBarterRequestIdx());
             }
-            for(BarterHostItem bhi : barterEntity.getBarterHostItemList()) {
+            for(BarterHostItemEntity bhi : barterEntity.getBarterHostItemEntityList()) {
                 GifticonEntity gifticonEntity = bhi.getGifticonEntity();
                 gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());
                 gifticonRepository.save(gifticonEntity);

@@ -1,8 +1,8 @@
 package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.barter.infrastructure.BarterGuestItemRepository;
-import com.conseller.conseller.core.barter.infrastructure.BarterGuestItem;
-import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterGuestItemEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
@@ -32,9 +32,9 @@ public class BarterGuestItemServiceImpl implements BarterGuestItemService{
         for(Long gifticonIdx : gifticonList) {
             GifticonEntity gifticonEntity = gifticonRepository.findById(gifticonIdx)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 기프티콘입니다."));
-            BarterGuestItem barterGuestItem = new BarterGuestItem(barterRequestEntity, gifticonEntity);
+            BarterGuestItemEntity barterGuestItemEntity = new BarterGuestItemEntity(barterRequestEntity, gifticonEntity);
             gifticonEntity.setGifticonStatus(GifticonStatus.BARTER.getStatus());
-            barterGuestItemRepository.save(barterGuestItem);
+            barterGuestItemRepository.save(barterGuestItemEntity);
         }
         return null;
     }

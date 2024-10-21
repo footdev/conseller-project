@@ -1,8 +1,8 @@
 package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.barter.infrastructure.BarterHostItemRepository;
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
-import com.conseller.conseller.core.barter.infrastructure.BarterHostItem;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
@@ -38,9 +38,9 @@ public class BarterHostItemServiceImpl implements BarterHostItemService{
                 recentExpireDate = gifticonEntity.getGifticonEndDate();
             }
 
-            BarterHostItem barterHostItem = new BarterHostItem(barterEntity, gifticonEntity);
+            BarterHostItemEntity barterHostItemEntity = new BarterHostItemEntity(barterEntity, gifticonEntity);
             gifticonEntity.setGifticonStatus(GifticonStatus.BARTER.getStatus());
-            barterHostItemRepository.save(barterHostItem);
+            barterHostItemRepository.save(barterHostItemEntity);
         }
 
         return recentExpireDate;

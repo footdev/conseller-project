@@ -7,7 +7,7 @@ import com.conseller.conseller.core.barter.api.dto.request.BarterModifyRequestDt
 import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponseDTO;
 import com.conseller.conseller.core.barter.api.dto.response.BarterItemData;
 import com.conseller.conseller.core.barter.api.dto.response.BarterResponse;
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 
 
 import java.util.List;

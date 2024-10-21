@@ -1,9 +1,10 @@
-package com.conseller.conseller.core.barter.infrastructure;
+package com.conseller.conseller.core.barter.infrastructure.entity;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterHostItemDto;
 import com.conseller.conseller.core.barter.api.dto.request.BarterModifyRequestDto;
 import com.conseller.conseller.core.barter.api.dto.response.BarterItemData;
 import com.conseller.conseller.core.barter.api.dto.response.BarterResponseDTO;
+import com.conseller.conseller.core.barter.domain.Barter;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponseDto;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
@@ -19,17 +20,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
 import static java.time.LocalDateTime.now;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "barterIdx")
 public class BarterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long barterIdx;
+    private long barterIdx;
 
     @Column(name = "barter_name", nullable = false)
     private String barterName;
@@ -68,69 +70,37 @@ public class BarterEntity {
     @JoinColumn(name = "prefer_sub_catergory_idx")
     private SubCategoryEntity preferSubCategoryEntity;
 
-    @OneToMany(mappedBy = "barter")
-    List<BarterRequestEntity> barterRequestEntityList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "barter")
-    List<BarterHostItem> barterHostItemList = new ArrayList<>();
-
-    @Builder
-    public BarterEntity(String barterName, String barterText, LocalDateTime barterEndDate, UserEntity barterHost, SubCategoryEntity subCategoryEntity, SubCategoryEntity preferSubCategoryEntity) {
-        this.barterName = barterName;
-        this.barterText = barterText;
-        this.barterCreatedDate = now();
-        this.barterEndDate = barterEndDate;
-        this.barterHost = barterHost;
-        this.subCategoryEntity = subCategoryEntity;
-        this.preferSubCategoryEntity = preferSubCategoryEntity;
+    public Barter toDomain() {
+        return Barter.builder()
+                .barterIdx(barterIdx)
+                .barterName(barterName)
+                .barterText(barterText)
+                .barterCreatedDate(barterCreatedDate)
+                .barterEndDate(barterEndDate)
+                .barterModifiedDate(barterModifiedDate)
+                .barterCompletedDate(barterCompletedDate)
+                .barterStatus(barterStatus)
+                .barterHost(barterHost)
+                .barterCompleteGuest(barterCompleteGuest)
+                .subCategoryEntity(subCategoryEntity)
+                .preferSubCategoryEntity(preferSubCategoryEntity)
+                .build();
     }
 
-    public BarterResponseDTO toBarterResponseDto(BarterEntity barterEntity){
-        List<BarterHostItemDto> barterHostItemDtoList= new ArrayList<>();
-        for(BarterHostItem bhi : barterEntity.getBarterHostItemList()) {
-            BarterHostItemDto bhiDto = bhi.toBarterHostItemDto(bhi);
-            barterHostItemDtoList.add(bhiDto);
-        }
-
-        List<BarterRequestResponseDto> barterRequestResponseDtoList = new ArrayList<>();
-        for(BarterRequestEntity bri : barterEntity.getBarterRequestEntityList()) {
-            BarterRequestResponseDto briDto = bri.toBarterRequestResponseDto(bri);
-            barterRequestResponseDtoList.add(briDto);
-        }
-
-        UserEntity host = barterEntity.getBarterHost();
-        UserEntity guest = barterEntity.getBarterCompleteGuest();
-
-        UserInfoResponse hostUserInfoResponse = UserInfoResponse.builder()
-                .userId(host.getUserId())
-                .userEmail(host.getUserEmail())
-                .userNickname(host.getUserNickname())
-                .userProfileUrl(host.getUserProfileUrl())
-                .build();
-
-        UserInfoResponse guestUserInfoResponse = null;
-
-        if(barterEntity.getBarterCompleteGuest() != null) {
-            guestUserInfoResponse = UserInfoResponse.builder()
-                    .userId(guest.getUserId())
-                    .userEmail(guest.getUserEmail())
-                    .userNickname(guest.getUserNickname())
-                    .userProfileUrl(guest.getUserProfileUrl())
-                    .build();
-        }
-
-        return BarterResponseDTO.builder()
-                .barterIdx(barterEntity.getBarterIdx())
-                .barterName(barterEntity.getBarterName())
-                .barterText(barterEntity.getBarterText())
-                .barterCreatedDate(convertString(barterEntity.getBarterCreatedDate()))
-                .barterEndDate(convertString(barterEntity.getBarterEndDate()))
-                .subCategory(barterEntity.getSubCategoryEntity().getSubCategoryContent())
-                .preferSubCategory(barterEntity.getPreferSubCategoryEntity().getSubCategoryContent())
-                .barterHost(hostUserInfoResponse)
-                .barterCompleteGuest(guestUserInfoResponse)
-                .barterRequestResponseDtoList(barterRequestResponseDtoList)
-                .barterHostItemDtoList(barterHostItemDtoList)
+    public static BarterEntity of(Barter barter) {
+        return BarterEntity.builder()
+                .barterIdx(barter.getBarterIdx())
+                .barterName(barter.getBarterName())
+                .barterText(barter.getBarterText())
+                .barterCreatedDate(barter.getBarterCreatedDate())
+                .barterEndDate(barter.getBarterEndDate())
+                .barterModifiedDate(barter.getBarterModifiedDate())
+                .barterCompletedDate(barter.getBarterCompletedDate())
+                .barterStatus(barter.getBarterStatus())
+                .barterHost(barter.getBarterHost())
+                .barterCompleteGuest(barter.getBarterCompleteGuest())
+                .subCategoryEntity(barter.getSubCategoryEntity())
+                .preferSubCategoryEntity(barter.getPreferSubCategoryEntity())
                 .build();
     }
 

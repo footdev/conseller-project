@@ -1,5 +1,6 @@
 package com.conseller.conseller.core.barter.infrastructure;
 
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

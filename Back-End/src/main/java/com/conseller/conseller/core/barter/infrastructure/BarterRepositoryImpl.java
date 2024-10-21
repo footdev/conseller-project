@@ -2,6 +2,7 @@ package com.conseller.conseller.core.barter.infrastructure;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterFilterDto;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;

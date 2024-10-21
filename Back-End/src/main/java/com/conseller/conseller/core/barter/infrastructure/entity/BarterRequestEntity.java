@@ -1,7 +1,8 @@
-package com.conseller.conseller.core.barter.infrastructure;
+package com.conseller.conseller.core.barter.infrastructure.entity;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemDto;
 import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponseDto;
+import com.conseller.conseller.core.barter.domain.BarterRequest;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
@@ -14,13 +15,13 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "barterRequestIdx")
 public class BarterRequestEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long barterRequestIdx;
+    private long barterRequestIdx;
 
     @Column(name = "barter_request_status")
     private String barterRequestStatus = RequestStatus.WAIT.getStatus();
@@ -34,19 +35,30 @@ public class BarterRequestEntity {
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "barterRequest")
-    List<BarterGuestItem> barterGuestItemList = new ArrayList<>();
+    List<BarterGuestItemEntity> barterGuestItemEntityList = new ArrayList<>();
 
-    @Builder
-    public BarterRequestEntity(BarterEntity barterEntity, UserEntity userEntity){
-        this.barterRequestStatus = RequestStatus.WAIT.getStatus();
-        this.barterEntity = barterEntity;
-        this.userEntity = userEntity;
+    public BarterRequest toDomain() {
+        return BarterRequest.builder()
+                .barterRequestIdx(barterRequestIdx)
+                .barterRequestStatus(barterRequestStatus)
+                .barter(barterEntity.toDomain())
+                .user(userEntity.toDomain())
+                .build();
     }
 
     public static BarterRequestEntity of(BarterEntity barterEntity, UserEntity userEntity) {
         return BarterRequestEntity.builder()
                 .barterEntity(barterEntity)
                 .userEntity(userEntity)
+                .build();
+    }
+
+    public static BarterRequestEntity of(BarterRequest barterRequest) {
+        return BarterRequestEntity.builder()
+                .barterRequestIdx(barterRequest.getBarterRequestIdx())
+                .barterRequestStatus(barterRequest.getBarterRequestStatus())
+                .barterEntity(BarterEntity.of(barterRequest.getBarter()))
+                .userEntity(UserEntity.of(barterRequest.getUser()))
                 .build();
     }
 
@@ -63,8 +75,8 @@ public class BarterRequestEntity {
                 .build();
 
         List<BarterGuestItemDto> barterGuestItemDtoList  = new ArrayList<>();
-        List<BarterGuestItem> barterGuestItemList = barterRequestEntity.getBarterGuestItemList();
-        for(BarterGuestItem bgi : barterGuestItemList) {
+        List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntityList();
+        for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
             BarterGuestItemDto barterGuestItemDto = bgi.toBarterGuestItemDto(bgi);
             barterGuestItemDtoList.add(barterGuestItemDto);
         }
