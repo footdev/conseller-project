@@ -2,9 +2,6 @@ package com.conseller.conseller.core.barter.api.dto.request;
 
 
 
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
-import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -3,8 +3,9 @@ package com.conseller.conseller.core.barter.api.dto.mapper;
 import com.conseller.conseller.core.barter.api.dto.request.BarterCreateDto;
 import com.conseller.conseller.core.barter.api.dto.response.BarterItemData;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponseDto;
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
-import com.conseller.conseller.core.barter.infrastructure.BarterHostItem;
+import com.conseller.conseller.core.barter.infrastructure.BarterHostItemRepository;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
@@ -12,11 +13,15 @@ import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
 
 @Mapper(componentModel = "spring")
 public interface BarterMapper {
@@ -31,11 +36,11 @@ public interface BarterMapper {
     BarterEntity registBarterCreateToBarter(BarterCreateDto barterCreateDto, UserEntity userEntity, LocalDateTime endDate, SubCategoryEntity subCategoryEntity, SubCategoryEntity preferCategory);
 
 
-    default BarterItemData toBarterItemData(BarterEntity barterEntity) {
-        List<BarterHostItem> barterHostItemList = barterEntity.getBarterHostItemList();
+    default BarterItemData toBarterItemData(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItems) {
+        List<BarterHostItemEntity> barterHostItemEntityList = barterHostItems;
         List<GifticonEntity> gifticonEntityList = new ArrayList<>();
         GifticonEntity gifticonEntity = null;
-        for(BarterHostItem gift : barterHostItemList) {
+        for(BarterHostItemEntity gift : barterHostItemEntityList) {
             if(gift.getGifticonEntity().getSubCategoryEntity() == barterEntity.getSubCategoryEntity()) {
                 gifticonEntity = gift.getGifticonEntity();
                 break;
@@ -66,7 +71,7 @@ public interface BarterMapper {
     }
 
     //Barter -> MyBarterResponseDto 매핑
-    default MyBarterResponseDto toMybarterResponseDto(BarterEntity barterEntity) {
+    default MyBarterResponseDto toMybarterResponseDto(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItems) {
         MyBarterResponseDto.MyBarterResponseDtoBuilder barterResponseDto = MyBarterResponseDto.builder()
                 .barterIdx(barterEntity.getBarterIdx())
                 .barterName(barterEntity.getBarterName())
@@ -77,7 +82,7 @@ public interface BarterMapper {
                 .barterHostIdx(barterEntity.getBarterHost().getUserIdx())
                 .subCategory(String.valueOf(barterEntity.getSubCategoryEntity().getSubCategoryIdx()));
 
-        List<GifticonResponse> gifticonResponses = barterEntity.getBarterHostItemList().stream()
+        List<GifticonResponse> gifticonResponses = barterHostItems.stream()
                 .map(item -> item.getGifticonEntity().toResponseDto())
                 .collect(Collectors.toList());
 

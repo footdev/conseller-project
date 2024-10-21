@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.barter.api.dto.request;
 
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.Builder;
