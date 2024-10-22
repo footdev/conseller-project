@@ -35,7 +35,7 @@ public class BarterRequestEntity {
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "barterRequest")
-    List<BarterGuestItemEntity> barterGuestItemEntityList = new ArrayList<>();
+    List<BarterGuestItemEntity> barterGuestItemEntites = new ArrayList<>();
 
     public BarterRequest toDomain() {
         return BarterRequest.builder()
@@ -75,7 +75,7 @@ public class BarterRequestEntity {
                 .build();
 
         List<BarterGuestItemDto> barterGuestItemDtoList  = new ArrayList<>();
-        List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntityList();
+        List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntites();
         for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
             BarterGuestItemDto barterGuestItemDto = bgi.toBarterGuestItemDto(bgi);
             barterGuestItemDtoList.add(barterGuestItemDto);

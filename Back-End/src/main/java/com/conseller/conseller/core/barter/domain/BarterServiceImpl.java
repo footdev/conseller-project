@@ -190,7 +190,7 @@ public class BarterServiceImpl implements BarterService{
         for(BarterRequestEntity br : barterRequestEntityList) {
             if(br.getBarterRequestStatus().equals(RequestStatus.REJECTED.getStatus())) continue;
 
-            List<BarterGuestItemEntity> barterGuestItemEntityList = br.getBarterGuestItemEntityList();
+            List<BarterGuestItemEntity> barterGuestItemEntityList = br.getBarterGuestItemEntites();
 
             for(BarterGuestItemEntity bg : barterGuestItemEntityList) {
                 GifticonEntity gifticonEntity = gifticonRepository.findById(bg.getGifticonEntity().getGifticonIdx())
@@ -244,7 +244,7 @@ public class BarterServiceImpl implements BarterService{
                 throw new RuntimeException("거절된 요청 에러입니다.");
             }
 
-            List<BarterGuestItemEntity> barterGuestItemEntityList = br.getBarterGuestItemEntityList();
+            List<BarterGuestItemEntity> barterGuestItemEntityList = br.getBarterGuestItemEntites();
             br.setBarterRequestStatus(RequestStatus.REJECTED.getStatus());
             barterRequestRepository.save(br);
 
@@ -265,7 +265,7 @@ public class BarterServiceImpl implements BarterService{
             gift.setGifticonStatus(GifticonStatus.KEEP.getStatus());
             gifticonRepository.save(gift);
         }
-        for(BarterGuestItemEntity guestItem : barterRequestEntity.getBarterGuestItemEntityList()){
+        for(BarterGuestItemEntity guestItem : barterRequestEntity.getBarterGuestItemEntites()){
             GifticonEntity gift = guestItem.getGifticonEntity();
             gift.setGifticonStatus(GifticonStatus.KEEP.getStatus());
             gift.setUserEntity(barterHost);
@@ -299,7 +299,7 @@ public class BarterServiceImpl implements BarterService{
         barterRequestEntity.setBarterRequestStatus(RequestStatus.REJECTED.getStatus());
         barterRequestRepository.save(barterRequestEntity);
 
-        List<BarterGuestItemEntity> gifticonList = barterRequestEntity.getBarterGuestItemEntityList();
+        List<BarterGuestItemEntity> gifticonList = barterRequestEntity.getBarterGuestItemEntites();
         for(BarterGuestItemEntity bgi : gifticonList) {
             GifticonEntity gifticonEntity = bgi.getGifticonEntity();
             gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());
@@ -329,7 +329,7 @@ public class BarterServiceImpl implements BarterService{
         List<BarterRequestEntity> barterRequestEntityList = barterEntity.getBarterRequestEntityList();
         List<BarterConfirmListOfList> barterConfirmListOfLists = new ArrayList<>();
         for(BarterRequestEntity bq : barterRequestEntityList) {
-            List<BarterGuestItemEntity> barterGuestItemEntityList = bq.getBarterGuestItemEntityList();
+            List<BarterGuestItemEntity> barterGuestItemEntityList = bq.getBarterGuestItemEntites();
             List<BarterConfirmList> barterConfirmLists = new ArrayList<>();
             for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
                 BarterConfirmList barterConfirmList = BarterConfirmList.builder()

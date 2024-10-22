@@ -21,7 +21,7 @@ public class MyBarterRequestResponseDto {
 
     private String barterStatus;
 
-    private MyBarterResponseDto myBarterResponseDto;
+    private MyBarterResponse myBarterResponse;
 
     private List<GifticonResponse> barterGuestItems;
 

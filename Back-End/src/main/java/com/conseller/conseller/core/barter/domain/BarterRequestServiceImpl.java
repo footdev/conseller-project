@@ -122,7 +122,7 @@ public class BarterRequestServiceImpl implements BarterRequestService{
     public void deleteBarterRequest(Long barterRequestIdx) {
         BarterRequestEntity barterRequestEntity = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_REQUEST_INVALID));
-        List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntityList();
+        List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntites();
 
         List<BarterGuestItemDto> barterGuestItemDtoList = new ArrayList<>();
         for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
@@ -141,7 +141,7 @@ public class BarterRequestServiceImpl implements BarterRequestService{
     public void rejectByTimeBarterRequest(Long barterRequestIdx) {
         BarterRequestEntity barterRequestEntity = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
-        List<BarterGuestItemEntity> barterGuestItemEntityList =  barterRequestEntity.getBarterGuestItemEntityList();
+        List<BarterGuestItemEntity> barterGuestItemEntityList =  barterRequestEntity.getBarterGuestItemEntites();
         for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
             GifticonEntity gifticonEntity = bgi.getGifticonEntity();
             gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());

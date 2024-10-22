@@ -2,8 +2,7 @@ package com.conseller.conseller.core.barter.api.dto.mapper;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterCreateDto;
 import com.conseller.conseller.core.barter.api.dto.response.BarterItemData;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponseDto;
-import com.conseller.conseller.core.barter.infrastructure.BarterHostItemRepository;
+import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
@@ -13,8 +12,6 @@ import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -71,8 +68,8 @@ public interface BarterMapper {
     }
 
     //Barter -> MyBarterResponseDto 매핑
-    default MyBarterResponseDto toMybarterResponseDto(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItems) {
-        MyBarterResponseDto.MyBarterResponseDtoBuilder barterResponseDto = MyBarterResponseDto.builder()
+    default MyBarterResponse toMybarterResponseDto(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItems) {
+        MyBarterResponse.MyBarterResponseBuilder barterResponse = MyBarterResponse.builder()
                 .barterIdx(barterEntity.getBarterIdx())
                 .barterName(barterEntity.getBarterName())
                 .barterText(barterEntity.getBarterText())
@@ -86,13 +83,13 @@ public interface BarterMapper {
                 .map(item -> item.getGifticonEntity().toResponseDto())
                 .collect(Collectors.toList());
 
-        barterResponseDto.barterHostItems(gifticonResponses);
+        barterResponse.barterHostItems(gifticonResponses);
 
         if (barterEntity.getBarterCompleteGuest() != null) {
-            barterResponseDto.barterCompleteGuestIdx(barterEntity.getBarterCompleteGuest().getUserIdx());
+            barterResponse.barterCompleteGuestIdx(barterEntity.getBarterCompleteGuest().getUserIdx());
         }
 
-        return barterResponseDto.build();
+        return barterResponse.build();
     }
 }
 
