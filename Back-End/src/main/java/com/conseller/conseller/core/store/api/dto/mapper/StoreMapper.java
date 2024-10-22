@@ -76,9 +76,9 @@ public interface StoreMapper {
         response.setGiftconName(storeEntity.getGifticonEntity().getGifticonName());
         response.setStorePrice(storeEntity.getStorePrice());
         response.setPostContent(storeEntity.getStoreText());
-        response.setBuyUserImageUrl(storeEntity.getConsumer().getUserProfileUrl());
-        response.setBuyUserNickname(storeEntity.getConsumer().getUserNickname());
-        response.setBuyUserName(storeEntity.getConsumer().getUsername());
+        response.setBuyUserImageUrl(storeEntity.getConsumerEntity().getUserProfileUrl());
+        response.setBuyUserNickname(storeEntity.getConsumerEntity().getUserNickname());
+        response.setBuyUserName(storeEntity.getConsumerEntity().getUsername());
         response.setBuyUserIdx(storeEntity.getUserEntity().getUserIdx());
 
         return response;

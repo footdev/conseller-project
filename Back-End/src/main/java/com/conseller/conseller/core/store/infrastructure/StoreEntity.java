@@ -1,6 +1,7 @@
 package com.conseller.conseller.core.store.infrastructure;
 
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
+import com.conseller.conseller.core.store.domain.Store;
 import com.conseller.conseller.core.store.domain.enums.StoreStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
@@ -52,6 +53,20 @@ public class StoreEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_consumer_idx")
-    private UserEntity consumer;
+    private UserEntity consumerEntity;
 
+    public Store toDomain() {
+        return Store.builder()
+                .storeIdx(storeIdx)
+                .storePrice(storePrice)
+                .storeCreatedDate(storeCreatedDate)
+                .storeEndDate(storeEndDate)
+                .notificationCreatedDate(notificationCreatedDate)
+                .storeText(storeText)
+                .storeStatus(storeStatus)
+                .gifticon(gifticonEntity.toDomain())
+                .user(userEntity.toDomain())
+                .consumer(consumerEntity.toDomain())
+                .build();
+    }
 }
