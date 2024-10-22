@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Component
 @Log4j2
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class NotificationFacade {
 

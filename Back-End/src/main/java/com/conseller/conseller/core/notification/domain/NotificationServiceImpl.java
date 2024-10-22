@@ -2,10 +2,10 @@ package com.conseller.conseller.core.notification.domain;
 
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.BarterRepository;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
-import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.barter.infrastructure.BarterRequestRepository;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
 import com.conseller.conseller.global.exception.CustomException;

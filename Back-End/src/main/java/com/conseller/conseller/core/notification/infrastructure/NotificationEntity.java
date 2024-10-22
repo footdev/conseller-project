@@ -1,5 +1,6 @@
 package com.conseller.conseller.core.notification.infrastructure;
 
+import com.conseller.conseller.core.notification.domain.Notification;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -39,6 +40,30 @@ public class NotificationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private UserEntity notificationUserEntity;
+
+    public Notification toDomain() {
+        return Notification.builder()
+                .notificationIdx(notificationIdx)
+                .notificationTitle(notificationTitle)
+                .notificationContent(notificationContent)
+                .notificationCreatedDate(notificationCreatedDate)
+                .notificationType(notificationType)
+                .notificationSeller(notificationSeller)
+                .notificationUserEntity(notificationUserEntity)
+                .build();
+    }
+
+    public static NotificationEntity of(Notification notification) {
+        return NotificationEntity.builder()
+                .notificationIdx(notification.getNotificationIdx())
+                .notificationTitle(notification.getNotificationTitle())
+                .notificationContent(notification.getNotificationContent())
+                .notificationCreatedDate(notification.getNotificationCreatedDate())
+                .notificationType(notification.getNotificationType())
+                .notificationSeller(notification.isNotificationSeller())
+                .notificationUserEntity(notification.getNotificationUserEntity())
+                .build();
+    }
 
     public static NotificationEntity from(String title, String contents, int type, boolean seller, UserEntity userEntity) {
         return NotificationEntity.builder()
