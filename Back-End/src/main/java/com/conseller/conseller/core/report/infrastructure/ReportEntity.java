@@ -1,6 +1,8 @@
 package com.conseller.conseller.core.report.infrastructure;
 
+import com.conseller.conseller.core.report.domain.Report;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 @EqualsAndHashCode(of = "reportIdx")
 public class ReportEntity {
     @Id
@@ -43,4 +46,25 @@ public class ReportEntity {
     @JoinColumn(name = "reported_idx")
     private UserEntity reported;
 
+    public Report toDomain() {
+        return Report.builder()
+                .reportIdx(reportIdx)
+                .reportCreatedDate(reportCreatedDate)
+                .reportCompletedDate(reportCompletedDate)
+                .reportText(reportText)
+                .reporter(reporter.toDomain())
+                .reported(reported.toDomain())
+                .build();
+    }
+
+    public static  ReportEntity of(Report report) {
+        return ReportEntity.builder()
+                .reportIdx(report.getReportIdx())
+                .reportCreatedDate(report.getReportCreatedDate())
+                .reportCompletedDate(report.getReportCompletedDate())
+                .reportText(report.getReportText())
+                .reporter(UserEntity.of(report.getReporter()))
+                .reported(UserEntity.of(report.getReported()))
+                .build();
+    }
 }
