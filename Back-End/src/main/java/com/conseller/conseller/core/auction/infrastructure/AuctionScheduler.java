@@ -2,7 +2,7 @@ package com.conseller.conseller.core.auction.infrastructure;
 
 import com.conseller.conseller.core.auction.domain.AuctionService;
 import com.conseller.conseller.core.bid.domain.AuctionBidService;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -36,8 +36,8 @@ public class AuctionScheduler {
         List<AuctionEntity> auctionEntities = auctionService.getAuctionExpiredList();
 
         for(AuctionEntity auctionEntity : auctionEntities) {
-            List<AuctionBid> bids = auctionEntity.getAuctionBidList();
-            for(AuctionBid bid : bids) {
+            List<AuctionBidEntity> bids = auctionEntity.getAuctionBidEntityList();
+            for(AuctionBidEntity bid : bids) {
                 auctionBidService.rejectAuctionBid(bid.getAuctionBidIdx());
             }
             auctionService.rejectAuction(auctionEntity.getAuctionIdx());

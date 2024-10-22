@@ -12,7 +12,7 @@ import com.conseller.conseller.core.auction.infrastructure.AuctionRepositoryImpl
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidRepository;
 import com.conseller.conseller.core.bid.api.dto.mapper.AuctionBidMapper;
 import com.conseller.conseller.core.bid.domain.enums.BidStatus;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.exception.CustomException;
@@ -78,7 +78,7 @@ public class AuctionServiceImpl implements AuctionService{
         AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        List<AuctionBidItemData> auctionBidItemDataList = AuctionMapper.INSTANCE.bidsToItemDatas(auctionEntity.getAuctionBidList());
+        List<AuctionBidItemData> auctionBidItemDataList = AuctionMapper.INSTANCE.bidsToItemDatas(auctionEntity.getAuctionBidEntityList());
 
         return AuctionMapper.INSTANCE.entityToDetailAuctionResponse(auctionEntity, auctionBidItemDataList);
     }
@@ -134,17 +134,17 @@ public class AuctionServiceImpl implements AuctionService{
 //                }
 
                 if (isExist) {
-                    AuctionBid auctionBid = auctionBidRepository.findById(bidIdx)
+                    AuctionBidEntity auctionBidEntity = auctionBidRepository.findById(bidIdx)
                             .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_BID_INVALID));
 
                     // 입찰 정보 수정
-                    auctionBid.setAuctionBidPrice(auctionEntity.getUpperPrice());
-                    auctionBid.setAuctionEntity(auctionEntity);
+                    auctionBidEntity.setAuctionBidPrice(auctionEntity.getUpperPrice());
+                    auctionBidEntity.setAuctionEntity(auctionEntity);
                 } else { // 없으면
-                    AuctionBid auctionBid = AuctionBidMapper.INSTANCE.registImToAuctionBid(userEntity, auctionEntity, auctionEntity.getUpperPrice());
+                    AuctionBidEntity auctionBidEntity = AuctionBidMapper.INSTANCE.registImToAuctionBid(userEntity, auctionEntity, auctionEntity.getUpperPrice());
 
                     // 새로 등록
-                    auctionBidRepository.save(auctionBid);
+                    auctionBidRepository.save(auctionBidEntity);
                 }
             }
 
@@ -179,7 +179,7 @@ public class AuctionServiceImpl implements AuctionService{
 
         //가장 높은 입찰 삭제
         // 입찰 목록을 입찰 금액에 내림차순으로 정렬해서 가져옴-
-        List<AuctionBid> auctionBidList = auctionBidRepository
+        List<AuctionBidEntity> auctionBidEntityList = auctionBidRepository
                 .findByAuctionIdxOrderByAuctionBidPriceDesc(auctionEntity.getAuctionIdx());
 
         //입잘자가 혼자라면 초기화
@@ -191,7 +191,7 @@ public class AuctionServiceImpl implements AuctionService{
 //            auction.setHighestBidUser(auctionBidList.get(1).getUser());
 //        }
 
-        auctionBidRepository.deleteByUser_UserIdxAndAuction_AuctionIdx(auctionBidList.get(0).getUserEntity().getUserIdx(), auctionIdx);
+        auctionBidRepository.deleteByUser_UserIdxAndAuction_AuctionIdx(auctionBidEntityList.get(0).getUserEntity().getUserIdx(), auctionIdx);
         log.info("거래 취소 완료");
     }
 
@@ -207,7 +207,7 @@ public class AuctionServiceImpl implements AuctionService{
 
         auctionEntity.setAuctionStatus(AuctionStatus.AWARDED.getStatus());
 
-        for(AuctionBid bid : auctionEntity.getAuctionBidList()) {
+        for(AuctionBidEntity bid : auctionEntity.getAuctionBidEntityList()) {
             if(bid.getUserEntity().getUserIdx().equals(userEntity.getUserIdx())){
                 bid.setAuctionBidStatus(BidStatus.AWARDED.getStatus());
             }

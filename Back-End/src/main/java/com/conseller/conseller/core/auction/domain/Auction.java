@@ -2,9 +2,8 @@ package com.conseller.conseller.core.auction.domain;
 
 
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
-import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,8 +27,8 @@ public class Auction {
     private LocalDateTime notificationCreatedDate;
     private Gifticon gifticon;
     private User user;
-    private AuctionBid highestBid;
-    private List<AuctionBid> auctionBidList;
+    private AuctionBidEntity highestBid;
+    private List<AuctionBidEntity> auctionBidEntityList;
 
     public static Auction of(AuctionEntity auctionEntity) {
         return Auction.builder()
@@ -43,9 +42,9 @@ public class Auction {
                 .auctionCompletedDate(auctionEntity.getAuctionCompletedDate())
                 .notificationCreatedDate(auctionEntity.getNotificationCreatedDate())
                 .gifticon(auctionEntity.getGifticonEntity().toDomain())
-                .user(User.of(auctionEntity.getUserEntity()))
+                .user(auctionEntity.getUserEntity().toDomain())
                 .highestBid(auctionEntity.getHighestBid())
-                .auctionBidList(auctionEntity.getAuctionBidList())
+                .auctionBidEntityList(auctionEntity.getAuctionBidEntityList())
                 .build();
     }
 }

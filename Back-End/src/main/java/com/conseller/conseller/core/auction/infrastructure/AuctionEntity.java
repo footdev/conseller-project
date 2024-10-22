@@ -1,7 +1,8 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
+import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
@@ -57,9 +58,27 @@ public class AuctionEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_bid_idx")
-    private AuctionBid highestBid;
+    private AuctionBidEntity highestBid;
 
     @OneToMany(mappedBy = "auction")
-    private List<AuctionBid> auctionBidList;
+    private List<AuctionBidEntity> auctionBidEntityList;
+
+    public Auction toDomain() {
+        return Auction.builder()
+                .auctionIdx(auctionIdx)
+                .auctionText(auctionText)
+                .lowerPrice(lowerPrice)
+                .upperPrice(upperPrice)
+                .auctionStatus(auctionStatus)
+                .auctionStartDate(auctionStartDate)
+                .auctionEndDate(auctionEndDate)
+                .auctionCompletedDate(auctionCompletedDate)
+                .notificationCreatedDate(notificationCreatedDate)
+                .gifticon(gifticonEntity.toDomain())
+                .user(userEntity.toDomain())
+                .highestBid(highestBid)
+                .auctionBidEntityList(auctionBidEntityList)
+                .build();
+    }
 }
 
