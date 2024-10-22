@@ -2,7 +2,7 @@ package com.conseller.conseller.core.user.domain;
 
 import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
 import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponseDto;
+import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponseDto;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
@@ -76,7 +76,7 @@ public interface UserService {
     public List<AuctionBidResponse> getUserAuctionBids(long userIdx);
 
     //내 교환목록 불러오기
-    public List<MyBarterResponseDto> getUserBarters(long userIdx);
+    public List<MyBarterResponse> getUserBarters(long userIdx);
 
     //내 교환 요청목록 불러오기
     public List<MyBarterRequestResponseDto> getUserBarterRequests(long userIdx);

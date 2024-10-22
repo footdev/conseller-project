@@ -1,9 +1,9 @@
 package com.conseller.conseller.core.user.infrastructure;
 
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
-import com.conseller.conseller.core.barter.infrastructure.BarterEntity;
-import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
@@ -105,7 +105,7 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
 
     @Builder.Default
     @OneToMany(mappedBy = "user")
-    private List<AuctionBid> auctionBids = new ArrayList<>();
+    private List<AuctionBidEntity> auctionBidEntities = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "barterHost")
@@ -213,6 +213,7 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
         this.userAccountBank = userInfoRequest.getUserAccountBank();
     }
 
+    // TODO: 도메인 다 바꿔야함
     public User toDomain() {
         return User.builder()
                 .userIdx(this.userIdx)

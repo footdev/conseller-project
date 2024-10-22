@@ -2,7 +2,7 @@ package com.conseller.conseller.core.user.api;
 
 import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
 import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponseDto;
+import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponseDto;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
@@ -222,9 +222,9 @@ public class UserApi {
 
     //내 물물교환 보기
     @GetMapping("/{userIdx}/barter")
-    public ResponseEntity<Item<List<MyBarterResponseDto>>> getUserBarters(@PathVariable long userIdx) {
+    public ResponseEntity<Item<List<MyBarterResponse>>> getUserBarters(@PathVariable long userIdx) {
 
-        Item<List<MyBarterResponseDto>> response = new Item<>(userService.getUserBarters(userIdx));
+        Item<List<MyBarterResponse>> response = new Item<>(userService.getUserBarters(userIdx));
 
         return ResponseEntity.ok()
                 .body(response);

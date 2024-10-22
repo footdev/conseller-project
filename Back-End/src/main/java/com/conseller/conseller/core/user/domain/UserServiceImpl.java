@@ -2,13 +2,14 @@ package com.conseller.conseller.core.user.domain;
 
 import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
-import com.conseller.conseller.core.barter.infrastructure.BarterGuestItem;
-import com.conseller.conseller.core.barter.infrastructure.BarterRequestEntity;
+import com.conseller.conseller.core.barter.infrastructure.BarterHostItemRepository;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterGuestItemEntity;
+import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
 import com.conseller.conseller.core.barter.api.dto.mapper.BarterMapper;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponseDto;
+import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponseDto;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
 import com.conseller.conseller.global.entity.BlackListEntity;
@@ -58,6 +59,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final BlackListRepository blackListRepository;
+    private final BarterHostItemRepository barterHostItemRepository;
     private final UserValidator userValidator;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -215,7 +217,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
         List<AuctionBidResponse> auctionBidResponses = new ArrayList<>();
 
-        for (AuctionBid bid : userEntity.getAuctionBids()) {
+        for (AuctionBidEntity bid : userEntity.getAuctionBidEntities()) {
             AuctionBidResponse bidResponse = AuctionBidResponse.builder()
                     .auctionBidIdx(bid.getAuctionBidIdx())
                     .auctionBidPrice(bid.getAuctionBidPrice())
@@ -231,12 +233,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<MyBarterResponseDto> getUserBarters(long userIdx) {
+    public List<MyBarterResponse> getUserBarters(long userIdx) {
         UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         return userEntity.getBarterEntities().stream()
-                .map(BarterMapper.INSTANCE::toMybarterResponseDto)
+                .map(barterEntity -> BarterMapper.INSTANCE.toMybarterResponseDto(barterEntity, barterHostItemRepository.findByBarterIdx(barterEntity.getBarterIdx())))
                 .collect(Collectors.toList());
     }
 
@@ -252,7 +254,7 @@ public class UserServiceImpl implements UserService {
             List<GifticonResponse> barterGuestItems = new ArrayList<>();
 
             //물물 교환 요청 기프티콘들을 dto로 변환
-            for (BarterGuestItem item : barterRequestEntity.getBarterGuestItemList()) {
+            for (BarterGuestItemEntity item : barterRequestEntity.getBarterGuestItemEntites()) {
                 GifticonResponse gifticon = item.getGifticonEntity().toResponseDto();
                 barterGuestItems.add(gifticon);
             }
@@ -264,7 +266,7 @@ public class UserServiceImpl implements UserService {
                     .barterStatus(barterRequestEntity.getBarterEntity().getBarterStatus())
                     .barterRequestStatus(barterRequestEntity.getBarterRequestStatus())
                     .barterGuestItems(barterGuestItems)
-                    .myBarterResponseDto(BarterMapper.INSTANCE.toMybarterResponseDto(barterRequestEntity.getBarterEntity()))
+                    .myBarterResponse(BarterMapper.INSTANCE.toMybarterResponseDto(barterRequestEntity.getBarterEntity(), barterHostItemRepository.findByBarterIdx(barterRequestEntity.getBarterEntity().getBarterIdx())))
                     .build();
 
             myBarterRequests.add(myBarterRequest);
