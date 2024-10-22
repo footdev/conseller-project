@@ -156,10 +156,10 @@ public class NotificationServiceImpl implements NotificationService{
         String contents = null;
 
         if(index == 1) { // 구매자
-            if(storeEntity.getConsumer().getFcm() == null)
+            if(storeEntity.getConsumerEntity().getFcm() == null)
                 return;
 
-            userEntity = storeEntity.getConsumer();
+            userEntity = storeEntity.getConsumerEntity();
 
             contents = storeEntity.getUserEntity().getUserNickname() + " " + body;
         } else if( index == 2) { // 판매자
@@ -168,7 +168,7 @@ public class NotificationServiceImpl implements NotificationService{
 
             userEntity = storeEntity.getUserEntity();
 
-            contents = storeEntity.getConsumer().getUserNickname() + " " + body;
+            contents = storeEntity.getConsumerEntity().getUserNickname() + " " + body;
         } else {
             throw new CustomException(CustomExceptionStatus.INVALID_NOTI_TYPE);
         }
@@ -191,9 +191,9 @@ public class NotificationServiceImpl implements NotificationService{
             NotificationEntity notificationEntity;
 
             if(index == 1) {
-                notificationEntity = NotificationEntity.from(title, contents, type, false, storeEntity.getConsumer());
+                notificationEntity = NotificationEntity.from(title, contents, type, false, storeEntity.getConsumerEntity());
             }else {
-                notificationEntity = NotificationEntity.from(title, contents, type, true, storeEntity.getConsumer());
+                notificationEntity = NotificationEntity.from(title, contents, type, true, storeEntity.getConsumerEntity());
             }
 
             notificationRepository.save(notificationEntity);
