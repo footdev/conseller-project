@@ -2,7 +2,7 @@ package com.conseller.conseller.core.bid.api.dto.mapper;
 
 import com.conseller.conseller.core.bid.api.dto.request.AuctionBidRequest;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,9 +15,9 @@ public interface AuctionBidMapper {
     //User, Auction, requset -> AuctionBid Entity 매핑
     @Mapping(source = "user", target = "user")
     @Mapping(source = "auction", target = "auction")
-    AuctionBid registRequestToAuctionBid(UserEntity userEntity, AuctionEntity auctionEntity, AuctionBidRequest request);
+    AuctionBidEntity registRequestToAuctionBid(UserEntity userEntity, AuctionEntity auctionEntity, AuctionBidRequest request);
 
     @Mapping(source = "user", target = "user")
     @Mapping(source = "auction", target = "auction")
-    AuctionBid registImToAuctionBid(UserEntity userEntity, AuctionEntity auctionEntity, Integer auctionBidPrice);
+    AuctionBidEntity registImToAuctionBid(UserEntity userEntity, AuctionEntity auctionEntity, Integer auctionBidPrice);
 }

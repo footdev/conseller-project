@@ -4,7 +4,7 @@ import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
 import com.conseller.conseller.core.bid.api.dto.request.AuctionBidRequest;
 import com.conseller.conseller.core.bid.domain.enums.BidStatus;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidRepository;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBid;
+import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
@@ -104,9 +104,9 @@ public class AuctionBidServiceImpl implements AuctionBidService{
 
     @Override
     public void rejectAuctionBid(Long auctionBidIdx) {
-        AuctionBid auctionBid = auctionBidRepository.findById(auctionBidIdx)
+        AuctionBidEntity auctionBidEntity = auctionBidRepository.findById(auctionBidIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_BID_INVALID));
 
-        auctionBid.setAuctionBidStatus(BidStatus.FAILURE.getStatus());
+        auctionBidEntity.setAuctionBidStatus(BidStatus.FAILURE.getStatus());
     }
 }
