@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Builder
 @Getter @Setter
 @DynamicUpdate
 @RequiredArgsConstructor
@@ -58,7 +59,7 @@ public class AuctionEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_bid_idx")
-    private AuctionBidEntity highestBid;
+    private AuctionBidEntity highestBidEntity;
 
     @OneToMany(mappedBy = "auction")
     private List<AuctionBidEntity> auctionBidEntityList;
@@ -69,15 +70,33 @@ public class AuctionEntity {
                 .auctionText(auctionText)
                 .lowerPrice(lowerPrice)
                 .upperPrice(upperPrice)
-                .auctionStatus(auctionStatus)
+                .auctionStatus(AuctionStatus.valueOf(auctionStatus))
                 .auctionStartDate(auctionStartDate)
                 .auctionEndDate(auctionEndDate)
                 .auctionCompletedDate(auctionCompletedDate)
                 .notificationCreatedDate(notificationCreatedDate)
                 .gifticon(gifticonEntity.toDomain())
                 .user(userEntity.toDomain())
-                .highestBid(highestBid)
+                .highestBid(highestBidEntity.toDomain())
                 .auctionBidEntityList(auctionBidEntityList)
+                .build();
+    }
+
+    public static AuctionEntity of(Auction auction) {
+        return AuctionEntity.builder()
+                .auctionIdx(auction.getAuctionIdx())
+                .auctionText(auction.getAuctionText())
+                .lowerPrice(auction.getLowerPrice())
+                .upperPrice(auction.getUpperPrice())
+                .auctionStatus(auction.getAuctionStatus().getStatus())
+                .auctionStartDate(auction.getAuctionStartDate())
+                .auctionEndDate(auction.getAuctionEndDate())
+                .auctionCompletedDate(auction.getAuctionCompletedDate())
+                .notificationCreatedDate(auction.getNotificationCreatedDate())
+                .gifticonEntity(GifticonEntity.of(auction.getGifticon()))
+                .userEntity(UserEntity.of(auction.getUser()))
+                .highestBidEntity(AuctionBidEntity.of(auction.getHighestBid()))
+                .auctionBidEntityList(auction.getAuctionBidEntityList())
                 .build();
     }
 }

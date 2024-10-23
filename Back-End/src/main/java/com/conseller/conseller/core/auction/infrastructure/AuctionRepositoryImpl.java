@@ -114,9 +114,9 @@ public class AuctionRepositoryImpl {
                         .or(auction.gifticon.gifticonEndDate.gt(cursor.getGifticonEntity().getGifticonEndDate()));
 
             case HIGHEST_BID:
-                return auction.highestBid.eq(cursor.getHighestBid())
+                return auction.highestBid.eq(cursor.getHighestBidEntity())
                         .and(auction.auctionIdx.gt(cursor.getAuctionIdx()))
-                        .or(auction.highestBid.auctionBidPrice.gt(cursor.getHighestBid().getAuctionBidPrice()));
+                        .or(auction.highestBid.auctionBidPrice.gt(cursor.getHighestBidEntity().getAuctionBidPrice()));
 
             case UPPER_PRICE:
                 return auction.upperPrice.eq(cursor.getUpperPrice())

@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
-import com.conseller.conseller.core.auction.domain.AuctionService;
 import com.conseller.conseller.core.bid.domain.AuctionBidService;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.notification.domain.NotificationService;

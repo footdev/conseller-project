@@ -24,7 +24,7 @@ public interface AuctionMapper {
     // RegistAuctionRequest -> Auction 매핑
     @Mapping(source = "user", target = "user")
     @Mapping(source = "gifticon", target = "gifticon")
-    AuctionEntity registAuctionRequestToAuction(RegistAuctionRequest registAuctionRequest, UserEntity userEntity, GifticonEntity gifticonEntity);
+    AuctionEntity registAuctionRequestToAuctionEntity(RegistAuctionRequest registAuctionRequest, UserEntity userEntity, GifticonEntity gifticonEntity);
 
     //User, Auction, AuctionBidList -> DetailAuctionResponse 매핑
     default DetailAuctionResponse entityToDetailAuctionResponse(AuctionEntity auctionEntity, List<AuctionBidItemData> auctionBidList) {
@@ -37,7 +37,7 @@ public interface AuctionMapper {
         response.setAuctionUserNickname(auctionEntity.getUserEntity().getUserNickname());
         response.setDeposit(false);
         response.setAuctionEndDate(convertString(auctionEntity.getAuctionEndDate()));
-        response.setAuctionHighestBid(auctionEntity.getHighestBid().getAuctionBidPrice());
+        response.setAuctionHighestBid(auctionEntity.getHighestBidEntity().getAuctionBidPrice());
         response.setAuctionUserProfileUrl(auctionEntity.getUserEntity().getUserProfileUrl());
         response.setGifticonDataImageName(auctionEntity.getGifticonEntity().getGifticonDataImageUrl());
         response.setGifticonName(auctionEntity.getGifticonEntity().getGifticonName());

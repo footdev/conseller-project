@@ -10,7 +10,6 @@ import com.conseller.conseller.core.auction.domain.AuctionService;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,7 @@ public class AuctionApi {
     // 경매 목록
     @PostMapping("/{auctionId}")
     public ResponseEntity<AuctionListResponse> getAuctionList(@PathVariable long auctionId, @RequestBody AuctionListRequest request) {
-        AuctionListResponse response = auctionService.getAuctionList(auctionId, request);
+        AuctionListResponse response = auctionService.getAuctions(auctionId, request);
         return ResponseEntity.ok()
                 .body(response);
     }

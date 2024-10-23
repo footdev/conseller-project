@@ -1,7 +1,10 @@
 package com.conseller.conseller.core.auction.domain;
 
 
+import com.conseller.conseller.core.auction.api.dto.request.RegistAuctionRequest;
+import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
+import com.conseller.conseller.core.bid.implement.AuctionBid;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.user.domain.User;
@@ -20,31 +23,32 @@ public class Auction {
     private String auctionText;
     private Integer lowerPrice;
     private Integer upperPrice;
-    private String auctionStatus;
+    private AuctionStatus auctionStatus;
     private LocalDateTime auctionStartDate;
     private LocalDateTime auctionEndDate;
     private LocalDateTime auctionCompletedDate;
     private LocalDateTime notificationCreatedDate;
     private Gifticon gifticon;
     private User user;
-    private AuctionBidEntity highestBid;
+    private AuctionBid highestBid;
     private List<AuctionBidEntity> auctionBidEntityList;
 
-    public static Auction of(AuctionEntity auctionEntity) {
+    public static Auction of(RegistAuctionRequest registAuctionRequest, User user, Gifticon gifticon) {
         return Auction.builder()
-                .auctionIdx(auctionEntity.getAuctionIdx())
-                .auctionText(auctionEntity.getAuctionText())
-                .lowerPrice(auctionEntity.getLowerPrice())
-                .upperPrice(auctionEntity.getUpperPrice())
-                .auctionStatus(auctionEntity.getAuctionStatus())
-                .auctionStartDate(auctionEntity.getAuctionStartDate())
-                .auctionEndDate(auctionEntity.getAuctionEndDate())
-                .auctionCompletedDate(auctionEntity.getAuctionCompletedDate())
-                .notificationCreatedDate(auctionEntity.getNotificationCreatedDate())
-                .gifticon(auctionEntity.getGifticonEntity().toDomain())
-                .user(auctionEntity.getUserEntity().toDomain())
-                .highestBid(auctionEntity.getHighestBid())
-                .auctionBidEntityList(auctionEntity.getAuctionBidEntityList())
+                .auctionText(registAuctionRequest.getAuctionText())
+                .lowerPrice(registAuctionRequest.getLowerPrice())
+                .upperPrice(registAuctionRequest.getUpperPrice())
+                .auctionStatus(AuctionStatus.IN_PROGRESS)
+                .auctionStartDate(LocalDateTime.now())
+                .auctionEndDate(gifticon.getGifticonEndDate())
+                .notificationCreatedDate(LocalDateTime.now().plusDays(7))
+                .gifticon(gifticon)
+                .user(user)
+                .highestBid(null)
                 .build();
+    }
+
+    public void updateText(String text) {
+        this.auctionText = text;
     }
 }

@@ -1,45 +1,46 @@
 package com.conseller.conseller.core.auction.api.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.conseller.conseller.core.auction.domain.Auction;
+import com.conseller.conseller.core.bid.implement.AuctionBid;
+import lombok.*;
 
 import java.util.List;
 
-@Setter
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class DetailAuctionResponse {
     private String postContent;
-
-    private Long auctionUserIdx;
-
+    private long auctionUserIdx;
     private String auctionUserNickname;
-
     private String auctionUserProfileUrl;
-
-    private Long auctionUserDeposit;
-
-    private List<AuctionBidItemData> auctionBidList;
-
-    private Long auctionIdx;
-
+    private long auctionUserDeposit;
+    private long auctionIdx;
     private String gifticonDataImageName;
-
     private String gifticonName;
-
     private String gifticonEndDate;
-
     private String auctionEndDate;
+    private boolean deposit;
+    private int lowerPrice;
+    private int upperPrice;
+    private AuctionBid highestBid;
 
-    private Boolean deposit;
-
-    private Integer lowerPrice;
-
-    private Integer upperPrice;
-
-    private Integer auctionHighestBid;
-
+    public static DetailAuctionResponse of(Auction auction) {
+        return DetailAuctionResponse.builder()
+                .postContent(auction.getAuctionText())
+                .auctionUserIdx(auction.getUser().getUserIdx())
+                .auctionUserNickname(auction.getUser().getUserNickname())
+                .auctionUserProfileUrl(auction.getUser().getUserProfileUrl())
+                .auctionUserDeposit(auction.getUser().getUserDeposit())
+                .auctionIdx(auction.getAuctionIdx())
+                .gifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl())
+                .gifticonName(auction.getGifticon().getGifticonName())
+                .gifticonEndDate(auction.getGifticon().getGifticonEndDate().toString())
+                .auctionEndDate(auction.getAuctionEndDate().toString())
+                .deposit(false)
+                .lowerPrice(auction.getLowerPrice())
+                .upperPrice(auction.getUpperPrice())
+                .highestBid(auction.getHighestBid())
+                .build();
+    }
 }
