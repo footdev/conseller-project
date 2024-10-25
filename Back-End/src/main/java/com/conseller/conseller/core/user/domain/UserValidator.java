@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.user.domain;
 
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.user.infrastructure.User;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
@@ -44,28 +44,28 @@ public class UserValidator {
         return userRepository.existsByUserIdx(userIdx);
     }
 
-    public UserEntity validateLogin(LoginRequest request) {
+    public User validateLogin(LoginRequest request) {
         // 입력 id 정보가 유효한지 확인
-        UserEntity userEntity = userRepository.findByUserId(request.getUserId())
+        User user = userRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.WRONG_ID));
 
         // 입력한 password 정보가 유효한지 확인
-        if (!userEntity.checkPassword(new BCryptPasswordEncoder(), request.getUserPassword())) {
+        if (!user.checkPassword(new BCryptPasswordEncoder(), request.getUserPassword())) {
             throw new CustomException(CustomExceptionStatus.WRONG_PW);
         }
 
-        return userEntity;
+        return user;
     }
 
     //해당 유저가 서비스 이용이 가능한 유저인지 확인
-    public void validateUser(UserEntity userEntity) {
+    public void validateUser(User user) {
         // 입력한 유저가 사용 제한된 유저인지 확인
-        if (UserStatus.RESTRICTED.getStatus().equals(userEntity.getUserStatus())) {
+        if (UserStatus.RESTRICTED.getStatus().equals(user.getUserStatus())) {
             throw new CustomException(CustomExceptionStatus.RESTRICT);
         }
 
         // 입력한 유저가 탈퇴한 유저인지 확인
-        if (userEntity.getUserDeletedDate() != null) {
+        if (user.getUserDeletedDate() != null) {
             throw new CustomException(CustomExceptionStatus.RESTRICT);
         }
     }

@@ -5,7 +5,6 @@ import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
-import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
 import com.conseller.conseller.core.inquiry.infrastructure.InquiryEntity;
 import com.conseller.conseller.core.notification.infrastructure.NotificationEntity;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userIdx", callSuper = false)
 @Table(name = "\"USER\"")
-public class UserEntity extends BaseTimeEntity implements UserDetails {
+public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -214,8 +213,8 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
     }
 
     // TODO: 도메인 다 바꿔야함
-    public User toDomain() {
-        return User.builder()
+    public com.conseller.conseller.core.user.domain.User toDomain() {
+        return com.conseller.conseller.core.user.domain.User.builder()
                 .userIdx(this.userIdx)
                 .userId(this.userId)
                 .userPassword(this.userPassword)
@@ -239,8 +238,8 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
                 .build();
     }
 
-    public static UserEntity of(User user) {
-        return UserEntity.builder()
+    public static User of(com.conseller.conseller.core.user.domain.User user) {
+        return User.builder()
                 .userIdx(user.getUserIdx())
                 .userId(user.getUserId())
                 .userPassword(user.getUserPassword())

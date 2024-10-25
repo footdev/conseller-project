@@ -6,7 +6,7 @@ import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponseDto;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.user.infrastructure.User;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.core.store.api.dto.response.StoreItemData;
 import com.conseller.conseller.user.api.dto.request.*;
@@ -19,7 +19,7 @@ import java.util.List;
 public interface UserService {
 
     // 회원가입
-    public UserEntity register(SignUpRequest signUpRequest);
+    public User register(SignUpRequest signUpRequest);
 
     //닉네임 중복체크
     public InfoValidationRequest checkNickname(String nickname);

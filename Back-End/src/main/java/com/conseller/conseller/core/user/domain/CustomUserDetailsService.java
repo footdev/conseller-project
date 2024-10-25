@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.user.domain;
 
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.user.infrastructure.User;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
@@ -28,23 +28,23 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserWithoutPassword(String userId, String pattern) {
-        UserEntity userEntity = userRepository.findByUserId(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
         return (org.springframework.security.core.userdetails.User) org.springframework.security.core.userdetails.User.builder()
-                .username(userEntity.getUsername())
+                .username(user.getUsername())
                 .password(pattern)
-                .roles(userEntity.getRoles().toArray(new String[0]))
+                .roles(user.getRoles().toArray(new String[0]))
                 .build();
     }
 
     // 해당하는 User의 데이터가 존재한다면 UserDetails 객체로 만들어서 return
-    private UserDetails createUserDetailsByUserId(UserEntity userEntity) {
-        log.info("user Info in Method createUserDetails : " + userEntity.getUserId());
+    private UserDetails createUserDetailsByUserId(User user) {
+        log.info("user Info in Method createUserDetails : " + user.getUserId());
         org.springframework.security.core.userdetails.User userDetails = (org.springframework.security.core.userdetails.User) org.springframework.security.core.userdetails.User.builder()
-                .username(userEntity.getUsername())
-                .password(userEntity.getPassword())
-                .roles(userEntity.getRoles().toArray(new String[0]))
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRoles().toArray(new String[0]))
                 .build();
         log.info("userDetails password : " + userDetails.getPassword());
         return userDetails;

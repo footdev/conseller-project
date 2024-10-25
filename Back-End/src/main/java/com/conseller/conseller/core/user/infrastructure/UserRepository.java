@@ -6,16 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByUserId(String id);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUserId(String id);
 
-    Optional<UserEntity> findByUserName(String name);
+    Optional<User> findByUserName(String name);
 
-    Optional<UserEntity> findByUserIdx(Long userIdx);
+    Optional<User> findByUserIdx(Long userIdx);
 
-    Optional<UserEntity> findByUserEmailAndUserName(String userEmail, String userName);
+    Optional<User> findByUserEmailAndUserName(String userEmail, String userName);
 
-    Optional<UserEntity> findByUserEmailAndUserId(String userEmail, String userId);
+    Optional<User> findByUserEmailAndUserId(String userEmail, String userId);
 
     @Query("select u.refreshToken from User u where u.userId = :userId")
     Optional<String> findRefreshTokenByUserId(@Param("userId") String userId);
