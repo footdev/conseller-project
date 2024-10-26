@@ -8,10 +8,9 @@ import com.conseller.conseller.core.barter.domain.BarterService;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/barter")
 @RequiredArgsConstructor
 public class BarterApi {
@@ -19,21 +18,18 @@ public class BarterApi {
     private final BarterService barterService;
     private final NotificationService notificationService;
 
-    //구매자 입장
-    //1. 전체 물물교환 리스트 확인 - 필터 넣기 가능
     @PostMapping("/all")
     public ResponseEntity<BarterResponse> getAllBarterList(@RequestBody BarterFilterDto barterFilterDto) {
         return ResponseEntity.ok()
                 .body(barterService.getBarterList(barterFilterDto));
     }
-    //2. 물물교환글 자세히 보기
+
     @GetMapping("/{barterIdx}/{userIdx}")
     public ResponseEntity<BarterDetailResponseDTO> getBarter(@PathVariable Long barterIdx, @PathVariable Long userIdx) {
         return ResponseEntity.ok()
                 .body(barterService.getBarter(barterIdx, userIdx));
     }
 
-    //판매자 입장
     //1. 물물교환 작성
     @PostMapping("/new")
     public ResponseEntity<CreateBarterResponse> addBarter(@RequestBody BarterCreateDto barterCreateDto) {
@@ -42,6 +38,7 @@ public class BarterApi {
         return ResponseEntity.ok()
                 .body(createBarterResponse);
     }
+
     //2. 물물교환 글 수정
     @PatchMapping("/{barterIdx}")
     public ResponseEntity<Void> modifyBarter(@PathVariable Long barterIdx, @RequestBody BarterModifyRequestDto barterModifyRequestDto) {
@@ -49,13 +46,14 @@ public class BarterApi {
         return ResponseEntity.ok()
                 .build();
     }
-    //3. 자신의 물물교환글 삭제하기
+
     @DeleteMapping("/{barterIdx}")
     public ResponseEntity<Void> deleteBarter(@PathVariable Long barterIdx) {
         barterService.deleteBarter(barterIdx);
         return ResponseEntity.ok()
                 .build();
     }
+
     //4. 자신의 물물교환 신청글에 달린 물물 교환 신청에 대해 선택하기
     @PatchMapping("/Confirm")
     public ResponseEntity<Void> selectBarterRequest(@RequestBody BarterConfirmRequestDTO barterConfirm) {
@@ -77,7 +75,6 @@ public class BarterApi {
                 .body(barterService.getBarterConfirmPage(barterIdx));
     }
 
-    // 인기 물물교환 전송
     @GetMapping("/popular")
     public ResponseEntity<Object> getPopularBarter() {
         return ResponseEntity.ok()
