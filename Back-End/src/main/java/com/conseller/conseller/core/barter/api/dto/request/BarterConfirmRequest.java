@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class BarterConfirmRequestDTO {
+public class BarterConfirmRequest {
     private Long barterIdx;
     private Long userIdx;
     private Boolean confirm;

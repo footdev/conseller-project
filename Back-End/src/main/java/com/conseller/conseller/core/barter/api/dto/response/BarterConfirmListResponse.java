@@ -8,13 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BarterConfirmList {
+public class BarterConfirmListResponse {
     private String gifticonDataImageName;
     private String gifticonName;
     private String gifticonEndDate;
 
     @Builder
-    public BarterConfirmList(String gifticonDataImageName, String gifticonName, String gifticonEndDate){
+    public BarterConfirmListResponse(String gifticonDataImageName, String gifticonName, String gifticonEndDate){
         this.gifticonDataImageName = gifticonDataImageName;
         this.gifticonName = gifticonName;
         this.gifticonEndDate = gifticonEndDate;

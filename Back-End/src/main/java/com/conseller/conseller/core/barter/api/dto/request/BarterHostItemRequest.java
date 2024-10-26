@@ -9,12 +9,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BarterHostItemDto {
+public class BarterHostItemRequest {
     private long barterIdx;
     private GifticonResponse gifticon;
 
     @Builder
-    public BarterHostItemDto(long barterIdx, GifticonResponse gifticon){
+    public BarterHostItemRequest(long barterIdx, GifticonResponse gifticon){
         this.barterIdx = barterIdx;
         this.gifticon = gifticon;
     }

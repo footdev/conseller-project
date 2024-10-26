@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BarterRequestRegistDto {
+public class BarterRegistRequest {
     private Long userIdx;
     private List<Long> barterGuestItemList;
 }

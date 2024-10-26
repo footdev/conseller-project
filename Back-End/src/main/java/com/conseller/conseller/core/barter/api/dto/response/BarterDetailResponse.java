@@ -8,8 +8,8 @@ import java.util.List;
 @Setter
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class BarterDetailResponseDTO {
-    private List<BarterConfirmList> barterImageList;
+public class BarterDetailResponse {
+    private List<BarterConfirmListResponse> barterImageList;
     private String preper;
     private String barterName;
     private String barterText;
@@ -20,7 +20,7 @@ public class BarterDetailResponseDTO {
     private Long barterRequestIdx;
 
     @Builder
-    public BarterDetailResponseDTO(List<BarterConfirmList> barterImageList, String preper, String barterName, String barterText, Long barterUserIdx, String barterUserProfileUrl, Long barterUserDeposit, String barterUserNickname, Long barterRequestIdx) {
+    public BarterDetailResponse(List<BarterConfirmListResponse> barterImageList, String preper, String barterName, String barterText, Long barterUserIdx, String barterUserProfileUrl, Long barterUserDeposit, String barterUserNickname, Long barterRequestIdx) {
         this.barterImageList = barterImageList;
         this.preper = preper;
         this.barterName = barterName;

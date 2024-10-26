@@ -9,7 +9,7 @@ import java.util.List;
 @Getter @Setter @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class MyBarterRequestResponseDto {
+public class MyBarterRequestResponse {
 
     private Long barterRequestIdx;
 

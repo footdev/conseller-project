@@ -1,14 +1,14 @@
 package com.conseller.conseller.core.barter.api.dto.mapper;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterCreateDto;
-import com.conseller.conseller.core.barter.api.dto.response.BarterItemData;
+import com.conseller.conseller.core.barter.api.dto.request.BarterCreateRequest;
+import com.conseller.conseller.core.barter.api.dto.response.BarterHostItemResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
-import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
+import com.conseller.conseller.core.category.infrastructure.SubCategory;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.user.infrastructure.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -30,15 +30,15 @@ public interface BarterMapper {
     @Mapping(source = "endDate", target = "barterEndDate")
     @Mapping(source = "subCategory", target = "subCategory")
     @Mapping(source = "preferCategory", target = "preferSubCategory")
-    BarterEntity registBarterCreateToBarter(BarterCreateDto barterCreateDto, UserEntity userEntity, LocalDateTime endDate, SubCategoryEntity subCategoryEntity, SubCategoryEntity preferCategory);
+    BarterEntity registBarterCreateToBarter(BarterCreateRequest barterCreateRequest, User user, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory);
 
 
-    default BarterItemData toBarterItemData(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItems) {
-        List<BarterHostItemEntity> barterHostItemEntityList = barterHostItems;
+    default BarterHostItemResponse toBarterItemData(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItemEntities) {
+        List<BarterHostItemEntity> barterHostItemEntityList = barterHostItemEntities;
         List<GifticonEntity> gifticonEntityList = new ArrayList<>();
         GifticonEntity gifticonEntity = null;
         for(BarterHostItemEntity gift : barterHostItemEntityList) {
-            if(gift.getGifticonEntity().getSubCategoryEntity() == barterEntity.getSubCategoryEntity()) {
+            if(gift.getGifticonEntity().getSubCategory() == barterEntity.getSubCategory()) {
                 gifticonEntity = gift.getGifticonEntity();
                 break;
             }
@@ -48,27 +48,27 @@ public interface BarterMapper {
             deposit = true;
         }
 
-        String preferSubCategory = barterEntity.getPreferSubCategoryEntity().getSubCategoryContent();
+        String preferSubCategory = barterEntity.getPreferSubCategory().getSubCategoryContent();
 
-        if(barterEntity.getPreferSubCategoryEntity().getSubCategoryIdx() > 10) {
-            preferSubCategory = barterEntity.getPreferSubCategoryEntity().getMainCategoryEntity().getMainCategoryContent();
+        if(barterEntity.getPreferSubCategory().getSubCategoryIdx() > 10) {
+            preferSubCategory = barterEntity.getPreferSubCategory().getMainCategoryEntity().getMainCategoryContent();
         }
 
-        BarterItemData barterItemData = new BarterItemData();
-        barterItemData.setBarterIdx(barterEntity.getBarterIdx());
-        barterItemData.setGifticonDataImageName(gifticonEntity.getGifticonDataImageUrl());
-        barterItemData.setGifticonName(gifticonEntity.getGifticonName());
-        barterItemData.setGifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()));
-        barterItemData.setBarterEndDate(convertString(barterEntity.getBarterEndDate()));
-        barterItemData.setDeposit(deposit);
-        barterItemData.setPreper(preferSubCategory);
-        barterItemData.setBarterName(barterEntity.getBarterName());
+        BarterHostItemResponse barterHostItemResponse = new BarterHostItemResponse();
+        barterHostItemResponse.setBarterIdx(barterEntity.getBarterIdx());
+        barterHostItemResponse.setGifticonDataImageName(gifticonEntity.getGifticonDataImageUrl());
+        barterHostItemResponse.setGifticonName(gifticonEntity.getGifticonName());
+        barterHostItemResponse.setGifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()));
+        barterHostItemResponse.setBarterEndDate(convertString(barterEntity.getBarterEndDate()));
+        barterHostItemResponse.setDeposit(deposit);
+        barterHostItemResponse.setPreper(preferSubCategory);
+        barterHostItemResponse.setBarterName(barterEntity.getBarterName());
 
-        return barterItemData;
+        return barterHostItemResponse;
     }
 
     //Barter -> MyBarterResponseDto 매핑
-    default MyBarterResponse toMybarterResponseDto(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItems) {
+    default MyBarterResponse toMybarterResponseDto(BarterEntity barterEntity, List<BarterHostItemEntity> barterHostItemEntities) {
         MyBarterResponse.MyBarterResponseBuilder barterResponse = MyBarterResponse.builder()
                 .barterIdx(barterEntity.getBarterIdx())
                 .barterName(barterEntity.getBarterName())
@@ -77,9 +77,9 @@ public interface BarterMapper {
                 .barterCreatedDate(convertString(barterEntity.getBarterCreatedDate()))
                 .barterEndDate(convertString(barterEntity.getBarterEndDate()))
                 .barterHostIdx(barterEntity.getBarterHost().getUserIdx())
-                .subCategory(String.valueOf(barterEntity.getSubCategoryEntity().getSubCategoryIdx()));
+                .subCategory(String.valueOf(barterEntity.getSubCategory().getSubCategoryIdx()));
 
-        List<GifticonResponse> gifticonResponses = barterHostItems.stream()
+        List<GifticonResponse> gifticonResponses = barterHostItemEntities.stream()
                 .map(item -> item.getGifticonEntity().toResponseDto())
                 .collect(Collectors.toList());
 

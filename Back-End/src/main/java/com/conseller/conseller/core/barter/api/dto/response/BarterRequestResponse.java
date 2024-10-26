@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.barter.api.dto.response;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemDto;
+import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemRequest;
 import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,20 +11,20 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class BarterRequestResponseDto {
+public class BarterRequestResponse {
 
     private Long barterRequestIdx;
     private String barterRequestStatus;
     private Long barterIdx;
     private UserInfoResponse user;
-    private List<BarterGuestItemDto> barterGuestItemDtoList;
+    private List<BarterGuestItemRequest> barterGuestItemRequestList;
 
     @Builder
-    public BarterRequestResponseDto(Long barterRequestIdx, String barterRequestStatus, Long barterIdx, UserInfoResponse user, List<BarterGuestItemDto> barterGuestItemDtoList){
+    public BarterRequestResponse(Long barterRequestIdx, String barterRequestStatus, Long barterIdx, UserInfoResponse user, List<BarterGuestItemRequest> barterGuestItemRequestList){
         this.barterRequestIdx = barterRequestIdx;
         this.barterRequestStatus = barterRequestStatus;
         this.barterIdx = barterIdx;
         this.user = user;
-        this.barterGuestItemDtoList = barterGuestItemDtoList;
+        this.barterGuestItemRequestList = barterGuestItemRequestList;
     }
 }

@@ -1,8 +1,8 @@
 package com.conseller.conseller.core.barter.api.dto.request;
 
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
-import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.category.infrastructure.SubCategory;
+import com.conseller.conseller.core.user.infrastructure.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class BarterCreateDto {
+public class BarterCreateRequest {
     private Integer mainCategory;
     private Integer subCategory;
     private String barterName;
@@ -22,7 +22,7 @@ public class BarterCreateDto {
     private Long userIdx;
 
     @Builder
-    public BarterCreateDto(String barterName, String barterText, Integer barterSubCategory, Integer preferSubCategory, List<Long> selectedItemIndices, String barterEndDate, Long userIdx) {
+    public BarterCreateRequest(String barterName, String barterText, Integer barterSubCategory, Integer preferSubCategory, List<Long> selectedItemIndices, String barterEndDate, Long userIdx) {
         this.barterName = barterName;
         this.barterText = barterText;
         this.subCategory = barterSubCategory;
@@ -32,13 +32,13 @@ public class BarterCreateDto {
         this.userIdx = userIdx;
     }
 
-    public BarterEntity toEntity(BarterCreateDto barterCreateDto, UserEntity host, LocalDateTime endDate, SubCategoryEntity subCategoryEntity, SubCategoryEntity preferCategory) {
+    public BarterEntity toEntity(BarterCreateRequest barterCreateRequest, User host, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory) {
         return BarterEntity.builder()
-                .barterName(barterCreateDto.getBarterName())
-                .barterText(barterCreateDto.getBarterText())
+                .barterName(barterCreateRequest.getBarterName())
+                .barterText(barterCreateRequest.getBarterText())
                 .barterHost(host)
                 .barterEndDate(endDate)
-                .subCategory(subCategoryEntity)
+                .subCategory(subCategory)
                 .preferSubCategory(preferCategory)
                 .build();
     }
