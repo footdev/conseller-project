@@ -1,8 +1,9 @@
 package com.conseller.conseller.core.barter.api;
 
 import com.conseller.conseller.core.barter.api.dto.request.*;
-import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponseDTO;
-import com.conseller.conseller.core.barter.api.dto.response.BarterResponse;
+import com.conseller.conseller.core.barter.api.dto.response.BarterConfirmPageResponse;
+import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponse;
+import com.conseller.conseller.core.barter.api.dto.response.BarterListResponse;
 import com.conseller.conseller.core.barter.api.dto.response.CreateBarterResponse;
 import com.conseller.conseller.core.barter.domain.BarterService;
 import com.conseller.conseller.core.notification.domain.NotificationService;
@@ -19,30 +20,30 @@ public class BarterApi {
     private final NotificationService notificationService;
 
     @PostMapping("/all")
-    public ResponseEntity<BarterResponse> getAllBarterList(@RequestBody BarterFilterDto barterFilterDto) {
+    public ResponseEntity<BarterListResponse> getAllBarterList(@RequestBody BarterFilterRequest barterFilterRequest) {
         return ResponseEntity.ok()
-                .body(barterService.getBarterList(barterFilterDto));
+                .body(barterService.getBarterList(barterFilterRequest));
     }
 
     @GetMapping("/{barterIdx}/{userIdx}")
-    public ResponseEntity<BarterDetailResponseDTO> getBarter(@PathVariable Long barterIdx, @PathVariable Long userIdx) {
+    public ResponseEntity<BarterDetailResponse> getBarter(@PathVariable Long barterIdx, @PathVariable Long userIdx) {
         return ResponseEntity.ok()
                 .body(barterService.getBarter(barterIdx, userIdx));
     }
 
     //1. 물물교환 작성
     @PostMapping("/new")
-    public ResponseEntity<CreateBarterResponse> addBarter(@RequestBody BarterCreateDto barterCreateDto) {
+    public ResponseEntity<CreateBarterResponse> addBarter(@RequestBody BarterCreateRequest barterCreateRequest) {
         CreateBarterResponse createBarterResponse = new CreateBarterResponse();
-        createBarterResponse.setBarterIdx(barterService.addBarter(barterCreateDto));
+        createBarterResponse.setBarterIdx(barterService.addBarter(barterCreateRequest));
         return ResponseEntity.ok()
                 .body(createBarterResponse);
     }
 
     //2. 물물교환 글 수정
     @PatchMapping("/{barterIdx}")
-    public ResponseEntity<Void> modifyBarter(@PathVariable Long barterIdx, @RequestBody BarterModifyRequestDto barterModifyRequestDto) {
-        barterService.modifyBarter(barterIdx, barterModifyRequestDto);
+    public ResponseEntity<Void> modifyBarter(@PathVariable Long barterIdx, @RequestBody BarterModifyRequest barterModifyRequest) {
+        barterService.modifyBarter(barterIdx, barterModifyRequest);
         return ResponseEntity.ok()
                 .build();
     }
@@ -56,7 +57,7 @@ public class BarterApi {
 
     //4. 자신의 물물교환 신청글에 달린 물물 교환 신청에 대해 선택하기
     @PatchMapping("/Confirm")
-    public ResponseEntity<Void> selectBarterRequest(@RequestBody BarterConfirmRequestDTO barterConfirm) {
+    public ResponseEntity<Void> selectBarterRequest(@RequestBody BarterConfirmRequest barterConfirm) {
 
         if(barterConfirm.getConfirm()){
             barterService.exchangeGifticon(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx());
@@ -70,7 +71,7 @@ public class BarterApi {
     }
 
     @GetMapping("/Confirm/{barterIdx}")
-    public ResponseEntity<BarterConfirmPageResponseDTO> getConfirmPage(@PathVariable Long barterIdx) {
+    public ResponseEntity<BarterConfirmPageResponse> getConfirmPage(@PathVariable Long barterIdx) {
         return ResponseEntity.ok()
                 .body(barterService.getBarterConfirmPage(barterIdx));
     }
