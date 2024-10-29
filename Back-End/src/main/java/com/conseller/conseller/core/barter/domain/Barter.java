@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.barter.domain;
 
-import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.category.infrastructure.SubCategory;
+import com.conseller.conseller.core.user.infrastructure.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,8 +18,8 @@ public class Barter {
     private LocalDateTime barterModifiedDate;
     private LocalDateTime barterCompletedDate;
     private String barterStatus;
-    private UserEntity barterHost;
-    private UserEntity barterCompleteGuest;
-    private SubCategoryEntity subCategoryEntity;
-    private SubCategoryEntity preferSubCategoryEntity;
+    private User barterHost;
+    private User barterCompleteGuest;
+    private SubCategory subCategory;
+    private SubCategory preferSubCategory;
 }

@@ -1,10 +1,10 @@
 package com.conseller.conseller.core.barter.infrastructure.entity;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemDto;
-import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponseDto;
+import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemRequest;
+import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponse;
 import com.conseller.conseller.core.barter.domain.BarterRequest;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.core.user.infrastructure.User;
 import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
 import lombok.*;
 
@@ -32,7 +32,7 @@ public class BarterRequestEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx", nullable = false)
-    private UserEntity userEntity;
+    private User user;
 
     @OneToMany(mappedBy = "barterRequest")
     List<BarterGuestItemEntity> barterGuestItemEntites = new ArrayList<>();
@@ -42,14 +42,14 @@ public class BarterRequestEntity {
                 .barterRequestIdx(barterRequestIdx)
                 .barterRequestStatus(barterRequestStatus)
                 .barter(barterEntity.toDomain())
-                .user(userEntity.toDomain())
+                .user(user.toDomain())
                 .build();
     }
 
-    public static BarterRequestEntity of(BarterEntity barterEntity, UserEntity userEntity) {
+    public static BarterRequestEntity of(BarterEntity barterEntity, User user) {
         return BarterRequestEntity.builder()
                 .barterEntity(barterEntity)
-                .userEntity(userEntity)
+                .user(user)
                 .build();
     }
 
@@ -58,35 +58,35 @@ public class BarterRequestEntity {
                 .barterRequestIdx(barterRequest.getBarterRequestIdx())
                 .barterRequestStatus(barterRequest.getBarterRequestStatus())
                 .barterEntity(BarterEntity.of(barterRequest.getBarter()))
-                .userEntity(UserEntity.of(barterRequest.getUser()))
+                .user(User.of(barterRequest.getUser()))
                 .build();
     }
 
-    public BarterRequestResponseDto toBarterRequestResponseDto(BarterRequestEntity barterRequestEntity) {
-        UserEntity userEntity = barterRequestEntity.getUserEntity();
+    public BarterRequestResponse toBarterRequestResponseDto(BarterRequestEntity barterRequestEntity) {
+        User user = barterRequestEntity.getUser();
         UserInfoResponse userInfoResponse = UserInfoResponse.builder()
-                .userId(userEntity.getUserId())
-                .userNickname(userEntity.getUserNickname())
-                .userEmail(userEntity.getUserEmail())
-                .userProfileUrl(userEntity.getUserProfileUrl())
-                .userAccount(userEntity.getUserAccount())
-                .userAccountBank(userEntity.getUserAccountBank())
-                .userPhoneNumber(userEntity.getUserPhoneNumber())
+                .userId(user.getUserId())
+                .userNickname(user.getUserNickname())
+                .userEmail(user.getUserEmail())
+                .userProfileUrl(user.getUserProfileUrl())
+                .userAccount(user.getUserAccount())
+                .userAccountBank(user.getUserAccountBank())
+                .userPhoneNumber(user.getUserPhoneNumber())
                 .build();
 
-        List<BarterGuestItemDto> barterGuestItemDtoList  = new ArrayList<>();
+        List<BarterGuestItemRequest> barterGuestItemRequestList = new ArrayList<>();
         List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntites();
         for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
-            BarterGuestItemDto barterGuestItemDto = bgi.toBarterGuestItemDto(bgi);
-            barterGuestItemDtoList.add(barterGuestItemDto);
+            BarterGuestItemRequest barterGuestItemRequest = bgi.toBarterGuestItemDto(bgi);
+            barterGuestItemRequestList.add(barterGuestItemRequest);
         }
 
 
-        return BarterRequestResponseDto.builder()
+        return BarterRequestResponse.builder()
                 .barterRequestIdx(barterRequestEntity.getBarterRequestIdx())
                 .barterRequestStatus(barterRequestEntity.getBarterRequestStatus())
                 .barterIdx(barterRequestEntity.getBarterEntity().getBarterIdx())
-                .barterGuestItemDtoList(barterGuestItemDtoList)
+                .barterGuestItemDtoList(barterGuestItemRequestList)
                 .user(userInfoResponse)
                 .build();
     }

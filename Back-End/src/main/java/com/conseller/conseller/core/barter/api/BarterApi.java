@@ -3,7 +3,7 @@ package com.conseller.conseller.core.barter.api;
 import com.conseller.conseller.core.barter.api.dto.request.*;
 import com.conseller.conseller.core.barter.api.dto.response.BarterConfirmPageResponse;
 import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponse;
-import com.conseller.conseller.core.barter.api.dto.response.BarterListResponse;
+import com.conseller.conseller.core.barter.api.dto.response.BarterPagingResponse;
 import com.conseller.conseller.core.barter.api.dto.response.CreateBarterResponse;
 import com.conseller.conseller.core.barter.domain.BarterService;
 import com.conseller.conseller.core.notification.domain.NotificationService;
@@ -20,7 +20,7 @@ public class BarterApi {
     private final NotificationService notificationService;
 
     @PostMapping("/all")
-    public ResponseEntity<BarterListResponse> getAllBarterList(@RequestBody BarterFilterRequest barterFilterRequest) {
+    public ResponseEntity<BarterPagingResponse> getAllBarterList(@RequestBody BarterFilterRequest barterFilterRequest) {
         return ResponseEntity.ok()
                 .body(barterService.getBarterList(barterFilterRequest));
     }

@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.barter.infrastructure.entity;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterHostItemDto;
+import com.conseller.conseller.core.barter.api.dto.request.BarterHostItemRequest;
 import com.conseller.conseller.core.barter.domain.BarterHostItem;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
@@ -34,8 +34,8 @@ public class BarterHostItemEntity {
         this.gifticonEntity = gifticonEntity;
     }
 
-    public BarterHostItem toDomain() {
-        return BarterHostItem.builder()
+    public com.conseller.conseller.core.barter.domain.BarterHostItem toDomain() {
+        return com.conseller.conseller.core.barter.domain.BarterHostItem.builder()
                 .barterHostItemIdx(barterHostItemIdx)
                 .barter(barterEntity.toDomain())
                 .gifticon(gifticonEntity.toDomain())
@@ -49,15 +49,15 @@ public class BarterHostItemEntity {
                 .build();
     }
 
-    public BarterHostItemDto toBarterHostItemDto(BarterEntity barterEntity, GifticonResponse gifticon) {
-        BarterHostItemDto barterHostItemDto = new BarterHostItemDto();
-        barterHostItemDto.setBarterIdx(barterEntity.getBarterIdx());
-        barterHostItemDto.setGifticon(gifticon);
+    public BarterHostItemRequest toBarterHostItemDto(BarterEntity barterEntity, GifticonResponse gifticon) {
+        BarterHostItemRequest barterHostItemRequest = new BarterHostItemRequest();
+        barterHostItemRequest.setBarterIdx(barterEntity.getBarterIdx());
+        barterHostItemRequest.setGifticon(gifticon);
 
-        return barterHostItemDto;
+        return barterHostItemRequest;
     }
 
-    public BarterHostItemDto toBarterHostItemDto(BarterHostItemEntity barterHostItemEntity) {
+    public BarterHostItemRequest toBarterHostItemDto(BarterHostItemEntity barterHostItemEntity) {
         GifticonEntity gifticonEntity = barterHostItemEntity.getGifticonEntity();
         GifticonResponse gifticonResponse = GifticonResponse.builder()
                 .gifticonIdx(gifticonEntity.getGifticonIdx())
@@ -69,11 +69,11 @@ public class BarterHostItemEntity {
                 .gifticonStartDate(convertString(gifticonEntity.getGifticonStartDate()))
                 .gifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()))
                 .mainCategoryIdx(gifticonEntity.getMainCategoryEntity().getMainCategoryIdx())
-                .subCategoryIdx(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx())
-                .userIdx(gifticonEntity.getUserEntity().getUserIdx())
+                .subCategoryIdx(gifticonEntity.getSubCategory().getSubCategoryIdx())
+                .userIdx(gifticonEntity.getUser().getUserIdx())
                 .build();
 
-        return BarterHostItemDto.builder()
+        return BarterHostItemRequest.builder()
                 .barterIdx(barterHostItemEntity.getBarterEntity().getBarterIdx())
                 .gifticon(gifticonResponse)
                 .build();

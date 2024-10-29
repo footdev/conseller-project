@@ -1,7 +1,10 @@
 package com.conseller.conseller.core.barter.api.dto.response;
 
+import com.conseller.conseller.core.barter.domain.BarterHostItem;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import lombok.*;
+
+import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
 
 
 @Getter
@@ -16,16 +19,16 @@ public class BarterHostItemResponse {
     private String preper;
     private String barterName;
 
-    public static BarterHostItemResponse of(BarterHostItemEntity barterHostItemEntity) {
+    public static BarterHostItemResponse of(BarterHostItem barterhostItem) {
         return BarterHostItemResponse.builder()
-                .barterIdx(barterHostItemEntity.getBarterEntity().getBarterIdx())
-                .gifticonDataImageName(barterHostItemEntity.getGifticon().getGifticonDataImageName())
-                .gifticonName(barterHostItemEntity.getGifticon().getGifticonName())
-                .gifticonEndDate(barterHostItemEntity.getGifticon().getGifticonEndDate())
-                .barterEndDate(barterHostItemEntity.getBarterEntity().getBarterEndDate().toString())
-                .deposit(barterHostItemEntity.getGifticon().getDeposit())
-                .preper(barterHostItemEntity.getGifticon().getPreper())
-                .barterName(barterHostItemEntity.getBarterEntity().getBarterName())
+                .barterIdx(barterhostItem.getBarter().getBarterIdx())
+                .gifticonDataImageName(barterhostItem.getGifticon().getGifticonDataImageUrl())
+                .gifticonName(barterhostItem.getGifticon().getGifticonName())
+                .gifticonEndDate(convertString(barterhostItem.getGifticon().getGifticonEndDate()))
+                .barterEndDate(barterhostItem.getBarter().getBarterEndDate().toString())
+                .deposit(barterhostItem.getBarter().getBarterHost().getUserDeposit() > 0)
+                .preper(barterhostItem.getBarter().getPreferSubCategory().getSubCategoryContent())
+                .barterName(barterhostItem.getBarter().getBarterName())
                 .build();
     }
 

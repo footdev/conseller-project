@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class BarterConfirmPageResponse {
     private String barterName;

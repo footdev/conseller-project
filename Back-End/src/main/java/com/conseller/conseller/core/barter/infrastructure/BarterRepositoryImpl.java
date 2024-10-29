@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.barter.infrastructure;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterFilterDto;
+import com.conseller.conseller.core.barter.api.dto.request.BarterFilterRequest;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.querydsl.core.types.Order;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.conseller.conseller.entity.QBarter.barter;
 
@@ -23,8 +24,8 @@ import static com.conseller.conseller.entity.QBarter.barter;
 public class BarterRepositoryImpl {
     private final JPAQueryFactory factory;
 
-    public Page<BarterEntity> findBarterList(BarterFilterDto filter, Pageable pageable) {
-        List<BarterEntity> content  = factory
+    public Page<com.conseller.conseller.core.barter.domain.Barter> findBarterList(BarterFilterRequest filter, Pageable pageable) {
+        List<com.conseller.conseller.core.barter.domain.Barter> content  = factory
                 .selectFrom(barter)
                 .where(
                         eqCategory(filter.getMainCategory(), filter.getSubCategory()),
@@ -34,7 +35,10 @@ public class BarterRepositoryImpl {
                 .orderBy(orderSpecifier(filter.getStatus()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetch();
+                .fetch()
+                .stream()
+                .map(BarterEntity::toDomain)
+                .collect(Collectors.toList());
 
         Long count = factory
                 .select(barter.count())

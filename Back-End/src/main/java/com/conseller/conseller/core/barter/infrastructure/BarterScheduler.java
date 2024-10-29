@@ -1,8 +1,6 @@
 package com.conseller.conseller.core.barter.infrastructure;
 
-import com.conseller.conseller.core.barter.domain.BarterService;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
-import com.conseller.conseller.core.barter.domain.BarterRequestService;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
@@ -31,8 +29,8 @@ public class BarterScheduler {
     @Transactional
     @Scheduled(cron="0 0 0 * * ?")
     public void autoBarterExpire() {
-        List<BarterEntity> barterEntities = barterService.getExpiredBarterList();
-        for(BarterEntity barterEntity : barterEntities) {
+        List<BarterEntity> barterEntityEntities = barterService.getExpiredBarterList();
+        for(BarterEntity barterEntity : barterEntityEntities) {
             List<BarterRequestEntity> barterRequestEntityList = barterEntity.getBarterRequestEntityList();
             for(BarterRequestEntity bq : barterRequestEntityList) {
                 barterRequestService.rejectByTimeBarterRequest(bq.getBarterRequestIdx());
