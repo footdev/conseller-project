@@ -14,7 +14,7 @@ import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -93,15 +93,15 @@ public class BarterRequestService implements BarterRequestService{
 
         List<BarterRequestEntity> barterRequestEntityList = barterEntity.getBarterRequestEntityList();
         for(BarterRequestEntity bq : barterRequestEntityList) {
-            if(bq.getUser().getUserIdx() == barterRegistRequest.getUserIdx()) {
+            if(bq.getUserEntity().getUserIdx() == barterRegistRequest.getUserIdx()) {
                 throw new CustomException(CustomExceptionStatus.BARTER_ALREADY_SEND);
             }
         }
 
-        User user = userRepository.findByUserIdx(barterRegistRequest.getUserIdx())
+        UserEntity userEntity = userRepository.findByUserIdx(barterRegistRequest.getUserIdx())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
-        BarterRequestEntity barterRequestEntity = BarterRequestEntity.of(barterEntity, user);
+        BarterRequestEntity barterRequestEntity = BarterRequestEntity.of(barterEntity, userEntity);
         barterRequestRepository.save(barterRequestEntity);
 
         if(statusOfBarter.equals(BarterStatus.EXCHANGEABLE.getStatus())) {

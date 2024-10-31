@@ -1,15 +1,14 @@
 package com.conseller.conseller.core.barter.api.dto.response;
 
+import com.conseller.conseller.core.barter.domain.Barter;
 import lombok.*;
 
 import java.util.List;
 
 @Getter
-@Setter
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BarterDetailResponse {
-    private List<BarterConfirmListResponse> barterImageList;
+    private List<barterItemResponse> barterImageList;
     private String preper;
     private String barterName;
     private String barterText;
@@ -17,10 +16,9 @@ public class BarterDetailResponse {
     private String barterUserProfileUrl;
     private Long barterUserDeposit;
     private String barterUserNickname;
-    private Long barterRequestIdx;
 
     @Builder
-    public BarterDetailResponse(List<BarterConfirmListResponse> barterImageList, String preper, String barterName, String barterText, Long barterUserIdx, String barterUserProfileUrl, Long barterUserDeposit, String barterUserNickname, Long barterRequestIdx) {
+    public BarterDetailResponse(List<barterItemResponse> barterImageList, String preper, String barterName, String barterText, Long barterUserIdx, String barterUserProfileUrl, Long barterUserDeposit, String barterUserNickname) {
         this.barterImageList = barterImageList;
         this.preper = preper;
         this.barterName = barterName;
@@ -29,6 +27,18 @@ public class BarterDetailResponse {
         this.barterUserProfileUrl = barterUserProfileUrl;
         this.barterUserDeposit = barterUserDeposit;
         this.barterUserNickname = barterUserNickname;
-        this.barterRequestIdx = barterRequestIdx;
+    }
+
+    public static BarterDetailResponse of(Barter barter, List<barterItemResponse> barterImageList) {
+        return BarterDetailResponse.builder()
+                .barterImageList(barterImageList)
+                .preper(barter.getPreferSubCategoryContent())
+                .barterName(barter.getBarterName())
+                .barterText(barter.getBarterText())
+                .barterUserIdx(barter.getHostIdx())
+                .barterUserProfileUrl(barter.getHostProfileUrl())
+                .barterUserDeposit(barter.getHostDeposit())
+                .barterUserNickname(barter.getHostNickname())
+                .build();
     }
 }

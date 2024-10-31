@@ -4,7 +4,7 @@ import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemReques
 import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponse;
 import com.conseller.conseller.core.barter.domain.BarterRequest;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
 import lombok.*;
 
@@ -32,7 +32,7 @@ public class BarterRequestEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @OneToMany(mappedBy = "barterRequest")
     List<BarterGuestItemEntity> barterGuestItemEntites = new ArrayList<>();
@@ -42,14 +42,14 @@ public class BarterRequestEntity {
                 .barterRequestIdx(barterRequestIdx)
                 .barterRequestStatus(barterRequestStatus)
                 .barter(barterEntity.toDomain())
-                .user(user.toDomain())
+                .user(userEntity.toDomain())
                 .build();
     }
 
-    public static BarterRequestEntity of(BarterEntity barterEntity, User user) {
+    public static BarterRequestEntity of(BarterEntity barterEntity, UserEntity userEntity) {
         return BarterRequestEntity.builder()
                 .barterEntity(barterEntity)
-                .user(user)
+                .userEntity(userEntity)
                 .build();
     }
 
@@ -58,20 +58,20 @@ public class BarterRequestEntity {
                 .barterRequestIdx(barterRequest.getBarterRequestIdx())
                 .barterRequestStatus(barterRequest.getBarterRequestStatus())
                 .barterEntity(BarterEntity.of(barterRequest.getBarter()))
-                .user(User.of(barterRequest.getUser()))
+                .userEntity(UserEntity.of(barterRequest.getUser()))
                 .build();
     }
 
     public BarterRequestResponse toBarterRequestResponseDto(BarterRequestEntity barterRequestEntity) {
-        User user = barterRequestEntity.getUser();
+        UserEntity userEntity = barterRequestEntity.getUserEntity();
         UserInfoResponse userInfoResponse = UserInfoResponse.builder()
-                .userId(user.getUserId())
-                .userNickname(user.getUserNickname())
-                .userEmail(user.getUserEmail())
-                .userProfileUrl(user.getUserProfileUrl())
-                .userAccount(user.getUserAccount())
-                .userAccountBank(user.getUserAccountBank())
-                .userPhoneNumber(user.getUserPhoneNumber())
+                .userId(userEntity.getUserId())
+                .userNickname(userEntity.getUserNickname())
+                .userEmail(userEntity.getUserEmail())
+                .userProfileUrl(userEntity.getUserProfileUrl())
+                .userAccount(userEntity.getUserAccount())
+                .userAccountBank(userEntity.getUserAccountBank())
+                .userPhoneNumber(userEntity.getUserPhoneNumber())
                 .build();
 
         List<BarterGuestItemRequest> barterGuestItemRequestList = new ArrayList<>();

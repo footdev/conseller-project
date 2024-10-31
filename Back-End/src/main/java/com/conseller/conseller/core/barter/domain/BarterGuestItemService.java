@@ -13,12 +13,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BarterGuestItemService implements BarterGuestItemService{
+public class BarterGuestItemService {
 
     private final BarterGuestItemRepository barterGuestItemRepository;
     private final GifticonRepository gifticonRepository;
 
-    @Override
     public Void addBarterGuestItem(List<Long> gifticonList, BarterRequestEntity barterRequestEntity) {
         for(Long gifticonIdx : gifticonList) {
             GifticonEntity gifticonEntity = gifticonRepository.findById(gifticonIdx)

@@ -22,7 +22,7 @@ public class BarterApi {
     @PostMapping("/all")
     public ResponseEntity<BarterPagingResponse> getAllBarterList(@RequestBody BarterFilterRequest barterFilterRequest) {
         return ResponseEntity.ok()
-                .body(barterService.getBarterList(barterFilterRequest));
+                .body(barterService.getBarters(barterFilterRequest));
     }
 
     @GetMapping("/{barterIdx}/{userIdx}")
@@ -35,7 +35,7 @@ public class BarterApi {
     @PostMapping("/new")
     public ResponseEntity<CreateBarterResponse> addBarter(@RequestBody BarterCreateRequest barterCreateRequest) {
         CreateBarterResponse createBarterResponse = new CreateBarterResponse();
-        createBarterResponse.setBarterIdx(barterService.addBarter(barterCreateRequest));
+        createBarterResponse.setBarterIdx(barterService.createBarter(barterCreateRequest));
         return ResponseEntity.ok()
                 .body(createBarterResponse);
     }

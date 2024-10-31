@@ -14,11 +14,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BarterHostItemService implements BarterHostItemService{
+public class BarterHostItemService {
 
     private final BarterHostItemRepository barterHostItemRepository;
     private final GifticonRepository gifticonRepository;
-    @Override
+
     public LocalDateTime addBarterHostItem(List<Long> gifticons, BarterEntity barterEntity) {
         for(Long gifticonIdx : gifticons) {
             GifticonEntity gifticonEntity = gifticonRepository.findById(gifticonIdx)

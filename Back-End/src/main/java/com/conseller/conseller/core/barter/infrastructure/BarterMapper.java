@@ -6,9 +6,9 @@ import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
 import com.conseller.conseller.core.barter.domain.BarterHostItem;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
-import com.conseller.conseller.core.category.infrastructure.SubCategory;
+import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -29,7 +29,7 @@ public interface BarterMapper {
     @Mapping(source = "endDate", target = "barterEndDate")
     @Mapping(source = "subCategory", target = "subCategory")
     @Mapping(source = "preferCategory", target = "preferSubCategory")
-    BarterEntity registBarterCreateToBarter(BarterCreateRequest barterCreateRequest, User user, LocalDateTime endDate, SubCategory subCategory, SubCategory preferCategory);
+    BarterEntity registBarterCreateToBarter(BarterCreateRequest barterCreateRequest, UserEntity userEntity, LocalDateTime endDate, SubCategoryEntity subCategoryEntity, SubCategoryEntity preferCategory);
 
 
     default BarterHostItemResponse toBarterItemData(BarterHostItem barterHostItem) {
@@ -47,7 +47,7 @@ public interface BarterMapper {
                 .barterCreatedDate(convertString(barterEntity.getBarterCreatedDate()))
                 .barterEndDate(convertString(barterEntity.getBarterEndDate()))
                 .barterHostIdx(barterEntity.getBarterHost().getUserIdx())
-                .subCategory(String.valueOf(barterEntity.getSubCategory().getSubCategoryIdx()));
+                .subCategory(String.valueOf(barterEntity.getSubCategoryEntity().getSubCategoryIdx()));
 
         List<GifticonResponse> gifticonResponses = barterHostItemEntityHostItemEntities.stream()
                 .map(item -> item.getGifticonEntity().toResponseDto())

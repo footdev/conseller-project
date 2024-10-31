@@ -3,11 +3,12 @@ package com.conseller.conseller.core.barter.infrastructure;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-
+@Repository
 public interface BarterRepository extends JpaRepository<BarterEntity, Long> {
 
     // 물물교환

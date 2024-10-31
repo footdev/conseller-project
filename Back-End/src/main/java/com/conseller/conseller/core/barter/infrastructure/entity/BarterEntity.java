@@ -2,10 +2,11 @@ package com.conseller.conseller.core.barter.infrastructure.entity;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterModifyRequest;
 import com.conseller.conseller.core.barter.api.dto.response.BarterHostItemResponse;
+import com.conseller.conseller.core.barter.domain.Barter;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
-import com.conseller.conseller.core.category.infrastructure.SubCategory;
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -44,27 +45,26 @@ public class BarterEntity {
     @Column(name = "barter_completed_date")
     private LocalDateTime barterCompletedDate;
 
- // Enum의 문자열 값을 데이터베이스에 저장
     private String barterStatus = BarterStatus.EXCHANGEABLE.getStatus();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_idx")
-    private User barterHost;
+    private UserEntity barterHost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "complete_guest_idx")
-    private User barterCompleteGuest;
+    private UserEntity barterCompleteGuest;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sub_category_idx")
-    private SubCategory subCategory;
+    private SubCategoryEntity subCategoryEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prefer_sub_catergory_idx")
-    private SubCategory preferSubCategory;
+    private SubCategoryEntity preferSubCategoryEntity;
 
-    public com.conseller.conseller.core.barter.domain.Barter toDomain() {
-        return com.conseller.conseller.core.barter.domain.Barter.builder()
+    public Barter toDomain() {
+        return Barter.builder()
                 .barterIdx(barterIdx)
                 .barterName(barterName)
                 .barterText(barterText)
@@ -73,14 +73,14 @@ public class BarterEntity {
                 .barterModifiedDate(barterModifiedDate)
                 .barterCompletedDate(barterCompletedDate)
                 .barterStatus(barterStatus)
-                .barterHost(barterHost)
-                .barterCompleteGuest(barterCompleteGuest)
-                .subCategory(subCategory)
-                .preferSubCategory(preferSubCategory)
+                .host(barterHost.toDomain())
+                .barterCompleteGuest(barterCompleteGuest.toDomain())
+                .subCategory(subCategoryEntity.toDomain())
+                .preferSubCategory(preferSubCategoryEntity.toDomain())
                 .build();
     }
 
-    public static BarterEntity of(com.conseller.conseller.core.barter.domain.Barter barter) {
+    public static BarterEntity of(Barter barter) {
         return BarterEntity.builder()
                 .barterIdx(barter.getBarterIdx())
                 .barterName(barter.getBarterName())
@@ -90,31 +90,18 @@ public class BarterEntity {
                 .barterModifiedDate(barter.getBarterModifiedDate())
                 .barterCompletedDate(barter.getBarterCompletedDate())
                 .barterStatus(barter.getBarterStatus())
-                .barterHost(barter.getBarterHost())
-                .barterCompleteGuest(barter.getBarterCompleteGuest())
-                .subCategory(barter.getSubCategory())
-                .preferSubCategory(barter.getPreferSubCategory())
+                .barterHost(UserEntity.of(barter.getHost()))
+                .barterCompleteGuest(UserEntity.of(barter.getBarterCompleteGuest()))
+                .subCategoryEntity(SubCategoryEntity.of(barter.getSubCategory()))
+                .preferSubCategoryEntity(SubCategoryEntity.of(barter.getPreferSubCategory()))
                 .build();
     }
 
-    public void modifyBarter(BarterModifyRequest barterModifyRequest, SubCategory preferSubCategory) {
+    public void modifyBarter(BarterModifyRequest barterModifyRequest, SubCategoryEntity preferSubCategoryEntity) {
         this.barterName = barterModifyRequest.getBarterName();
         this.barterText = barterModifyRequest.getBarterText();
-        this.preferSubCategory = preferSubCategory;
+        this.preferSubCategoryEntity = preferSubCategoryEntity;
 
-    }
-
-    public BarterHostItemResponse toBarterItemData(BarterEntity barterEntity, GifticonEntity gifticonEntity, Boolean deposit) {
-        return BarterHostItemResponse.builder()
-                .barterIdx(barterEntity.getBarterIdx())
-                .gifticonDataImageName(gifticonEntity.getGifticonDataImageUrl())
-                .gifticonName(gifticonEntity.getGifticonName())
-                .gifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()))
-                .barterEndDate(convertString(barterEntity.getBarterEndDate()))
-                .deposit(deposit)
-                .preper(barterEntity.getPreferSubCategory().getSubCategoryContent())
-                .barterName(barterEntity.getBarterName())
-                .build();
     }
 }
 

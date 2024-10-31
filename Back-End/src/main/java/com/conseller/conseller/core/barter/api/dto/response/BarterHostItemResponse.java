@@ -1,7 +1,6 @@
 package com.conseller.conseller.core.barter.api.dto.response;
 
 import com.conseller.conseller.core.barter.domain.BarterHostItem;
-import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import lombok.*;
 
 import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
@@ -27,7 +26,7 @@ public class BarterHostItemResponse {
                 .gifticonEndDate(convertString(barterhostItem.getGifticon().getGifticonEndDate()))
                 .barterEndDate(barterhostItem.getBarter().getBarterEndDate().toString())
                 .deposit(barterhostItem.getBarter().getBarterHost().getUserDeposit() > 0)
-                .preper(barterhostItem.getBarter().getPreferSubCategory().getSubCategoryContent())
+                .preper(barterhostItem.getBarter().getPreferSubCategoryEntity().getSubCategoryContent())
                 .barterName(barterhostItem.getBarter().getBarterName())
                 .build();
     }

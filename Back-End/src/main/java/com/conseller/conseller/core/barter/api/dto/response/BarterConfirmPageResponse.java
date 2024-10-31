@@ -4,7 +4,6 @@ import com.conseller.conseller.core.barter.api.dto.request.BarterConfirmListOfLi
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -13,14 +12,14 @@ import java.util.List;
 public class BarterConfirmPageResponse {
     private String barterName;
     private String barterText;
-    private List<BarterConfirmListResponse> barterConfirmListResponse;
+    private List<barterItemResponse> barterItemResponse;
     private List<BarterConfirmListOfList> barterTradeAllList;
 
     @Builder
-    public BarterConfirmPageResponse(String barterName, String barterText, List<BarterConfirmListResponse> barterConfirmListResponse, List<BarterConfirmListOfList> barterTradeAllList) {
+    public BarterConfirmPageResponse(String barterName, String barterText, List<barterItemResponse> barterItemResponse, List<BarterConfirmListOfList> barterTradeAllList) {
         this.barterName = barterName;
         this.barterText = barterText;
-        this.barterConfirmListResponse = barterConfirmListResponse;
+        this.barterItemResponse = barterItemResponse;
         this.barterTradeAllList = barterTradeAllList;
     }
 }

@@ -34,8 +34,8 @@ public class BarterHostItemEntity {
         this.gifticonEntity = gifticonEntity;
     }
 
-    public com.conseller.conseller.core.barter.domain.BarterHostItem toDomain() {
-        return com.conseller.conseller.core.barter.domain.BarterHostItem.builder()
+    public BarterHostItem toDomain() {
+        return BarterHostItem.builder()
                 .barterHostItemIdx(barterHostItemIdx)
                 .barter(barterEntity.toDomain())
                 .gifticon(gifticonEntity.toDomain())
@@ -69,8 +69,8 @@ public class BarterHostItemEntity {
                 .gifticonStartDate(convertString(gifticonEntity.getGifticonStartDate()))
                 .gifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()))
                 .mainCategoryIdx(gifticonEntity.getMainCategoryEntity().getMainCategoryIdx())
-                .subCategoryIdx(gifticonEntity.getSubCategory().getSubCategoryIdx())
-                .userIdx(gifticonEntity.getUser().getUserIdx())
+                .subCategoryIdx(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx())
+                .userIdx(gifticonEntity.getUserEntity().getUserIdx())
                 .build();
 
         return BarterHostItemRequest.builder()

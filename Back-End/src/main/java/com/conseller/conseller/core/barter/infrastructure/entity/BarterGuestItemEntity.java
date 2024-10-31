@@ -61,8 +61,8 @@ public class BarterGuestItemEntity {
                 .gifticonStartDate(convertString(gifticonEntity.getGifticonStartDate()))
                 .gifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()))
                 .mainCategoryIdx(gifticonEntity.getMainCategoryEntity().getMainCategoryIdx())
-                .subCategoryIdx(gifticonEntity.getSubCategory().getSubCategoryIdx())
-                .userIdx(gifticonEntity.getUser().getUserIdx())
+                .subCategoryIdx(gifticonEntity.getSubCategoryEntity().getSubCategoryIdx())
+                .userIdx(gifticonEntity.getUserEntity().getUserIdx())
                 .build();
 
         return BarterGuestItemRequest.builder()

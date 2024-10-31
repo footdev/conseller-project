@@ -2,24 +2,29 @@ package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.barter.api.dto.request.*;
 import com.conseller.conseller.core.barter.api.dto.response.*;
-import com.conseller.conseller.core.barter.implement.BarterHostItemReader;
+import com.conseller.conseller.core.barter.implement.*;
 import com.conseller.conseller.core.barter.infrastructure.BarterMapper;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
-import com.conseller.conseller.core.barter.implement.BarterReader;
 import com.conseller.conseller.core.barter.infrastructure.*;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterGuestItemEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
-import com.conseller.conseller.core.category.infrastructure.SubCategory;
+import com.conseller.conseller.core.category.domain.SubCategory;
+import com.conseller.conseller.core.category.implement.SubCategoryReader;
+import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryRepository;
+import com.conseller.conseller.core.gifticon.domain.Gifticon;
+import com.conseller.conseller.core.gifticon.implement.GifticonReader;
+import com.conseller.conseller.core.user.domain.User;
+import com.conseller.conseller.core.user.implement.UserReader;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +34,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.conseller.conseller.global.utils.DateTimeConverter.*;
@@ -55,117 +57,73 @@ public class BarterService {
     private final BarterGuestItemRepository barterGuestItemRepository;
 
     private final BarterReader barterReader;
+    private final BarterAppender barterAppender;
+    private final BarterProcessor barterProcessor;
+    private final BarterHostItemValidator barterHostItemValidator;
+
     private final BarterHostItemReader barterHostItemReader;
+    private final BarterHostItemAppender barterHostItemAppender;
 
-    //구매자 입장
-    public BarterPagingResponse getBarterList(BarterFilterRequest barterFilterRequest) {
+    private final UserReader userReader;
+
+    private final SubCategoryReader subCategoryReader;
+
+    private final GifticonReader gifticonReader;
+
+    public BarterPagingResponse getBarters(BarterFilterRequest barterFilterRequest) {
         Pageable pageable = PageRequest.of(barterFilterRequest.getPage() - 1, 10);
-        Page<com.conseller.conseller.core.barter.domain.Barter> barters = barterReader.readBartersByPaging(barterFilterRequest, pageable);
-
-        List<BarterHostItemResponse> barterHostItems = barters.stream()
-                .map(barter -> barterHostItemReader.readByBarterId(barter.getBarterIdx()))
-                .map(BarterHostItemResponse::of)
-                .collect(Collectors.toList());
-
+        Page<Barter> barters = barterReader.readBartersByPaging(barterFilterRequest, pageable);
         return BarterPagingResponse.of(
                 barters.getTotalPages(),
                 barters.getTotalElements(),
-                barterHostItems
+                barters.stream()
+                        .map(barter -> barterHostItemReader.readByBarterId(barter.getBarterIdx()))
+                        .map(BarterHostItemResponse::of)
+                        .collect(Collectors.toList())
         );
     }
 
-    //판맨자 입장
     public BarterDetailResponse getBarter(Long barterIdx, Long userIdx) {
-        BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
-        List<BarterHostItemEntity> barterHostItemEntityList = barterEntity.getBarterHostItemEntityList();
-        List<BarterConfirmListResponse> barterGifticonList = new ArrayList<>();
-        for(BarterHostItemEntity bhi : barterHostItemEntityList) {
-            GifticonEntity gifticonEntity = bhi.getGifticonEntity();
-            BarterConfirmListResponse barterConfirmListResponse = BarterConfirmListResponse.builder()
-                    .gifticonDataImageName(gifticonEntity.getGifticonDataImageUrl())
-                    .gifticonName(gifticonEntity.getGifticonName())
-                    .gifticonEndDate(convertString(gifticonEntity.getGifticonEndDate()))
-                    .build();
-            barterGifticonList.add(barterConfirmListResponse);
-        }
-        Long barterRequestIdx = (long) 0;
-        List<BarterRequestEntity> barterRequestEntityList = barterEntity.getBarterRequestEntityList();
-        for(BarterRequestEntity bq : barterRequestEntityList) {
-            if(bq.getUser().getUserIdx() == userIdx) {
-                barterRequestIdx = bq.getBarterRequestIdx();
-                break;
-            }
-        }
-
-        BarterDetailResponse barterDetailResponse = BarterDetailResponse.builder()
-                .barterImageList(barterGifticonList)
-                .preper(barterEntity.getPreferSubCategory().getSubCategoryContent())
-                .barterName(barterEntity.getBarterName())
-                .barterText(barterEntity.getBarterText())
-                .barterUserIdx(barterEntity.getBarterHost().getUserIdx())
-                .barterUserProfileUrl(barterEntity.getBarterHost().getUserProfileUrl())
-                .barterUserDeposit(barterEntity.getBarterHost().getUserDeposit())
-                .barterUserNickname(barterEntity.getBarterHost().getUserNickname())
-                .barterRequestIdx(barterRequestIdx)
-                .build();
-
-        return barterDetailResponse;
+        Barter barter = barterReader.read(barterIdx);
+        List<BarterHostItem> barterHostItems = barterHostItemReader.readAll(barterIdx);
+        List<barterItemResponse> barterItemResponses = barterHostItems.stream()
+                .map(
+                        barterHostItem -> barterItemResponse.of(
+                            barterHostItem.getHostItemName(),
+                            convertString(barterHostItem.getHostItemEndDate()),
+                            barterHostItem.getHostItemDataImageUrl()
+                    )
+                )
+                .collect(Collectors.toList());
+        return BarterDetailResponse.of(barter, barterItemResponses);
     }
 
 
-    public Long addBarter(BarterCreateRequest barterCreateRequest) {
-        User user = userRepository.findByUserIdx(barterCreateRequest.getUserIdx())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+    public Long createBarter(BarterCreateRequest barterCreateRequest) {
+        User host = userReader.read(barterCreateRequest.getUserIdx());
+        SubCategory preferSubCategory = subCategoryReader.read(barterCreateRequest.getPreferSubCategory());
+        SubCategory maxSubCategory = subCategoryReader.read(barterProcessor.getMaxSelectedCategory(barterCreateRequest.getHostItemIdxs()));
+        List<Gifticon> hostItems = gifticonReader.readAll(barterCreateRequest.getHostItemIdxs());
 
-        SubCategory preferSubCategory = subCategoryRepository.findById(barterCreateRequest.getSubCategory()).orElseThrow(() -> new RuntimeException("존재하지 않는 분류입니다."));
-        SubCategory subCategory = null;
+        barterHostItemValidator.isValidUserHostItem(hostItems, barterCreateRequest.getUserIdx());
+        barterHostItemValidator.isValidStatus(hostItems);
 
-        LocalDateTime endDate = convertLocalDateTime(barterCreateRequest.getBarterEndDate());
+        Barter barter = Barter.of(barterCreateRequest, host, preferSubCategory, maxSubCategory, now());
+        Long savedBarterId = barterAppender.append(barter);
 
-        BarterEntity barterEntity = BarterMapper.INSTANCE.registBarterCreateToBarter(barterCreateRequest, user, endDate, subCategory, preferSubCategory);
-        barterRepository.save(barterEntity);
-        Map<Long, Integer> categoryMap = new HashMap<>();
-        for(Long gifticonIdx : barterCreateRequest.getSelectedItemIndices()) {
-            GifticonEntity gifticonEntity = gifticonRepository.findByGifticonIdx(gifticonIdx)
-                    .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_NO_ITEM));
-            if(categoryMap.containsKey(gifticonEntity.getSubCategory().getSubCategoryIdx())) {
-                categoryMap.compute(gifticonEntity.getSubCategory().getSubCategoryIdx(), (key, k) -> k + 1);
-            } else {
-                categoryMap.put(gifticonEntity.getSubCategory().getSubCategoryIdx(), 1);
-            }
-        }
-        int max_count = 0;
-        long max_category = 0;
-        for(long key : categoryMap.keySet() ) {
-            if(categoryMap.get(key) > max_count) {
-                max_count = categoryMap.get(key);
-                max_category = key;
-            }
-        }
-        SubCategory barterSubCategory = subCategoryRepository.findBySubCategoryIdx(max_category)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.SUB_CATEGORY_INVALID));
-        barterEntity.setSubCategory(barterSubCategory);
+        barterHostItemAppender.appendAll(barterHostItemReader.convert(hostItems, barter));
 
-        try {
-            LocalDateTime gifticonEndDate = barterHostItemService.addBarterHostItem(barterCreateRequest.getSelectedItemIndices(), barterEntity);
-            barterEntity.setBarterEndDate(gifticonEndDate);
-            barterRepository.save(barterEntity);
-        } catch(Exception e) {
-            barterRepository.deleteById(barterEntity.getBarterIdx());
-            throw new CustomException(CustomExceptionStatus.GIFTICON_NOT_KEEP);
-        }
-        return barterEntity.getBarterIdx();
+        return savedBarterId;
     }
 
     @Transactional
     public void modifyBarter(Long barterIdx, BarterModifyRequest barterModifyRequest) {
-        SubCategory preferSubCategory = subCategoryRepository.findBySubCategoryIdx(barterModifyRequest.getSubCategory())
+        SubCategoryEntity preferSubCategoryEntity = subCategoryRepository.findBySubCategoryIdx(barterModifyRequest.getSubCategory())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.SUB_CATEGORY_INVALID));
         BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
 
-        barterEntity.modifyBarter(barterModifyRequest, preferSubCategory);
+        barterEntity.modifyBarter(barterModifyRequest, preferSubCategoryEntity);
     }
 
     public void deleteBarter(Long barterIdx) {
@@ -200,7 +158,7 @@ public class BarterService {
     public void exchangeGifticon(Long barterIdx, Long userIdx) {
         BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
-        User user = userRepository.findByUserIdx(userIdx)
+        UserEntity userEntity = userRepository.findByUserIdx(userIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
 
 
@@ -208,7 +166,7 @@ public class BarterService {
 
         List<BarterRequestEntity> findBarterRequestEntityList = barterEntity.getBarterRequestEntityList();
         for(BarterRequestEntity barterRequestEntity : findBarterRequestEntityList) {
-            if(barterRequestEntity.getUser().getUserIdx() == userIdx){
+            if(barterRequestEntity.getUserEntity().getUserIdx() == userIdx){
                 barterRequestIdx = barterRequestEntity.getBarterRequestIdx();
                 break;
             }
@@ -248,25 +206,25 @@ public class BarterService {
                 gifticonRepository.save(gifticonEntity);
             }
         }
-        User barterHost = barterEntity.getBarterHost();
-        User barterRequester = barterRequestEntity.getUser();
+        UserEntity barterHost = barterEntity.getBarterHost();
+        UserEntity barterRequester = barterRequestEntity.getUserEntity();
 
         for(BarterHostItemEntity hostItem : barterEntity.getBarterHostItemEntityList()){
             GifticonEntity gift = hostItem.getGifticonEntity();
-            gift.setUser(barterRequester);
+            gift.setUserEntity(barterRequester);
             gift.setGifticonStatus(GifticonStatus.KEEP.getStatus());
             gifticonRepository.save(gift);
         }
         for(BarterGuestItemEntity guestItem : barterRequestEntity.getBarterGuestItemEntites()){
             GifticonEntity gift = guestItem.getGifticonEntity();
             gift.setGifticonStatus(GifticonStatus.KEEP.getStatus());
-            gift.setUser(barterHost);
+            gift.setUserEntity(barterHost);
             gifticonRepository.save(gift);
         }
 
         barterEntity.setBarterStatus(BarterStatus.EXCHANGED.getStatus());
         barterEntity.setBarterCompletedDate(now());
-        barterEntity.setBarterCompleteGuest(user);
+        barterEntity.setBarterCompleteGuest(userEntity);
         barterRepository.save(barterEntity);
     }
 
@@ -278,7 +236,7 @@ public class BarterService {
 
         List<BarterRequestEntity> findBarterRequestEntityList = barterEntity.getBarterRequestEntityList();
         for(BarterRequestEntity barterRequestEntity : findBarterRequestEntityList) {
-            if(barterRequestEntity.getUser().getUserIdx() == userIdx){
+            if(barterRequestEntity.getUserEntity().getUserIdx() == userIdx){
                 barterRequestIdx = barterRequestEntity.getBarterRequestIdx();
                 break;
             }
@@ -305,35 +263,35 @@ public class BarterService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
 
         //barter의 기프티콘 리스트
-        List<BarterConfirmListResponse> hostGifticons = new ArrayList<>();
+        List<barterItemResponse> hostGifticons = new ArrayList<>();
         List<BarterHostItemEntity> barterHostItemEntityList = barterEntity.getBarterHostItemEntityList();
         for(BarterHostItemEntity bhi : barterHostItemEntityList) {
-            BarterConfirmListResponse barterConfirmListResponse = BarterConfirmListResponse.builder()
+            barterItemResponse barterItemResponse = barterItemResponse.builder()
                     .gifticonDataImageName(bhi.getGifticonEntity().getGifticonDataImageUrl())
                     .gifticonName(bhi.getGifticonEntity().getGifticonName())
                     .gifticonEndDate(convertString(bhi.getGifticonEntity().getGifticonEndDate()))
                     .build();
-            hostGifticons.add(barterConfirmListResponse);
+            hostGifticons.add(barterItemResponse);
         }
 
         List<BarterRequestEntity> barterRequestEntityList = barterEntity.getBarterRequestEntityList();
         List<BarterConfirmListOfList> barterConfirmListOfLists = new ArrayList<>();
         for(BarterRequestEntity bq : barterRequestEntityList) {
             List<BarterGuestItemEntity> barterGuestItemEntityList = bq.getBarterGuestItemEntites();
-            List<BarterConfirmListResponse> barterConfirmListResponses = new ArrayList<>();
+            List<barterItemResponse> barterItemRespons = new ArrayList<>();
             for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
-                BarterConfirmListResponse barterConfirmListResponse = BarterConfirmListResponse.builder()
+                barterItemResponse barterItemResponse = barterItemResponse.builder()
                         .gifticonDataImageName(bgi.getGifticonEntity().getGifticonDataImageUrl())
                         .gifticonName(bgi.getGifticonEntity().getGifticonName())
                         .gifticonEndDate(convertString(bgi.getGifticonEntity().getGifticonEndDate()))
                         .build();
-                barterConfirmListResponses.add(barterConfirmListResponse);
+                barterItemRespons.add(barterItemResponse);
             }
             BarterConfirmListOfList barterConfirmListOfList = BarterConfirmListOfList.builder()
-                    .buyUserImageUrl(bq.getUser().getUserProfileUrl())
-                    .buyUserNickName(bq.getUser().getUserNickname())
-                    .buyUserIdx(bq.getUser().getUserIdx())
-                    .barterTradeList(barterConfirmListResponses)
+                    .buyUserImageUrl(bq.getUserEntity().getUserProfileUrl())
+                    .buyUserNickName(bq.getUserEntity().getUserNickname())
+                    .buyUserIdx(bq.getUserEntity().getUserIdx())
+                    .barterTradeList(barterItemRespons)
                     .build();
             barterConfirmListOfLists.add(barterConfirmListOfList);
         }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class BarterAppender {
     private final BarterRepository barterRepository;
 
-    public void append(com.conseller.conseller.core.barter.domain.Barter barter) {
-        barterRepository.save(BarterEntity.of(barter));
+    public Long append(com.conseller.conseller.core.barter.domain.Barter barter) {
+        return barterRepository.save(BarterEntity.of(barter)).getBarterIdx();
     }
 }
