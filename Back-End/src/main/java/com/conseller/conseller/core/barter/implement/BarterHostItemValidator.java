@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.barter.implement;
 
-import com.conseller.conseller.core.barter.infrastructure.BarterHostItemRepository;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
@@ -17,7 +16,7 @@ public class BarterHostItemValidator {
 
     private final GifticonRepository gifticonRepository;
 
-    public void isValidUserHostItem(List<Gifticon> hostItems, Long userId) {
+    public void verifyUserGifticonMatch(List<Gifticon> hostItems, Long userId) {
         hostItems.stream()
                 .filter(gifticon -> gifticon.getGifticonIdx() != userId)
                 .findAny()
@@ -26,7 +25,7 @@ public class BarterHostItemValidator {
                 });
     }
 
-    public void isValidStatus(List<Gifticon> hostItems) {
+    public void isKeep(List<Gifticon> hostItems) {
         hostItems.stream()
                 .filter(gifticon -> !gifticon.getGifticonStatus().equals(GifticonStatus.KEEP.getStatus()))
                 .findAny()

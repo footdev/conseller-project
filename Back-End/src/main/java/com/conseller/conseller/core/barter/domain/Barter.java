@@ -60,4 +60,11 @@ public class Barter {
                 .preferSubCategory(preferSubCategory)
                 .build();
     }
+
+    public void modify(SubCategory preferSubCategory, String barterName, String barterText, LocalDateTime barterEndDate) {
+        this.preferSubCategory = preferSubCategory;
+        this.barterName = barterName;
+        this.barterText = barterText;
+        this.barterEndDate = barterEndDate;
+    }
 }

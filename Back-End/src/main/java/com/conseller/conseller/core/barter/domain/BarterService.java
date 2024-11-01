@@ -58,6 +58,7 @@ public class BarterService {
 
     private final BarterReader barterReader;
     private final BarterAppender barterAppender;
+    private final BarterModifier barterModifier;
     private final BarterProcessor barterProcessor;
     private final BarterHostItemValidator barterHostItemValidator;
 
@@ -105,8 +106,8 @@ public class BarterService {
         SubCategory maxSubCategory = subCategoryReader.read(barterProcessor.getMaxSelectedCategory(barterCreateRequest.getHostItemIdxs()));
         List<Gifticon> hostItems = gifticonReader.readAll(barterCreateRequest.getHostItemIdxs());
 
-        barterHostItemValidator.isValidUserHostItem(hostItems, barterCreateRequest.getUserIdx());
-        barterHostItemValidator.isValidStatus(hostItems);
+        barterHostItemValidator.verifyUserGifticonMatch(hostItems, barterCreateRequest.getUserIdx());
+        barterHostItemValidator.isKeep(hostItems);
 
         Barter barter = Barter.of(barterCreateRequest, host, preferSubCategory, maxSubCategory, now());
         Long savedBarterId = barterAppender.append(barter);
@@ -116,14 +117,10 @@ public class BarterService {
         return savedBarterId;
     }
 
-    @Transactional
     public void modifyBarter(Long barterIdx, BarterModifyRequest barterModifyRequest) {
-        SubCategoryEntity preferSubCategoryEntity = subCategoryRepository.findBySubCategoryIdx(barterModifyRequest.getSubCategory())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.SUB_CATEGORY_INVALID));
-        BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
-
-        barterEntity.modifyBarter(barterModifyRequest, preferSubCategoryEntity);
+        SubCategory preferSubCategory = subCategoryReader.read(barterModifyRequest.getSubCategory());
+        Barter barter = barterReader.read(barterIdx);
+        barterModifier.modify(barter, preferSubCategory, barterModifyRequest);
     }
 
     public void deleteBarter(Long barterIdx) {
