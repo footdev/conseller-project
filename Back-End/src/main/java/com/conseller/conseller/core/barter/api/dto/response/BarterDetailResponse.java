@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BarterDetailResponse {
-    private List<barterItemResponse> barterImageList;
+    private List<BarterItemResponse> barterImageList;
     private String preper;
     private String barterName;
     private String barterText;
@@ -18,7 +18,7 @@ public class BarterDetailResponse {
     private String barterUserNickname;
 
     @Builder
-    public BarterDetailResponse(List<barterItemResponse> barterImageList, String preper, String barterName, String barterText, Long barterUserIdx, String barterUserProfileUrl, Long barterUserDeposit, String barterUserNickname) {
+    public BarterDetailResponse(List<BarterItemResponse> barterImageList, String preper, String barterName, String barterText, Long barterUserIdx, String barterUserProfileUrl, Long barterUserDeposit, String barterUserNickname) {
         this.barterImageList = barterImageList;
         this.preper = preper;
         this.barterName = barterName;
@@ -29,7 +29,7 @@ public class BarterDetailResponse {
         this.barterUserNickname = barterUserNickname;
     }
 
-    public static BarterDetailResponse of(Barter barter, List<barterItemResponse> barterImageList) {
+    public static BarterDetailResponse of(Barter barter, List<BarterItemResponse> barterImageList) {
         return BarterDetailResponse.builder()
                 .barterImageList(barterImageList)
                 .preper(barter.getPreferSubCategoryContent())

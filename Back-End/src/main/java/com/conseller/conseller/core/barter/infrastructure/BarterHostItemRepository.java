@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface BarterHostItemRepository extends JpaRepository<BarterHostItemEntity, Long> {
 
-    BarterHostItemEntity findByBarterIdx(long barterId);
-    List<BarterHostItemEntity> findAllByBarterIdx(Long barterId);
+    public BarterHostItemEntity findByBarterIdx(long barterId);
+    public List<BarterHostItemEntity> findAllByBarterIdx(Long barterId);
+    public void deleteAllByBarterIdx(Long barterId);
 }

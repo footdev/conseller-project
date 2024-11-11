@@ -15,4 +15,6 @@ public interface BarterRequestRepository extends JpaRepository<BarterRequestEnti
 
     @Query("SELECT br FROM BarterRequest br WHERE br.user.userIdx = ?1")
     List<BarterRequestEntity> findByUserIdx(Long userIdx);
+
+    public void deleteAllByBarterIdx(Long barterId);
 }

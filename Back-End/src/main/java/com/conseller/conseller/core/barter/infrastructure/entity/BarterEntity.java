@@ -63,6 +63,9 @@ public class BarterEntity {
     @JoinColumn(name = "prefer_sub_catergory_idx")
     private SubCategoryEntity preferSubCategoryEntity;
 
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
+    private Boolean isDeleted;
+
     public Barter toDomain() {
         return Barter.builder()
                 .barterIdx(barterIdx)

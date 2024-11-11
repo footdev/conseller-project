@@ -12,11 +12,11 @@ import java.util.List;
 public class BarterConfirmPageResponse {
     private String barterName;
     private String barterText;
-    private List<barterItemResponse> barterItemResponse;
+    private List<BarterItemResponse> barterItemResponse;
     private List<BarterConfirmListOfList> barterTradeAllList;
 
     @Builder
-    public BarterConfirmPageResponse(String barterName, String barterText, List<barterItemResponse> barterItemResponse, List<BarterConfirmListOfList> barterTradeAllList) {
+    public BarterConfirmPageResponse(String barterName, String barterText, List<BarterItemResponse> barterItemResponse, List<BarterConfirmListOfList> barterTradeAllList) {
         this.barterName = barterName;
         this.barterText = barterText;
         this.barterItemResponse = barterItemResponse;

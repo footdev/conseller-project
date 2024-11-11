@@ -25,10 +25,9 @@ public class BarterHostItemResponse {
                 .gifticonName(barterhostItem.getGifticon().getGifticonName())
                 .gifticonEndDate(convertString(barterhostItem.getGifticon().getGifticonEndDate()))
                 .barterEndDate(barterhostItem.getBarter().getBarterEndDate().toString())
-                .deposit(barterhostItem.getBarter().getBarterHost().getUserDeposit() > 0)
-                .preper(barterhostItem.getBarter().getPreferSubCategoryEntity().getSubCategoryContent())
+                .deposit(barterhostItem.getBarter().getHost().getUserDeposit() > 0)
+                .preper(barterhostItem.getBarter().getPreferSubCategory().getSubCategoryContent())
                 .barterName(barterhostItem.getBarter().getBarterName())
                 .build();
     }
-
 }

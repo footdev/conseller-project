@@ -27,6 +27,7 @@ public class Barter {
     private User barterCompleteGuest;
     private SubCategory subCategory;
     private SubCategory preferSubCategory;
+    private Boolean isDeleted;
 
     public String getPreferSubCategoryContent() {
         return preferSubCategory.getSubCategoryContent();
@@ -58,6 +59,7 @@ public class Barter {
                 .host(host)
                 .subCategory(maxSubCategory)
                 .preferSubCategory(preferSubCategory)
+                .isDeleted(true)
                 .build();
     }
 
@@ -66,5 +68,9 @@ public class Barter {
         this.barterName = barterName;
         this.barterText = barterText;
         this.barterEndDate = barterEndDate;
+    }
+
+    public void remove() {
+        this.isDeleted = true;
     }
 }

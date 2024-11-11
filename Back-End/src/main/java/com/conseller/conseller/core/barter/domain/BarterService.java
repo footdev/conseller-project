@@ -13,9 +13,9 @@ import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemE
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.category.domain.SubCategory;
 import com.conseller.conseller.core.category.implement.SubCategoryReader;
-import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryRepository;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
+import com.conseller.conseller.core.gifticon.implement.GifticonModifier;
 import com.conseller.conseller.core.gifticon.implement.GifticonReader;
 import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.core.user.implement.UserReader;
@@ -59,17 +59,23 @@ public class BarterService {
     private final BarterReader barterReader;
     private final BarterAppender barterAppender;
     private final BarterModifier barterModifier;
+    private final BarterRemover barterRemover;
     private final BarterProcessor barterProcessor;
     private final BarterHostItemValidator barterHostItemValidator;
 
     private final BarterHostItemReader barterHostItemReader;
     private final BarterHostItemAppender barterHostItemAppender;
+    private final BarterHostItemRemover barterHostItemRemover;
+
+    private final BarterRequestReader barterRequestReader;
+    private final BarterRequestRemover barterRequestRemover;
 
     private final UserReader userReader;
 
     private final SubCategoryReader subCategoryReader;
 
     private final GifticonReader gifticonReader;
+    private final GifticonModifier gifticonModifier;
 
     public BarterPagingResponse getBarters(BarterFilterRequest barterFilterRequest) {
         Pageable pageable = PageRequest.of(barterFilterRequest.getPage() - 1, 10);
@@ -87,16 +93,7 @@ public class BarterService {
     public BarterDetailResponse getBarter(Long barterIdx, Long userIdx) {
         Barter barter = barterReader.read(barterIdx);
         List<BarterHostItem> barterHostItems = barterHostItemReader.readAll(barterIdx);
-        List<barterItemResponse> barterItemResponses = barterHostItems.stream()
-                .map(
-                        barterHostItem -> barterItemResponse.of(
-                            barterHostItem.getHostItemName(),
-                            convertString(barterHostItem.getHostItemEndDate()),
-                            barterHostItem.getHostItemDataImageUrl()
-                    )
-                )
-                .collect(Collectors.toList());
-        return BarterDetailResponse.of(barter, barterItemResponses);
+        return BarterDetailResponse.of(barter, BarterItemResponse.of(barterHostItems));
     }
 
 
@@ -123,33 +120,9 @@ public class BarterService {
         barterModifier.modify(barter, preferSubCategory, barterModifyRequest);
     }
 
-    public void deleteBarter(Long barterIdx) {
-        BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
-        List<BarterRequestEntity> barterRequestEntityList = barterRequestRepository.findByBarterIdx(barterIdx);
-
-        List<BarterHostItemEntity> barterHostItemEntityList = barterEntity.getBarterHostItemEntityList();
-        for(BarterHostItemEntity bhi : barterHostItemEntityList) {
-            GifticonEntity gift = bhi.getGifticonEntity();
-            gift.setGifticonStatus(GifticonStatus.KEEP.getStatus());
-            barterHostItemRepository.deleteById(bhi.getBarterHostItemIdx());
-        }
-
-        for(BarterRequestEntity br : barterRequestEntityList) {
-            if(br.getBarterRequestStatus().equals(RequestStatus.REJECTED.getStatus())) continue;
-
-            List<BarterGuestItemEntity> barterGuestItemEntityList = br.getBarterGuestItemEntites();
-
-            for(BarterGuestItemEntity bg : barterGuestItemEntityList) {
-                GifticonEntity gifticonEntity = gifticonRepository.findById(bg.getGifticonEntity().getGifticonIdx())
-                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
-                gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());
-                barterGuestItemRepository.deleteById(bg.getBarterGuestItemIdx());
-            }
-            barterRequestRepository.deleteById(br.getBarterRequestIdx());
-        }
-
-        barterRepository.deleteById(barterIdx);
+    public void deleteBarter(Long barterId) {
+        barterRemover.remove(barterId);
+        barterRequestRemover.removeAll(barterId);
     }
 
     public void exchangeGifticon(Long barterIdx, Long userIdx) {
@@ -260,10 +233,10 @@ public class BarterService {
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
 
         //barter의 기프티콘 리스트
-        List<barterItemResponse> hostGifticons = new ArrayList<>();
+        List<BarterItemResponse> hostGifticons = new ArrayList<>();
         List<BarterHostItemEntity> barterHostItemEntityList = barterEntity.getBarterHostItemEntityList();
         for(BarterHostItemEntity bhi : barterHostItemEntityList) {
-            barterItemResponse barterItemResponse = barterItemResponse.builder()
+            BarterItemResponse barterItemResponse = barterItemResponse.builder()
                     .gifticonDataImageName(bhi.getGifticonEntity().getGifticonDataImageUrl())
                     .gifticonName(bhi.getGifticonEntity().getGifticonName())
                     .gifticonEndDate(convertString(bhi.getGifticonEntity().getGifticonEndDate()))
@@ -275,9 +248,9 @@ public class BarterService {
         List<BarterConfirmListOfList> barterConfirmListOfLists = new ArrayList<>();
         for(BarterRequestEntity bq : barterRequestEntityList) {
             List<BarterGuestItemEntity> barterGuestItemEntityList = bq.getBarterGuestItemEntites();
-            List<barterItemResponse> barterItemRespons = new ArrayList<>();
+            List<BarterItemResponse> barterItemRespons = new ArrayList<>();
             for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
-                barterItemResponse barterItemResponse = barterItemResponse.builder()
+                BarterItemResponse barterItemResponse = barterItemResponse.builder()
                         .gifticonDataImageName(bgi.getGifticonEntity().getGifticonDataImageUrl())
                         .gifticonName(bgi.getGifticonEntity().getGifticonName())
                         .gifticonEndDate(convertString(bgi.getGifticonEntity().getGifticonEndDate()))

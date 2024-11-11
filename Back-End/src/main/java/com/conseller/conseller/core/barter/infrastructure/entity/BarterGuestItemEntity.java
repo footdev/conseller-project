@@ -28,17 +28,22 @@ public class BarterGuestItemEntity {
     @JoinColumn(name = "gifticon_idx", nullable = false)
     private GifticonEntity gifticonEntity;
 
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
+    private Boolean isDeleted;
+
     @Builder
-    public BarterGuestItemEntity(BarterRequestEntity barterRequestEntity, GifticonEntity gifticonEntity) {
+    public BarterGuestItemEntity(BarterRequestEntity barterRequestEntity, GifticonEntity gifticonEntity, Boolean isDeleted) {
         this.barterRequestEntity = barterRequestEntity;
         this.gifticonEntity = gifticonEntity;
+        this.isDeleted = isDeleted;
     }
 
     public BarterGuestItem toDomain() {
         return BarterGuestItem.builder()
-                .barterGuestItemIdx(barterGuestItemIdx)
-                .barterRequest(barterRequestEntity.toDomain())
-                .gifticon(gifticonEntity.toDomain())
+                .barterGuestItemIdx(this.barterGuestItemIdx)
+                .barterRequest(this.barterRequestEntity.toDomain())
+                .gifticon(this.gifticonEntity.toDomain())
+                .isDeleted(this.isDeleted)
                 .build();
     }
 
@@ -46,6 +51,7 @@ public class BarterGuestItemEntity {
         return BarterGuestItemEntity.builder()
                 .barterRequestEntity(BarterRequestEntity.of(barterGuestItem.getBarterRequest()))
                 .gifticonEntity(GifticonEntity.of(barterGuestItem.getGifticon()))
+                .isDeleted(barterGuestItem.getIsDeleted())
                 .build();
     }
 

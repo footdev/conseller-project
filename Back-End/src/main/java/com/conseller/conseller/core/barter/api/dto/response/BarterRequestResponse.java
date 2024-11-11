@@ -8,8 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
-@Getter
-@Setter
+
+@Getter @Builder
 @ToString
 public class BarterRequestResponse {
 
@@ -18,13 +18,4 @@ public class BarterRequestResponse {
     private Long barterIdx;
     private UserInfoResponse user;
     private List<BarterGuestItemRequest> barterGuestItemRequestList;
-
-    @Builder
-    public BarterRequestResponse(Long barterRequestIdx, String barterRequestStatus, Long barterIdx, UserInfoResponse user, List<BarterGuestItemRequest> barterGuestItemRequestList){
-        this.barterRequestIdx = barterRequestIdx;
-        this.barterRequestStatus = barterRequestStatus;
-        this.barterIdx = barterIdx;
-        this.user = user;
-        this.barterGuestItemRequestList = barterGuestItemRequestList;
-    }
 }

@@ -34,15 +34,18 @@ public class BarterRequestEntity {
     @JoinColumn(name = "user_idx", nullable = false)
     private UserEntity userEntity;
 
-    @OneToMany(mappedBy = "barterRequest")
     List<BarterGuestItemEntity> barterGuestItemEntites = new ArrayList<>();
+
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
+    private Boolean isDeleted;
 
     public BarterRequest toDomain() {
         return BarterRequest.builder()
-                .barterRequestIdx(barterRequestIdx)
-                .barterRequestStatus(barterRequestStatus)
-                .barter(barterEntity.toDomain())
-                .user(userEntity.toDomain())
+                .barterRequestIdx(this.barterRequestIdx)
+                .barterRequestStatus(this.barterRequestStatus)
+                .barter(this.barterEntity.toDomain())
+                .user(this.userEntity.toDomain())
+                .isDeleted(this.isDeleted)
                 .build();
     }
 
@@ -59,6 +62,7 @@ public class BarterRequestEntity {
                 .barterRequestStatus(barterRequest.getBarterRequestStatus())
                 .barterEntity(BarterEntity.of(barterRequest.getBarter()))
                 .userEntity(UserEntity.of(barterRequest.getUser()))
+                .isDeleted(barterRequest.getIsDeleted())
                 .build();
     }
 
@@ -81,12 +85,11 @@ public class BarterRequestEntity {
             barterGuestItemRequestList.add(barterGuestItemRequest);
         }
 
-
         return BarterRequestResponse.builder()
                 .barterRequestIdx(barterRequestEntity.getBarterRequestIdx())
                 .barterRequestStatus(barterRequestEntity.getBarterRequestStatus())
                 .barterIdx(barterRequestEntity.getBarterEntity().getBarterIdx())
-                .barterGuestItemDtoList(barterGuestItemRequestList)
+                .barterGuestItemRequestList(barterGuestItemRequestList)
                 .user(userInfoResponse)
                 .build();
     }

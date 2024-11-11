@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.barter.api.dto.request;
 
-import com.conseller.conseller.core.barter.api.dto.response.barterItemResponse;
+import com.conseller.conseller.core.barter.api.dto.response.BarterItemResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +15,10 @@ public class BarterConfirmListOfList {
     private String buyUserImageUrl;
     private String buyUserNickName;
     private Long buyUserIdx;
-    private List<barterItemResponse> barterTradeList;
+    private List<BarterItemResponse> barterTradeList;
 
     @Builder
-    public BarterConfirmListOfList(String buyUserImageUrl, String buyUserNickName, Long buyUserIdx, List<barterItemResponse> barterTradeList){
+    public BarterConfirmListOfList(String buyUserImageUrl, String buyUserNickName, Long buyUserIdx, List<BarterItemResponse> barterTradeList){
         this.buyUserImageUrl = buyUserImageUrl;
         this.buyUserNickName = buyUserNickName;
         this.buyUserIdx = buyUserIdx;
