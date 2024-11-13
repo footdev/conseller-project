@@ -8,6 +8,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
 
 @Entity
@@ -53,6 +56,12 @@ public class BarterHostItemEntity {
                 .gifticonEntity(GifticonEntity.of(barterHostItem.getGifticon()))
                 .isDeleted(barterHostItem.getIsDeleted())
                 .build();
+    }
+
+    public static List<BarterHostItemEntity> of(List<BarterHostItem> barterHostItems) {
+        return barterHostItems.stream()
+                .map(BarterHostItemEntity::of)
+                .collect(Collectors.toList());
     }
 
     public BarterHostItemRequest toBarterHostItemDto(BarterEntity barterEntity, GifticonResponse gifticon) {

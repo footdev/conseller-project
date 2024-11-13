@@ -5,6 +5,7 @@ import com.conseller.conseller.core.barter.domain.Barter;
 import com.conseller.conseller.core.barter.infrastructure.BarterRepository;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.category.domain.SubCategory;
+import com.conseller.conseller.core.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,11 @@ public class BarterModifier {
     @Transactional
     public void modify(Barter barter, SubCategory preferSubCategory, BarterModifyRequest barterModifyRequest) {
         barter.modify(preferSubCategory, barterModifyRequest.getBarterName(), barterModifyRequest.getBarterText(), LocalDateTime.parse(barterModifyRequest.getBarterEndDate()));
+        barterRepository.save(BarterEntity.of(barter));
+    }
+
+    public void accept(Barter barter, User guest) {
+        barter.accept(LocalDateTime.now(), guest);
         barterRepository.save(BarterEntity.of(barter));
     }
 }

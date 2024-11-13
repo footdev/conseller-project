@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 public class BarterConfirmRequest {
-    private Long barterIdx;
-    private Long userIdx;
-    private Boolean confirm;
+    private final Long barterIdx;
+    private final Long userIdx;
+    private final Long barterRequestIdx;
 }

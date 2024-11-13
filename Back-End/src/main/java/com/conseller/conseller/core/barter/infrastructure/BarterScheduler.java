@@ -5,7 +5,7 @@ import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterHostItemEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;

@@ -13,7 +13,7 @@ import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BarterRequestService implements BarterRequestService{
+public class BarterRequestService {
 
     private final BarterRequestRepository barterRequestRepository;
     private final BarterGuestItemRepository barterGuestItemRepository;
@@ -33,7 +33,7 @@ public class BarterRequestService implements BarterRequestService{
     private final BarterRepository barterRepository;
     private final UserRepository userRepository;
     List<BarterRequestResponse> barterRequestResponseList;
-    @Override
+
     public List<BarterRequestResponse> getBarterRequestList() {
         List<BarterRequestEntity> barterRequestEntityList = barterRequestRepository.findAll();
         List<BarterRequestResponse> barterRequestResponseList = new ArrayList<>();
@@ -46,7 +46,6 @@ public class BarterRequestService implements BarterRequestService{
         return barterRequestResponseList;
     }
 
-    @Override
     public BarterRequestResponse getBarterRequest(Long barterRequestIdx) {
         BarterRequestEntity barterRequestEntity = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
@@ -55,7 +54,6 @@ public class BarterRequestService implements BarterRequestService{
         return barterRequestResponse;
     }
 
-    @Override
     public List<BarterRequestResponse> getBarterRequestListByBarterIdx(Long barterIdx) {
         List<BarterRequestEntity> barterRequestEntityList = barterRequestRepository.findByBarterIdx(barterIdx);
         barterRequestResponseList = new ArrayList<>();
@@ -68,7 +66,6 @@ public class BarterRequestService implements BarterRequestService{
         return barterRequestResponseList;
     }
 
-    @Override
     public List<BarterRequestResponse> getBarterRequestListByRequester(Long userIdx) {
         List<BarterRequestEntity> barterRequestEntityList = barterRequestRepository.findByUserIdx(userIdx);
         barterRequestResponseList = new ArrayList<>();
@@ -81,7 +78,6 @@ public class BarterRequestService implements BarterRequestService{
         return barterRequestResponseList;
     }
 
-    @Override
     public void addBarterRequest(BarterRegistRequest barterRegistRequest, Long barterIdx) {
         BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
@@ -118,7 +114,6 @@ public class BarterRequestService implements BarterRequestService{
 
     }
 
-    @Override
     public void deleteBarterRequest(Long barterRequestIdx) {
         BarterRequestEntity barterRequestEntity = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_REQUEST_INVALID));
@@ -137,7 +132,6 @@ public class BarterRequestService implements BarterRequestService{
         barterRequestRepository.deleteById(barterRequestIdx);
     }
 
-    @Override
     public void rejectByTimeBarterRequest(Long barterRequestIdx) {
         BarterRequestEntity barterRequestEntity = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));

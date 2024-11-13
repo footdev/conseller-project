@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import lombok.Builder;
 import lombok.Getter;
 

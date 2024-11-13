@@ -1,7 +1,8 @@
 package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -38,5 +39,10 @@ public class BarterHostItem {
                 .barter(barter)
                 .isDeleted(isDeleted)
                 .build();
+    }
+
+    public void modifyUser(User user) {
+        this.gifticon.updateStatus(GifticonStatus.KEEP);
+        this.gifticon.modifyUser(user);
     }
 }

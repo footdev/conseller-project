@@ -36,7 +36,7 @@ public class BarterHostItemReader {
 
     public List<BarterHostItem> convert(List<Gifticon> hostItems, Barter barter) {
         return  hostItems.stream()
-                .map(hostItem -> BarterHostItem.from(hostItem, barter))
+                .map(hostItem -> BarterHostItem.from(hostItem, barter, barter.getIsDeleted()))
                 .collect(Collectors.toList());
     }
 }

@@ -11,6 +11,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -59,11 +60,17 @@ public class BarterRequestEntity {
     public static BarterRequestEntity of(BarterRequest barterRequest) {
         return BarterRequestEntity.builder()
                 .barterRequestIdx(barterRequest.getBarterRequestIdx())
-                .barterRequestStatus(barterRequest.getBarterRequestStatus())
+                .barterRequestStatus(barterRequest.getBarterRequestStatus().getStatus())
                 .barterEntity(BarterEntity.of(barterRequest.getBarter()))
                 .userEntity(UserEntity.of(barterRequest.getUser()))
                 .isDeleted(barterRequest.getIsDeleted())
                 .build();
+    }
+
+    public static List<BarterRequestEntity> of(List<BarterRequest> requests) {
+        return requests.stream()
+                .map(BarterRequestEntity::of)
+                .collect(Collectors.toList());
     }
 
     public BarterRequestResponse toBarterRequestResponseDto(BarterRequestEntity barterRequestEntity) {

@@ -31,7 +31,6 @@ public class BarterApi {
                 .body(barterService.getBarter(barterIdx, userIdx));
     }
 
-    //1. 물물교환 작성
     @PostMapping("/new")
     public ResponseEntity<CreateBarterResponse> addBarter(@RequestBody BarterCreateRequest barterCreateRequest) {
         CreateBarterResponse createBarterResponse = new CreateBarterResponse();
@@ -40,7 +39,6 @@ public class BarterApi {
                 .body(createBarterResponse);
     }
 
-    //2. 물물교환 글 수정
     @PatchMapping("/{barterIdx}")
     public ResponseEntity<Void> modifyBarter(@PathVariable Long barterIdx, @RequestBody BarterModifyRequest barterModifyRequest) {
         barterService.modifyBarter(barterIdx, barterModifyRequest);
@@ -56,16 +54,10 @@ public class BarterApi {
     }
 
     //4. 자신의 물물교환 신청글에 달린 물물 교환 신청에 대해 선택하기
-    @PatchMapping("/Confirm")
+    @PatchMapping("/accept")
     public ResponseEntity<Void> selectBarterRequest(@RequestBody BarterConfirmRequest barterConfirm) {
-
-        if(barterConfirm.getConfirm()){
-            barterService.exchangeGifticon(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx());
-            notificationService.sendBarterNotification(barterConfirm.getBarterIdx(), "물물교환 알림", 3);
-        } else {
-            barterService.rejectRequest(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx());
-        }
-
+        barterService.exchangeGifticon(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx());
+        notificationService.sendBarterNotification(barterConfirm.getBarterIdx(), "물물교환 알림", 3);
         return ResponseEntity.ok()
                 .build();
     }

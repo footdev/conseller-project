@@ -2,7 +2,7 @@ package com.conseller.conseller.core.barter.implement;
 
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;

@@ -73,4 +73,10 @@ public class Barter {
     public void remove() {
         this.isDeleted = true;
     }
+
+    public void accept(LocalDateTime barterCompletedDate, User guest) {
+        this.barterStatus = BarterStatus.EXCHANGED.getStatus();
+        this.barterCompletedDate = barterCompletedDate;
+        this.barterCompleteGuest = guest;
+    }
 }

@@ -1,10 +1,9 @@
-package com.conseller.conseller.core.barter.domain;
+package com.conseller.conseller.core.barter.implement;
 
-import com.conseller.conseller.core.barter.implement.BarterGuestItemReader;
+import com.conseller.conseller.core.barter.domain.BarterGuestGifticons;
+import com.conseller.conseller.core.barter.domain.Gifticons;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
