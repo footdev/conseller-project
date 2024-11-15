@@ -56,7 +56,7 @@ public class BarterApi {
     //4. 자신의 물물교환 신청글에 달린 물물 교환 신청에 대해 선택하기
     @PatchMapping("/accept")
     public ResponseEntity<Void> selectBarterRequest(@RequestBody BarterConfirmRequest barterConfirm) {
-        barterService.exchangeGifticon(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx());
+        barterService.exchangeGifticon(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx(), barterConfirm.getBarterRequestIdx());
         notificationService.sendBarterNotification(barterConfirm.getBarterIdx(), "물물교환 알림", 3);
         return ResponseEntity.ok()
                 .build();

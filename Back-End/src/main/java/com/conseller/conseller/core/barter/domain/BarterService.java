@@ -132,34 +132,6 @@ public class BarterService {
         barterModifier.accept(barter, acceptedRequest.getUser());
     }
 
-    public void rejectRequest(Long barterIdx, Long userIdx) {
-        BarterEntity barterEntity = barterRepository.findByBarterIdx(barterIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID));
-
-        Long barterRequestIdx = (long) -1;
-
-        List<BarterRequestEntity> findBarterRequestEntityList = barterEntity.getBarterRequestEntityList();
-        for(BarterRequestEntity barterRequestEntity : findBarterRequestEntityList) {
-            if(barterRequestEntity.getUserEntity().getUserIdx() == userIdx){
-                barterRequestIdx = barterRequestEntity.getBarterRequestIdx();
-                break;
-            }
-        }
-        if(barterRequestIdx == -1) throw new CustomException(CustomExceptionStatus.BARTER_REQUEST_INVALID);
-        BarterRequestEntity barterRequestEntity = barterRequestRepository.findByBarterRequestIdx(barterRequestIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_REQUEST_INVALID));
-
-        barterRequestEntity.setBarterRequestStatus(RequestStatus.REJECTED.getStatus());
-        barterRequestRepository.save(barterRequestEntity);
-
-        List<BarterGuestItemEntity> gifticonList = barterRequestEntity.getBarterGuestItemEntites();
-        for(BarterGuestItemEntity bgi : gifticonList) {
-            GifticonEntity gifticonEntity = bgi.getGifticonEntity();
-            gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());
-            gifticonRepository.save(gifticonEntity);
-        }
-    }
-
     public BarterConfirmPageResponse getBarterConfirmPage(Long barterIdx) {
 
         //barter 정보들
