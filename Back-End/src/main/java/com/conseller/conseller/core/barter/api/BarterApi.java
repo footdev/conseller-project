@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.barter.api;
 
 import com.conseller.conseller.core.barter.api.dto.request.*;
-import com.conseller.conseller.core.barter.api.dto.response.BarterConfirmPageResponse;
+import com.conseller.conseller.core.barter.api.dto.response.BarterRequestsResponse;
 import com.conseller.conseller.core.barter.api.dto.response.BarterDetailResponse;
 import com.conseller.conseller.core.barter.api.dto.response.BarterPagingResponse;
 import com.conseller.conseller.core.barter.api.dto.response.CreateBarterResponse;
@@ -53,7 +53,6 @@ public class BarterApi {
                 .build();
     }
 
-    //4. 자신의 물물교환 신청글에 달린 물물 교환 신청에 대해 선택하기
     @PatchMapping("/accept")
     public ResponseEntity<Void> selectBarterRequest(@RequestBody BarterConfirmRequest barterConfirm) {
         barterService.exchangeGifticon(barterConfirm.getBarterIdx(), barterConfirm.getUserIdx(), barterConfirm.getBarterRequestIdx());
@@ -62,15 +61,9 @@ public class BarterApi {
                 .build();
     }
 
-    @GetMapping("/Confirm/{barterIdx}")
-    public ResponseEntity<BarterConfirmPageResponse> getConfirmPage(@PathVariable Long barterIdx) {
+    @GetMapping("/requests/{barterIdx}")
+    public ResponseEntity<BarterRequestsResponse> getBarterRequests(@PathVariable Long barterIdx) {
         return ResponseEntity.ok()
-                .body(barterService.getBarterConfirmPage(barterIdx));
-    }
-
-    @GetMapping("/popular")
-    public ResponseEntity<Object> getPopularBarter() {
-        return ResponseEntity.ok()
-                .body(barterService.getPopularBarter());
+                .body(barterService.getBarterRequests(barterIdx));
     }
 }

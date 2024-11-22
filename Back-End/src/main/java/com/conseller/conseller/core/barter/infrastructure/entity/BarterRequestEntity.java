@@ -6,6 +6,7 @@ import com.conseller.conseller.core.barter.domain.BarterRequest;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
+import com.conseller.conseller.global.entity.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,8 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Builder
-@EqualsAndHashCode(of = "barterRequestIdx")
-public class BarterRequestEntity {
+public class BarterRequestEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,7 @@ public class BarterRequestEntity {
     public BarterRequest toDomain() {
         return BarterRequest.builder()
                 .barterRequestIdx(this.barterRequestIdx)
-                .barterRequestStatus(this.barterRequestStatus)
+                .barterRequestStatus(RequestStatus.find(barterRequestStatus))
                 .barter(this.barterEntity.toDomain())
                 .user(this.userEntity.toDomain())
                 .isDeleted(this.isDeleted)
@@ -71,33 +71,5 @@ public class BarterRequestEntity {
         return requests.stream()
                 .map(BarterRequestEntity::of)
                 .collect(Collectors.toList());
-    }
-
-    public BarterRequestResponse toBarterRequestResponseDto(BarterRequestEntity barterRequestEntity) {
-        UserEntity userEntity = barterRequestEntity.getUserEntity();
-        UserInfoResponse userInfoResponse = UserInfoResponse.builder()
-                .userId(userEntity.getUserId())
-                .userNickname(userEntity.getUserNickname())
-                .userEmail(userEntity.getUserEmail())
-                .userProfileUrl(userEntity.getUserProfileUrl())
-                .userAccount(userEntity.getUserAccount())
-                .userAccountBank(userEntity.getUserAccountBank())
-                .userPhoneNumber(userEntity.getUserPhoneNumber())
-                .build();
-
-        List<BarterGuestItemRequest> barterGuestItemRequestList = new ArrayList<>();
-        List<BarterGuestItemEntity> barterGuestItemEntityList = barterRequestEntity.getBarterGuestItemEntites();
-        for(BarterGuestItemEntity bgi : barterGuestItemEntityList) {
-            BarterGuestItemRequest barterGuestItemRequest = bgi.toBarterGuestItemDto(bgi);
-            barterGuestItemRequestList.add(barterGuestItemRequest);
-        }
-
-        return BarterRequestResponse.builder()
-                .barterRequestIdx(barterRequestEntity.getBarterRequestIdx())
-                .barterRequestStatus(barterRequestEntity.getBarterRequestStatus())
-                .barterIdx(barterRequestEntity.getBarterEntity().getBarterIdx())
-                .barterGuestItemRequestList(barterGuestItemRequestList)
-                .user(userInfoResponse)
-                .build();
     }
 }

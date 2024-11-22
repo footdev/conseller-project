@@ -5,12 +5,15 @@ import com.conseller.conseller.core.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Builder
 public class BarterRequest {
     private Long barterRequestIdx;
+    private LocalDateTime createdTime;
+    private LocalDateTime updatedTime;
     private RequestStatus barterRequestStatus;
     private Barter barter;
     private User user;
