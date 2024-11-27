@@ -28,4 +28,11 @@ public class BarterRequestReader {
                 .map(BarterRequestEntity::toDomain)
                 .collect(Collectors.toList());
     }
+
+    public List<BarterRequest> readAllByUser(Long userId) {
+        return barterRequestRepository.findByUserIdx(userId)
+                .stream()
+                .map(BarterRequestEntity::toDomain)
+                .collect(Collectors.toList());
+    }
 }

@@ -22,7 +22,7 @@ public class Barter {
     private LocalDateTime barterEndDate;
     private LocalDateTime barterModifiedDate;
     private LocalDateTime barterCompletedDate;
-    private String barterStatus;
+    private BarterStatus barterStatus;
     private User host;
     private User barterCompleteGuest;
     private SubCategory subCategory;
@@ -55,7 +55,7 @@ public class Barter {
                 .barterText(barterCreateRequest.getBarterText())
                 .barterCreatedDate(createdDate)
                 .barterEndDate(LocalDateTime.parse(barterCreateRequest.getBarterEndDate()))
-                .barterStatus(BarterStatus.EXCHANGEABLE.getStatus())
+                .barterStatus(BarterStatus.EXCHANGEABLE)
                 .host(host)
                 .subCategory(maxSubCategory)
                 .preferSubCategory(preferSubCategory)
@@ -75,7 +75,7 @@ public class Barter {
     }
 
     public void accept(LocalDateTime barterCompletedDate, User guest) {
-        this.barterStatus = BarterStatus.EXCHANGED.getStatus();
+        this.barterStatus = BarterStatus.EXCHANGED;
         this.barterCompletedDate = barterCompletedDate;
         this.barterCompleteGuest = guest;
     }

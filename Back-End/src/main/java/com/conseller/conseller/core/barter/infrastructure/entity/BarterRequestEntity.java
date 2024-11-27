@@ -35,8 +35,6 @@ public class BarterRequestEntity extends BaseTimeEntity {
     @JoinColumn(name = "user_idx", nullable = false)
     private UserEntity userEntity;
 
-    List<BarterGuestItemEntity> barterGuestItemEntites = new ArrayList<>();
-
     @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     private Boolean isDeleted;
 

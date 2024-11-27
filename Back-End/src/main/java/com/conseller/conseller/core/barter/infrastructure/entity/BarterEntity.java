@@ -92,7 +92,7 @@ public class BarterEntity {
                 .barterEndDate(barter.getBarterEndDate())
                 .barterModifiedDate(barter.getBarterModifiedDate())
                 .barterCompletedDate(barter.getBarterCompletedDate())
-                .barterStatus(barter.getBarterStatus())
+                .barterStatus(barter.getBarterStatus().getStatus())
                 .barterHost(UserEntity.of(barter.getHost()))
                 .barterCompleteGuest(UserEntity.of(barter.getBarterCompleteGuest()))
                 .subCategoryEntity(SubCategoryEntity.of(barter.getSubCategory()))

@@ -31,4 +31,14 @@ public class BarterRequest {
     public void delete() {
         this.isDeleted = true;
     }
+
+    public static BarterRequest of(Barter barter, User user, LocalDateTime createdTime) {
+        return BarterRequest.builder()
+                .barter(barter)
+                .user(user)
+                .barterRequestStatus(RequestStatus.WAIT)
+                .createdTime(createdTime)
+                .isDeleted(false)
+                .build();
+    }
 }

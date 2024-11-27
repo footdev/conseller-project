@@ -2,6 +2,7 @@ package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
+import com.conseller.conseller.core.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,5 +17,10 @@ public class BarterGuestItem {
     public void delete() {
         isDeleted = true;
         gifticon.updateStatus(GifticonStatus.KEEP);
+    }
+
+    public void modifyUser(User user) {
+        gifticon.updateStatus(GifticonStatus.KEEP);
+        gifticon.modifyUser(user);
     }
 }

@@ -21,4 +21,10 @@ public class BarterRequestRemover {
         barterRequests.forEach(BarterRequest::delete);
         barterRequestAppender.appendAll(barterRequests);
     }
+
+    public void remove(BarterRequest barterRequest) {
+        barterGuestItemRemover.removeAll(barterRequest.getBarterRequestIdx());
+        barterRequest.delete();
+        barterRequestAppender.append(barterRequest);
+    }
 }

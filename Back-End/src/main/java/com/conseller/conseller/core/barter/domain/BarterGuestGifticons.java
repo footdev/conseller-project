@@ -1,6 +1,7 @@
 package com.conseller.conseller.core.barter.domain;
 
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
+import com.conseller.conseller.core.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -21,6 +22,11 @@ public class BarterGuestGifticons implements Gifticons {
     @Override
     public void deleteAll() {
         gifticons.forEach(BarterGuestItem::delete);
+    }
+
+    @Override
+    public void modifyUserAll(User suer) {
+        gifticons.forEach(gifticon -> gifticon.modifyUser(suer));
     }
 
     public static BarterGuestGifticons from(List<BarterGuestItem> gifticons) {
