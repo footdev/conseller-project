@@ -5,6 +5,7 @@ import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
+import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
 import com.conseller.conseller.core.inquiry.infrastructure.InquiryEntity;
 import com.conseller.conseller.core.notification.infrastructure.NotificationEntity;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userIdx", callSuper = false)
 @Table(name = "\"USER\"")
-public class User extends BaseTimeEntity implements UserDetails {
+public class UserEntity extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +76,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Column(name = "user_account_bank")
     private String userAccountBank;
 
+    @Column(name = "user_cash")
+    private Long userCash;
+
     @Builder.Default
     @Column(name = "user_status", nullable = false)
     private String userStatus = UserStatus.ACTIVE.getStatus();
@@ -108,7 +112,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Builder.Default
     @OneToMany(mappedBy = "barterHost")
-    private List<BarterEntity> barterEntities = new ArrayList<>();
+    private List<BarterEntity> barterEntityEntities = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "user")
@@ -212,7 +216,6 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.userAccountBank = userInfoRequest.getUserAccountBank();
     }
 
-    // TODO: 도메인 다 바꿔야함
     public com.conseller.conseller.core.user.domain.User toDomain() {
         return com.conseller.conseller.core.user.domain.User.builder()
                 .userIdx(this.userIdx)
@@ -224,6 +227,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .userGender(this.userGender)
                 .userAge(this.userAge)
                 .userDeposit(this.userDeposit)
+                .userCash(this.userCash)
                 .userDeletedDate(this.userDeletedDate)
                 .userName(this.userName)
                 .userAccount(this.userAccount)
@@ -238,8 +242,8 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .build();
     }
 
-    public static User of(com.conseller.conseller.core.user.domain.User user) {
-        return User.builder()
+    public static UserEntity of(User user) {
+        return UserEntity.builder()
                 .userIdx(user.getUserIdx())
                 .userId(user.getUserId())
                 .userPassword(user.getUserPassword())
@@ -249,6 +253,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .userGender(user.getUserGender())
                 .userAge(user.getUserAge())
                 .userDeposit(user.getUserDeposit())
+                .userCash(user.getUserCash())
                 .userDeletedDate(user.getUserDeletedDate())
                 .userName(user.getUserName())
                 .userAccount(user.getUserAccount())

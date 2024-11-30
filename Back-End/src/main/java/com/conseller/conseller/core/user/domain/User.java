@@ -26,6 +26,7 @@ public class User {
     private char userGender;
     private int userAge;
     private long userDeposit;
+    private long userCash;
     private LocalDateTime userDeletedDate;
     private String userName;
     private String userAccount;
@@ -46,4 +47,8 @@ public class User {
     private List<Store> storeEntities;
     private List<Notification> notifications;
     private List<String> roles;
+
+    public void chargeCash(long cash) {
+        this.userCash += cash;
+    }
 }

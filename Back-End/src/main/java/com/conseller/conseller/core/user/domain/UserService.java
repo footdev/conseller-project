@@ -3,10 +3,10 @@ package com.conseller.conseller.core.user.domain;
 import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
 import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponseDto;
+import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponse;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.core.store.api.dto.response.StoreItemData;
 import com.conseller.conseller.user.api.dto.request.*;
@@ -19,7 +19,7 @@ import java.util.List;
 public interface UserService {
 
     // 회원가입
-    public User register(SignUpRequest signUpRequest);
+    public UserEntity register(SignUpRequest signUpRequest);
 
     //닉네임 중복체크
     public InfoValidationRequest checkNickname(String nickname);
@@ -79,7 +79,7 @@ public interface UserService {
     public List<MyBarterResponse> getUserBarters(long userIdx);
 
     //내 교환 요청목록 불러오기
-    public List<MyBarterRequestResponseDto> getUserBarterRequests(long userIdx);
+    public List<MyBarterRequestResponse> getUserBarterRequests(long userIdx);
 
     //회원탈퇴
     public void deleteUser(long userIdx, String token);
@@ -98,4 +98,6 @@ public interface UserService {
 
     //기프티콘 페이지 단위로 보내주기
     public GifticonPageResponse getGifticonPage(GifticonRequestDTO gifticonRequestDTO);
+
+    void chargeCash(ChargeCashRequest chargeCashRequest);
 }

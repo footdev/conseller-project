@@ -1,6 +1,6 @@
 package com.conseller.conseller.core.user.api.dto;
 
-import com.conseller.conseller.core.user.infrastructure.User;
+import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.core.user.api.dto.request.SignUpRequest;
 import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
 import org.mapstruct.Mapper;
@@ -19,9 +19,9 @@ public interface UserMapper {
     @Mapping(source = "userAccount", target = "userAccount")
     @Mapping(source = "userAccountBank", target = "userAccountBank")
     @Mapping(source = "userPhoneNumber", target = "userPhoneNumber")
-    UserInfoResponse toUserInfoResponse(User user);
+    UserInfoResponse toUserInfoResponse(UserEntity userEntity);
 
     @Mapping(target = "userAccountBank",
             expression = "java(com.conseller.conseller.user.enums.AccountBanks.fromString(signUpRequest.getUserAccountBank()).getBank())")
-    User signUpDtoToUser(SignUpRequest signUpRequest);
+    UserEntity signUpDtoToUser(SignUpRequest signUpRequest);
 }

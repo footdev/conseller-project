@@ -3,7 +3,7 @@ package com.conseller.conseller.core.user.api;
 import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
 import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
 import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponseDto;
+import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponse;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
@@ -232,9 +232,9 @@ public class UserApi {
 
     //내 물물교환 요청 보기
     @GetMapping("/{userIdx}/barter-request")
-    public ResponseEntity<Item<List<MyBarterRequestResponseDto>>> getUserBarterRequests(@PathVariable long userIdx) {
+    public ResponseEntity<Item<List<MyBarterRequestResponse>>> getUserBarterRequests(@PathVariable long userIdx) {
 
-        Item<List<MyBarterRequestResponseDto>> response = new Item<>(userService.getUserBarterRequests(userIdx));
+        Item<List<MyBarterRequestResponse>> response = new Item<>(userService.getUserBarterRequests(userIdx));
 
         return ResponseEntity.ok()
                 .body(response);
@@ -298,5 +298,12 @@ public class UserApi {
     public ResponseEntity<Object> getUserGifticonPages(@RequestBody GifticonRequestDTO gifticonRequestDTO) {
         return ResponseEntity.ok()
                 .body(userService.getGifticonPage(gifticonRequestDTO));
+    }
+
+    // 캐시 충전 (임시)
+    @PostMapping("/charge")
+    public ResponseEntity<Object> chargeCash(@RequestBody ChargeCashRequest chargeCashRequest) {
+        userService.chargeCash(chargeCashRequest);
+        return ResponseEntity.ok().build();
     }
 }
