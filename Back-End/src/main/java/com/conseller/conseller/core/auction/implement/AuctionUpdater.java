@@ -16,7 +16,7 @@ public class AuctionUpdater {
     @Transactional
     public void updateAuction(long id, String text) {
         Auction auction = auctionReader.read(id);
-        auction.updateText(text);
+        auction.modifyText(text);
         auctionRepository.save(AuctionEntity.of(auction));
     }
 }

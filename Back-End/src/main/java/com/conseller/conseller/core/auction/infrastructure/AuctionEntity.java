@@ -5,7 +5,9 @@ import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
+import com.conseller.conseller.global.entity.BaseTimeEntity;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,12 +17,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Builder
+@SuperBuilder
 @Getter @Setter
 @DynamicUpdate
 @RequiredArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class AuctionEntity {
+public class AuctionEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionIdx;
@@ -57,14 +59,11 @@ public class AuctionEntity {
     @JoinColumn(name = "user_idx")
     private UserEntity userEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_bid_idx")
     private AuctionBidEntity highestBidEntity;
 
-    @OneToMany(mappedBy = "auction")
-    private List<AuctionBidEntity> auctionBidEntityList;
-
-    public Auction toDomain() {
+     public Auction toDomain() {
         return Auction.builder()
                 .auctionIdx(auctionIdx)
                 .auctionText(auctionText)
@@ -78,7 +77,7 @@ public class AuctionEntity {
                 .gifticon(gifticonEntity.toDomain())
                 .user(userEntity.toDomain())
                 .highestBid(highestBidEntity.toDomain())
-                .auctionBidEntityList(auctionBidEntityList)
+                .isDeleted(super.getIsDeleted())
                 .build();
     }
 
@@ -96,7 +95,7 @@ public class AuctionEntity {
                 .gifticonEntity(GifticonEntity.of(auction.getGifticon()))
                 .userEntity(UserEntity.of(auction.getUser()))
                 .highestBidEntity(AuctionBidEntity.of(auction.getHighestBid()))
-                .auctionBidEntityList(auction.getAuctionBidEntityList())
+                .isDeleted(auction.isDeleted())
                 .build();
     }
 }

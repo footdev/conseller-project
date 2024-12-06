@@ -1,10 +1,7 @@
 package com.conseller.conseller.core.auction.api;
 
 import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
-import com.conseller.conseller.core.auction.api.dto.request.AuctionConfirmRequest;
-import com.conseller.conseller.core.auction.api.dto.request.AuctionListRequest;
-import com.conseller.conseller.core.auction.api.dto.request.ModifyAuctionRequest;
-import com.conseller.conseller.core.auction.api.dto.request.RegistAuctionRequest;
+import com.conseller.conseller.core.auction.api.dto.request.*;
 import com.conseller.conseller.core.auction.api.dto.response.*;
 import com.conseller.conseller.core.auction.domain.AuctionService;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
@@ -25,9 +22,8 @@ public class AuctionApi {
     // 경매 목록
     @PostMapping("/{auctionId}")
     public ResponseEntity<AuctionListResponse> getAuctionList(@PathVariable long auctionId, @RequestBody AuctionListRequest request) {
-        AuctionListResponse response = auctionService.getAuctions(auctionId, request);
         return ResponseEntity.ok()
-                .body(response);
+                .body(new AuctionListResponse(auctionService.getAuctions(auctionId, request)));
     }
 
     // 경매 글 등록
@@ -42,9 +38,8 @@ public class AuctionApi {
     // 경매 글 상세 보기
     @GetMapping("/{auctionIdx}")
     public ResponseEntity<DetailAuctionResponse> detailAuction(@PathVariable long auctionIdx) {
-        DetailAuctionResponse response =  auctionService.detailAuction(auctionIdx);
         return ResponseEntity.ok()
-                .body(response);
+                .body(DetailAuctionResponse.of(auctionService.detailAuction(auctionIdx)));
     }
 
     // 경매 글 수정
@@ -63,8 +58,25 @@ public class AuctionApi {
                 .build();
     }
 
+    // 즉시 구매가 거래 진행
+    @PostMapping("/buy-now")
+    public ResponseEntity<Object> buyNowPrice(@RequestBody BuyNowRequest buyNowRequest) {
+        auctionService.buyNowPrice(buyNowRequest.toTargetAuction(), buyNowRequest.toTargetBuyer());
+        return ResponseEntity.ok()
+                .build();
+
+    }
+
+    // 낙찰자 입장에서 낙찰 확정
+    @PostMapping("/confirm")
+    public ResponseEntity<Object> confirmBid(@RequestBody ConfirmBidRequest confirmBidRequest) {
+        auctionService.confirmWinningBid(confirmBidRequest.toTargetAuction(), confirmBidRequest.toTargetBuyer());
+        return ResponseEntity.ok()
+                .build();
+    }
+
     // 경매 거래 진행
-    @GetMapping("/trade/{auctionIdx}/{userIdx}")
+    @PostMapping("/trade/{auctionIdx}/{userIdx}")
     public ResponseEntity<AuctionTradeResponse> tradeAuction(@PathVariable long auctionIdx, @PathVariable long userIdx) {
         AuctionTradeResponse response = auctionService.tradeAuction(auctionIdx, userIdx);
         notificationService.sendAuctionNotification(auctionIdx, "경매 거래 진행", "님과의 경매가 진행 중 입니다.", 1, 1);

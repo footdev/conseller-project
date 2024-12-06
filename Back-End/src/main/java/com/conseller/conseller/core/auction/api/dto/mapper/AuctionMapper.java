@@ -5,7 +5,7 @@ import com.conseller.conseller.core.auction.api.dto.response.*;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
+ㅈimport com.conseller.conseller.core.user.infrastructure.User;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,7 +24,7 @@ public interface AuctionMapper {
     // RegistAuctionRequest -> Auction 매핑
     @Mapping(source = "user", target = "user")
     @Mapping(source = "gifticon", target = "gifticon")
-    AuctionEntity registAuctionRequestToAuctionEntity(RegistAuctionRequest registAuctionRequest, UserEntity userEntity, GifticonEntity gifticonEntity);
+    AuctionEntity registAuctionRequestToAuctionEntity(RegistAuctionRequest registAuctionRequest, User user, GifticonEntity gifticonEntity);
 
     //User, Auction, AuctionBidList -> DetailAuctionResponse 매핑
     default DetailAuctionResponse entityToDetailAuctionResponse(AuctionEntity auctionEntity, List<AuctionBidItemData> auctionBidList) {

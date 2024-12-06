@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
-import com.conseller.conseller.core.bid.domain.AuctionBidService;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AuctionScheduler {
-    private final AuctionService auctionService;
-    private final AuctionBidService auctionBidService;
     private final NotificationService notificationService;
 
     @Async

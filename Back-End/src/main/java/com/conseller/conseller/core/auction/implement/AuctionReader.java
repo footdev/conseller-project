@@ -29,7 +29,7 @@ public class AuctionReader {
     }
 
     @Transactional(readOnly = true)
-    public List<AuctionItemData> readAuctions(long cursorId, AuctionListRequest auctionListRequest) {
+    public List<AuctionItemData> read(long cursorId, AuctionListRequest auctionListRequest) {
         AuctionEntity cursor = auctionRepository.findById(cursorId)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 

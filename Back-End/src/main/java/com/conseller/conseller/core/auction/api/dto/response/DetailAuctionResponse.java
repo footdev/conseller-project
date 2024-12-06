@@ -1,10 +1,8 @@
 package com.conseller.conseller.core.auction.api.dto.response;
 
 import com.conseller.conseller.core.auction.domain.Auction;
-import com.conseller.conseller.core.bid.implement.AuctionBid;
+import com.conseller.conseller.core.bid.domain.AuctionBid;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Builder

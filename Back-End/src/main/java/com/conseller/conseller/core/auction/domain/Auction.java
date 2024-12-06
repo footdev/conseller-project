@@ -3,8 +3,7 @@ package com.conseller.conseller.core.auction.domain;
 
 import com.conseller.conseller.core.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
-import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
-import com.conseller.conseller.core.bid.implement.AuctionBid;
+import com.conseller.conseller.core.bid.domain.AuctionBid;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.user.domain.User;
@@ -32,6 +31,7 @@ public class Auction {
     private User user;
     private AuctionBid highestBid;
     private List<AuctionBidEntity> auctionBidEntityList;
+    private boolean isDeleted;
 
     public static Auction of(RegistAuctionRequest registAuctionRequest, User user, Gifticon gifticon) {
         return Auction.builder()
@@ -45,10 +45,24 @@ public class Auction {
                 .gifticon(gifticon)
                 .user(user)
                 .highestBid(null)
+                .isDeleted(false)
                 .build();
     }
 
-    public void updateText(String text) {
+    public void modifyText(String text) {
         this.auctionText = text;
+    }
+
+    public boolean isInProgress() {
+        return this.auctionStatus.equals(AuctionStatus.IN_PROGRESS);
+    }
+
+    public void trade() {
+        this.auctionStatus = AuctionStatus.IN_TRADE;
+    }
+
+    public void delete() {
+        this.auctionStatus = AuctionStatus.CANCLED;
+        this.isDeleted = true;
     }
 }
