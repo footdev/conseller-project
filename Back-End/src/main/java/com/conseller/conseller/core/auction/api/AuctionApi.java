@@ -3,6 +3,7 @@ package com.conseller.conseller.core.auction.api;
 import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.core.auction.api.dto.request.*;
 import com.conseller.conseller.core.auction.api.dto.response.*;
+import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.domain.AuctionService;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.notification.domain.NotificationService;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -68,9 +70,17 @@ public class AuctionApi {
     }
 
     // 낙찰자 입장에서 낙찰 확정
-    @PostMapping("/confirm")
+    @PostMapping("/confirm-bid")
     public ResponseEntity<Object> confirmBid(@RequestBody ConfirmBidRequest confirmBidRequest) {
         auctionService.confirmWinningBid(confirmBidRequest.toTargetAuction(), confirmBidRequest.toTargetBuyer());
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    // 낙찰자가 기프티콘 사용 후 거래 완전 확정
+    @PostMapping("/confirm-trade")
+    public ResponseEntity<Object> confirmTrade(@RequestBody ConfirmTradeRequest confirmTradeRequest) {
+        auctionService.confirmAuction(confirmTradeRequest.getAuctionIdx(), confirmTradeRequest.getBuyerIdx());
         return ResponseEntity.ok()
                 .build();
     }
@@ -85,105 +95,15 @@ public class AuctionApi {
                 .body(response);
     }
 
-    // 경매 진행 취소
-    // 없어도 될듯
-    @PatchMapping("/cancel/{auctionIdx}")
-    public ResponseEntity<Object> cancelAuction(@PathVariable long auctionIdx) {
-
-        // 거래 취소 알림
-        notificationService.sendAuctionNotification(auctionIdx, "경매 거래 취소", "님이 경매를 취소하였습니다", 1, 1);
-        notificationService.sendAuctionNotification(auctionIdx, "경매 거래 취소", "님이 경매를 취소하였습니다", 2, 1);
-
-        auctionService.cancelAuction(auctionIdx);
-
-        return ResponseEntity.ok()
-                .build();
-    }
-
-    // 입금 완료 버튼
-    // 없어도 될듯
-    @PatchMapping("/complete/{auctionIdx}")
-    public ResponseEntity<Object> completeAuction(@PathVariable long auctionIdx) {
-        // 판매자에게 알림
-        notificationService.sendAuctionNotification(auctionIdx, "경매 입금 완료", "님이 경매 입금을 완료하였습니다.", 2, 1);
-
-        return ResponseEntity.ok()
-                .build();
-    }
-
-    // 거래 확정 버튼
-    @PatchMapping("/confirm")
-    public  ResponseEntity<Object> confirmAuction(@RequestBody AuctionConfirmRequest auctionConfirmRequest) {
-        if(auctionConfirmRequest.getConfirm()) {
-            auctionService.confirmAuction(auctionConfirmRequest.getAuctionIdx());
-
-            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 완료", "님과의 경매가 완료되었습니다.", 1, 1);
-            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 완료", "님과의 경매가 완료되었습니다.", 2, 1);
-        }
-        else {
-            // 거래 취소 알림
-            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 취소", "님과의 경매가 취소되었습니다.", 1, 1);
-            notificationService.sendAuctionNotification(auctionConfirmRequest.getAuctionIdx(), "경매 거래 취소", "님과의 경매가 취소되었습니다.", 2, 1);
-
-            auctionService.cancelAuction(auctionConfirmRequest.getAuctionIdx());
-        }
-
-        return ResponseEntity.ok()
-                .build();
-    }
-
-    // 경매 판매자 입금 확인
-    @GetMapping("/Confirm/{auctionIdx}")
-    public ResponseEntity<AuctionConfirmResponse> getConfirmAuction(@PathVariable long auctionIdx) {
-        AuctionConfirmResponse response = auctionService.getConfirmAuction(auctionIdx);
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    // 입금확인 페이지
-    @GetMapping("/confirm-buy/{auctionIdx}")
-    public ResponseEntity<AuctionConfirmBuyResponse> getConfirmBuyAuction(@PathVariable long auctionIdx) {
-        AuctionConfirmBuyResponse response = auctionService.getConfirmBuyAuction(auctionIdx);
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    // 가장 조회가 많이 된 경매
+    // 하루 남은 경매 리스트
     @GetMapping("/popular")
     public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
-        List<AuctionEntity> auctionEntityList = auctionService.getPopularAuction();
-
-        List<AuctionItemData> auctionItemDataList = AuctionMapper.INSTANCE.auctionsToItemDatas(auctionEntityList);
-
-        AuctionPopularResponse response = new AuctionPopularResponse(auctionItemDataList);
-
+        List<Auction> popularAuctions = auctionService.getPopularAuction();
         return ResponseEntity.ok()
-                .body(response);
+                .body(new AuctionPopularResponse(
+                        popularAuctions.stream()
+                                .map(AuctionItemData::of)
+                                .collect(Collectors.toList())
+                ));
     }
-
-    // 가장 많은 메인카테고리
-    @GetMapping("/category/main")
-    public ResponseEntity<AuctionCategoryResponse> getMainCategory() {
-        List<Integer> list = auctionService.getMainCategory();
-
-        AuctionCategoryResponse response = new AuctionCategoryResponse(list);
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    // 가장 많은 서브카테고리
-    @GetMapping("/category/sub")
-    public ResponseEntity<AuctionCategoryResponse> getSubCategory() {
-
-        List<Integer> list = auctionService.getSubCategory();
-
-        AuctionCategoryResponse response = new AuctionCategoryResponse(list);
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
 }

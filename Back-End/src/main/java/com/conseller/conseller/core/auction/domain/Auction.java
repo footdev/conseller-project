@@ -65,4 +65,8 @@ public class Auction {
         this.auctionStatus = AuctionStatus.CANCLED;
         this.isDeleted = true;
     }
+
+    public boolean isConfirmedBid() {
+        return this.auctionStatus.equals(AuctionStatus.BID_CONFIRMED);
+    }
 }

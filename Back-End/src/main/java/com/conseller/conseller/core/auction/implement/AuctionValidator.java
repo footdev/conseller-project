@@ -13,4 +13,10 @@ public class AuctionValidator {
             throw new CustomException(CustomExceptionStatus.ALREADY_TRADE_AUCTION);
         }
     }
+
+    public void isConfirmedBid(Auction auction) {
+        if (!auction.isConfirmedBid()) {
+            throw new CustomException(CustomExceptionStatus.NOT_CONFIRMED_BID_AUCTION);
+        }
+    }
 }
