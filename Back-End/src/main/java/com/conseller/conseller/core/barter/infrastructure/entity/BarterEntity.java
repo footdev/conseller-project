@@ -75,7 +75,7 @@ public class BarterEntity {
                 .barterEndDate(barterEndDate)
                 .barterModifiedDate(barterModifiedDate)
                 .barterCompletedDate(barterCompletedDate)
-                .barterStatus(barterStatus)
+                .barterStatus(BarterStatus.valueOf(barterStatus))
                 .host(barterHost.toDomain())
                 .barterCompleteGuest(barterCompleteGuest.toDomain())
                 .subCategory(subCategoryEntity.toDomain())

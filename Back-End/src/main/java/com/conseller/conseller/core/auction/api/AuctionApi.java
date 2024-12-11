@@ -1,11 +1,9 @@
 package com.conseller.conseller.core.auction.api;
 
-import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.core.auction.api.dto.request.*;
 import com.conseller.conseller.core.auction.api.dto.response.*;
 import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.domain.AuctionService;
-import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.notification.domain.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +96,7 @@ public class AuctionApi {
     // 하루 남은 경매 리스트
     @GetMapping("/popular")
     public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
-        List<Auction> popularAuctions = auctionService.getPopularAuction();
+        List<Auction> popularAuctions = auctionService.getAuctionWithOneDayLeft();
         return ResponseEntity.ok()
                 .body(new AuctionPopularResponse(
                         popularAuctions.stream()

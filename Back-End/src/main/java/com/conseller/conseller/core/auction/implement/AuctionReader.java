@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.auction.implement;
 
-import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.core.auction.api.dto.request.AuctionListRequest;
 import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
 import com.conseller.conseller.core.auction.domain.Auction;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -29,10 +29,13 @@ public class AuctionReader {
     }
 
     @Transactional(readOnly = true)
-    public List<AuctionItemData> read(long cursorId, AuctionListRequest auctionListRequest) {
+    public List<Auction> read(long cursorId, AuctionListRequest auctionListRequest) {
         AuctionEntity cursor = auctionRepository.findById(cursorId)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
 
-        return AuctionMapper.INSTANCE.auctionsToItemDatas(auctionRepositoryImpl.findAuctionListByCursor(cursor, auctionListRequest));
+        return auctionRepositoryImpl.findAuctionListByCursor(cursor, auctionListRequest)
+                .stream()
+                .map(AuctionEntity::toDomain)
+                .collect(Collectors.toList());
     }
 }

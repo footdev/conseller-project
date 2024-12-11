@@ -8,6 +8,8 @@ import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class AuctionFinder {
@@ -33,5 +35,9 @@ public class AuctionFinder {
 
         auctionValidator.isConfirmedBid(auction);
         return auction;
+    }
+
+    public List<Auction> findAuctionWithOneDayLeft() {
+        return null;
     }
 }

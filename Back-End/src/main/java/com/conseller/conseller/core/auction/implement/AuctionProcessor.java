@@ -67,17 +67,11 @@ public class AuctionProcessor {
 
     @Transactional
     public void completeTrade(long auctionIdx, long buyerIdx) {
-        // 유효한 상태인 경매 조회
         Auction auction = auctionFinder.findConfirmedBidAuction(auctionIdx);
         User buyer = userFinder.findValidUser(buyerIdx);
-
-        // 구매자가 결제했던 이력을 조회
         AuctionOrder auctionOrder = auctionOrderReader.read(auction, buyer);
 
-        // 판매자에게 대금 지급
         paymentManager.depositFondsToSeller(auction.getUser(), auctionOrder);
-
-        // 판매 대금 지급 이력 생성 및 저장
         sellerPaymentHistoryAppender.append(auction, auction.getUser(), auctionOrder);
     }
 }

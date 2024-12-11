@@ -2,10 +2,9 @@ package com.conseller.conseller.core.auction.domain;
 
 import com.conseller.conseller.core.auction.api.dto.request.*;
 import com.conseller.conseller.core.auction.api.dto.response.*;
-import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.core.auction.implement.*;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
+import com.conseller.conseller.core.gifticon.implement.GifticonFinder;
 import com.conseller.conseller.core.gifticon.implement.GifticonReader;
 import com.conseller.conseller.core.gifticon.implement.GifticonUpdater;
 import com.conseller.conseller.core.gifticon.implement.GifticonValidator;
@@ -22,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuctionService {
     private final AuctionReader auctionReader;
+    private final AuctionFinder auctionFinder;
     private final AuctionAppender auctionAppender;
     private final AuctionUpdater auctionUpdater;
     private final AuctionRemover auctionRemover;
@@ -29,7 +29,7 @@ public class AuctionService {
 
     private final UserReader userReader;
     private final GifticonReader gifticonReader;
-    private final GifticonValidator gifticonValidator;
+    private final GifticonFinder gifticonFinder;
     private final GifticonUpdater gifticonUpdater;
     private AuctionValidator auctionValidator;
 
@@ -40,8 +40,8 @@ public class AuctionService {
     @Transactional
     public long registAuction(RegistAuctionRequest request) {
         User user = userReader.read(request.getUserIdx());
-        Gifticon gifticon = gifticonReader.read(request.getGifticonIdx());
-        gifticonValidator.isKeep(gifticon);
+        Gifticon gifticon = gifticonFinder.findKeepGifticon(request.getGifticonIdx());
+
         gifticonUpdater.updateStatus(gifticon, GifticonStatus.AUCTION);
         return auctionAppender.append(Auction.of(request, user, gifticon));
     }
@@ -58,14 +58,19 @@ public class AuctionService {
         auctionRemover.remove(id);
     }
 
+    // 낙찰 확정
+    public void confirmWinningBid(TargetAuction targetAuction, TargetBuyer targetBuyer) {
+        auctionProcessor.buy(targetAuction, targetBuyer);
+    }
+
      //경매 거래 확정
     public void confirmAuction(long auctionIdx, long buyerIdx) {
         auctionProcessor.completeTrade(auctionIdx, buyerIdx);
     }
 
-    // 인기 경매 목록
-    public List<Auction> getPopularAuction() {
-        return auctionFinder.findPopularAuction();
+    // 하루 남은 경매 목록
+    public List<Auction> getAuctionWithOneDayLeft() {
+        return auctionFinder.findAuctionWithOneDayLeft();
     }
 
     // 즉시 구매 진행
@@ -73,8 +78,5 @@ public class AuctionService {
         auctionProcessor.buyNow(targetAuction, targetBuyer);
     }
 
-    // 낙찰자가 낙찰을 확정했으므로 기프티콘이 지급되고 낙찰 확정이 된다.
-    public void confirmWinningBid(TargetAuction targetAuction, TargetBuyer targetBuyer) {
-        auctionProcessor.buy(targetAuction, targetBuyer);
-    }
+
 }
