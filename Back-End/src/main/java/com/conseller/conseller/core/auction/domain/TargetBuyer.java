@@ -10,4 +10,9 @@ public class TargetBuyer {
     public TargetBuyer(long buyerIdx) {
         this.buyerIdx = buyerIdx;
     }
+
+    public TargetBuyer(long buyerIdx, long price) {
+        this.buyerIdx = buyerIdx;
+        this.price = price;
+    }
 }
