@@ -17,26 +17,26 @@ public class AuctionScheduler {
     @Async
     @Scheduled(cron = "0 */15 * * * ?")
     public void autoAuctionConfirm() {
-        List<AuctionEntity> auctionEntities = auctionService.getAuctionConfirmList();
+        List<Auction> auctionEntities = auctionService.getAuctionConfirmList();
 
-        for(AuctionEntity auctionEntity : auctionEntities) {
-            auctionService.confirmAuction(auctionEntity.getAuctionIdx());
+        for(Auction auction : auctionEntities) {
+            auctionService.confirmAuction(auction.getAuctionIdx());
 
-            notificationService.sendAuctionNotification(auctionEntity.getAuctionIdx(),"경매 거래 확정", "님과의 거래가 자동으로 확정되었습니다.", 2,1);
+            notificationService.sendAuctionNotification(auction.getAuctionIdx(),"경매 거래 확정", "님과의 거래가 자동으로 확정되었습니다.", 2,1);
         }
     }
 
     @Async
     @Scheduled(cron = "0 0 0 * * ?")
     public void autoAuctionExpire() {
-        List<AuctionEntity> auctionEntities = auctionService.getAuctionExpiredList();
+        List<Auction> auctionEntities = auctionService.getAuctionExpiredList();
 
-        for(AuctionEntity auctionEntity : auctionEntities) {
-            List<AuctionBidEntity> bids = auctionEntity.getAuctionBidEntityList();
+        for(Auction auction : auctionEntities) {
+            List<AuctionBidEntity> bids = auction.getAuctionBidEntityList();
             for(AuctionBidEntity bid : bids) {
                 auctionBidService.rejectAuctionBid(bid.getAuctionBidIdx());
             }
-            auctionService.rejectAuction(auctionEntity.getAuctionIdx());
+            auctionService.rejectAuction(auction.getAuctionIdx());
         }
     }
 

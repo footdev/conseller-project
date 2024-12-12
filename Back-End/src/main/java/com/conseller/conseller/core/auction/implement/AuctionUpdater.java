@@ -1,7 +1,6 @@
 package com.conseller.conseller.core.auction.implement;
 
-import com.conseller.conseller.core.auction.domain.Auction;
-import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
+import com.conseller.conseller.core.auction.infrastructure.Auction;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,8 +14,8 @@ public class AuctionUpdater {
 
     @Transactional
     public void updateAuction(long id, String text) {
-        Auction auction = auctionReader.read(id);
+        com.conseller.conseller.core.auction.domain.Auction auction = auctionReader.read(id);
         auction.modifyText(text);
-        auctionRepository.save(AuctionEntity.of(auction));
+        auctionRepository.save(Auction.of(auction));
     }
 }

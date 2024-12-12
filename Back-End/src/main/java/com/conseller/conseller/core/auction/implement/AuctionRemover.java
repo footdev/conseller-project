@@ -1,7 +1,6 @@
 package com.conseller.conseller.core.auction.implement;
 
-import com.conseller.conseller.core.auction.domain.Auction;
-import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
+import com.conseller.conseller.core.auction.infrastructure.Auction;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
 import com.conseller.conseller.core.bid.domain.AuctionBid;
 import com.conseller.conseller.core.bid.implement.BidReader;
@@ -25,12 +24,12 @@ public class AuctionRemover {
 
     @Transactional
     public void remove(long id) {
-        Auction auction = auctionReader.read(id);
+        com.conseller.conseller.core.auction.domain.Auction auction = auctionReader.read(id);
         List<AuctionBid> auctionBids = bidReader.readAll(id);
 
         auction.delete();
         gifticonUpdater.updateStatus(auction.getGifticon(), GifticonStatus.KEEP);
-        auctionRepository.save(AuctionEntity.of(auction));
+        auctionRepository.save(Auction.of(auction));
 
         bidRemover.removeAll(auctionBids);
 

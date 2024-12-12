@@ -40,7 +40,11 @@ public class AuctionFinder {
         return auction;
     }
 
-    public List<Auction> findAuctionsEndingWithinOneHour() {
-        return auctionRepositoryImpl.findAuctionsEndingWithinOneHour(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+    public List<Auction> findAuctionsEndingWithinOneHour(long cursorId) {
+        Auction cursor = auctionRepository.findById(cursorId)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID))
+                .toDomain();
+
+        return auctionRepositoryImpl.findAuctionsEndingWithinOneHour(cursor, LocalDateTime.now(), LocalDateTime.now().plusHours(1));
     }
 }

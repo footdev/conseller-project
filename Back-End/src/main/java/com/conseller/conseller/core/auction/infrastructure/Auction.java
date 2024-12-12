@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
-import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
@@ -14,7 +13,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @SuperBuilder
@@ -22,7 +20,7 @@ import java.util.List;
 @DynamicUpdate
 @RequiredArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class AuctionEntity extends BaseTimeEntity {
+public class Auction extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionIdx;
@@ -63,8 +61,8 @@ public class AuctionEntity extends BaseTimeEntity {
     @JoinColumn(name = "auction_bid_idx")
     private AuctionBidEntity highestBidEntity;
 
-     public Auction toDomain() {
-        return Auction.builder()
+     public com.conseller.conseller.core.auction.domain.Auction toDomain() {
+        return com.conseller.conseller.core.auction.domain.Auction.builder()
                 .auctionIdx(auctionIdx)
                 .auctionText(auctionText)
                 .lowerPrice(lowerPrice)
@@ -81,8 +79,8 @@ public class AuctionEntity extends BaseTimeEntity {
                 .build();
     }
 
-    public static AuctionEntity of(Auction auction) {
-        return AuctionEntity.builder()
+    public static Auction of(com.conseller.conseller.core.auction.domain.Auction auction) {
+        return Auction.builder()
                 .auctionIdx(auction.getAuctionIdx())
                 .auctionText(auction.getAuctionText())
                 .lowerPrice(auction.getLowerPrice())
