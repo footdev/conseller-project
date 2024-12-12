@@ -1,5 +1,7 @@
-package com.conseller.conseller.core.auction.auction;
+package com.conseller.conseller.core.auction.domain.enums;
 
+import com.conseller.conseller.global.exception.CustomException;
+import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +21,6 @@ public enum AuctionOrderStatus {
                 return value;
             }
         }
-        return null;
+        throw new CustomException(CustomExceptionStatus.INVALID_AUCTION_ORDER_STATUS);
     }
 }

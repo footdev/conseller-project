@@ -2,6 +2,7 @@ package com.conseller.conseller.core.auction.implement;
 
 import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
+import com.conseller.conseller.core.auction.infrastructure.AuctionRepositoryImpl;
 import com.conseller.conseller.core.gifticon.implement.GifticonValidator;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuctionFinder {
     private final AuctionRepository auctionRepository;
+    private final AuctionRepositoryImpl auctionRepositoryImpl;
     private final AuctionValidator auctionValidator;
     private final GifticonValidator gifticonValidator;
 
@@ -39,6 +41,6 @@ public class AuctionFinder {
     }
 
     public List<Auction> findAuctionsEndingWithinOneHour() {
-        return auctionRepository.findAuctionsEndingWithinOneHour(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        return auctionRepositoryImpl.findAuctionsEndingWithinOneHour(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
     }
 }

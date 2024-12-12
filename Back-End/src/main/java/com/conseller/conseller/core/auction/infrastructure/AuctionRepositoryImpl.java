@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
 import com.conseller.conseller.core.auction.api.dto.request.AuctionListRequest;
-import com.conseller.conseller.core.auction.auction.AuctionOrderStatus;
+import com.conseller.conseller.core.auction.domain.enums.AuctionOrderStatus;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.conseller.conseller.entity.QAuction.auction;
@@ -37,6 +38,23 @@ public class AuctionRepositoryImpl {
                 .limit(10)
                 .fetch();
     }
+
+    public List<AuctionEntity> findAuctionsEndingWithinOneHour(AuctionEntity cursor, AuctionListRequest req, LocalDateTime now) {
+        return factory
+                .selectFrom(auction)
+                .innerJoin(auction.gifticon)
+                .fetchJoin()
+                .where(
+                        eqCategory(req.getMainCategory(), req.getSubCategory()),
+                        auction.auctionStatus.eq(AuctionStatus.IN_PROGRESS.getStatus()),
+                        auction.auctionEndDate.between(now, now.plusHours(1)),
+                        cursorFieldAndIdx(cursor, req)
+                )
+                .orderBy(orderSpecifier(req.getStatus()), auction.auctionIdx.asc())
+                .limit(10)
+                .fetch();
+    }
+
 
     public Page<AuctionEntity> findAuctionList(AuctionListRequest request, Pageable pageable) {
         List<AuctionEntity> content = factory

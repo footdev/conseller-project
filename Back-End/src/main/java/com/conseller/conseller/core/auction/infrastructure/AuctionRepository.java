@@ -23,7 +23,4 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     @Query("select a from Auction a where a.auctionStatus = '낙찰'")
     List<AuctionEntity> findAwardedAuctionList();
-
-    @Query("SELECT a FROM Auction a WHERE a.auctionEndDate BETWEEN :now AND :oneHourLater")
-    List<Auction> findAuctionsEndingWithinOneHour(@Param("now") LocalDateTime now, @Param("oneHourLater") LocalDateTime oneHourLater);
 }

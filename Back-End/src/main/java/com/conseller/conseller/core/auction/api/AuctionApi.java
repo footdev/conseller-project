@@ -83,16 +83,6 @@ public class AuctionApi {
                 .build();
     }
 
-    // 경매 거래 진행
-    @PostMapping("/trade/{auctionIdx}/{userIdx}")
-    public ResponseEntity<AuctionTradeResponse> tradeAuction(@PathVariable long auctionIdx, @PathVariable long userIdx) {
-        AuctionTradeResponse response = auctionService.tradeAuction(auctionIdx, userIdx);
-        notificationService.sendAuctionNotification(auctionIdx, "경매 거래 진행", "님과의 경매가 진행 중 입니다.", 1, 1);
-        notificationService.sendAuctionNotification(auctionIdx, "경매 거래 진행", "님과의 경매가 진행 중 입니다.", 2, 1);
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
     // 한시간 남은 경매 리스트
     @GetMapping("/popular")
     public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
