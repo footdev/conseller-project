@@ -23,7 +23,7 @@ public class AuctionApi {
     @PostMapping("/{auctionId}")
     public ResponseEntity<AuctionListResponse> getAuctionList(@PathVariable long auctionId, @RequestBody AuctionListRequest request) {
         return ResponseEntity.ok()
-                .body(new AuctionListResponse(auctionService.getAuctions(auctionId, request)));
+                .body(AuctionListResponse.of(auctionService.getAuctions(auctionId, request)));
     }
 
     // 경매 글 등록
@@ -93,7 +93,7 @@ public class AuctionApi {
                 .body(response);
     }
 
-    // 하루 남은 경매 리스트
+    // 한시간 남은 경매 리스트
     @GetMapping("/popular")
     public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
         List<Auction> popularAuctions = auctionService.getAuctionWithOneDayLeft();

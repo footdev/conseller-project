@@ -1,9 +1,12 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
+import com.conseller.conseller.core.auction.domain.Auction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -20,4 +23,7 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     @Query("select a from Auction a where a.auctionStatus = '낙찰'")
     List<AuctionEntity> findAwardedAuctionList();
+
+    @Query("SELECT a FROM Auction a WHERE a.auctionEndDate BETWEEN :now AND :oneHourLater")
+    List<Auction> findAuctionsEndingWithinOneHour(@Param("now") LocalDateTime now, @Param("oneHourLater") LocalDateTime oneHourLater);
 }

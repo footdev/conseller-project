@@ -7,7 +7,6 @@ import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.gifticon.implement.GifticonFinder;
 import com.conseller.conseller.core.gifticon.implement.GifticonReader;
 import com.conseller.conseller.core.gifticon.implement.GifticonUpdater;
-import com.conseller.conseller.core.gifticon.implement.GifticonValidator;
 import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.core.user.implement.UserReader;
 import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
@@ -28,12 +27,10 @@ public class AuctionService {
     private final AuctionProcessor auctionProcessor;
 
     private final UserReader userReader;
-    private final GifticonReader gifticonReader;
     private final GifticonFinder gifticonFinder;
     private final GifticonUpdater gifticonUpdater;
-    private AuctionValidator auctionValidator;
 
-    public List<AuctionItemData> getAuctions(long id, AuctionListRequest request) {
+    public List<Auction> getAuctions(long id, AuctionListRequest request) {
         return auctionReader.read(id, request);
     }
 
@@ -70,13 +67,11 @@ public class AuctionService {
 
     // 하루 남은 경매 목록
     public List<Auction> getAuctionWithOneDayLeft() {
-        return auctionFinder.findAuctionWithOneDayLeft();
+        return auctionFinder.findAuctionsEndingWithinOneHour();
     }
 
     // 즉시 구매 진행
     public void buyNowPrice(TargetAuction targetAuction, TargetBuyer targetBuyer) {
         auctionProcessor.buyNow(targetAuction, targetBuyer);
     }
-
-
 }

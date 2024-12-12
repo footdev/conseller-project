@@ -8,6 +8,7 @@ import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -37,7 +38,7 @@ public class AuctionFinder {
         return auction;
     }
 
-    public List<Auction> findAuctionWithOneDayLeft() {
-        return null;
+    public List<Auction> findAuctionsEndingWithinOneHour() {
+        return auctionRepository.findAuctionsEndingWithinOneHour(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
     }
 }
