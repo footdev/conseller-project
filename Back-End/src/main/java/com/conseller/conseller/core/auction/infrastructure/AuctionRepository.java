@@ -7,17 +7,17 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AuctionRepository extends JpaRepository<Auction, Long> {
+public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     @Query("select a from Auction a where a.auctionStatus = '거래 중' and current_timestamp - a.notificationCreatedDate >= 14 * 60 * 1000")
-    List<Auction> findByAuctionListConfirm();
+    List<AuctionEntity> findByAuctionListConfirm();
 
     @Query("select a from Auction a where a.auctionCompletedDate is null and a.auctionEndDate <= current_timestamp ")
-    List<Auction> findAuctionAllExpired();
+    List<AuctionEntity> findAuctionAllExpired();
 
     @Query("select a from Auction a left join a.auctionBidList b where a.auctionStatus = '진행 중' group by a order by count(b) desc ")
-    List<Auction> findAuctionList();
+    List<AuctionEntity> findAuctionList();
 
     @Query("select a from Auction a where a.auctionStatus = '낙찰'")
-    List<Auction> findAwardedAuctionList();
+    List<AuctionEntity> findAwardedAuctionList();
 }

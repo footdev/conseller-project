@@ -5,9 +5,9 @@ import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.domain.AuctionOrder;
 import com.conseller.conseller.core.auction.domain.TargetAuction;
 import com.conseller.conseller.core.auction.domain.TargetBuyer;
-import com.conseller.conseller.core.bid.domain.AuctionBid;
-import com.conseller.conseller.core.bid.implement.BidProcessor;
-import com.conseller.conseller.core.bid.implement.BidReader;
+import com.conseller.conseller.core.bid.domain.Bidding;
+import com.conseller.conseller.core.bid.implement.BiddingProcessor;
+import com.conseller.conseller.core.bid.implement.BiddingReader;
 import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.core.user.implement.UserFinder;
 import com.conseller.conseller.core.user.implement.UserReader;
@@ -22,6 +22,7 @@ import java.util.List;
 public class AuctionProcessor {
     private final AuctionFinder auctionFinder;
     private final AuctionManager auctionManager;
+    private final AuctionUpdater auctionUpdater;
 
     private final AuctionOrderReader auctionOrderReader;
     private final AuctionOrderAppender auctionOrderAppender;
@@ -29,8 +30,8 @@ public class AuctionProcessor {
     private final UserReader userReader;
     private final UserFinder userFinder;
 
-    private final BidReader bidReader;
-    private final BidProcessor bidProcessor;
+    private final BiddingReader biddingReader;
+    private final BiddingProcessor biddingProcessor;
 
     private final PaymentManager paymentManager;
 
@@ -43,8 +44,8 @@ public class AuctionProcessor {
 
         auctionManager.trade(auction, buyer);
 
-        List<AuctionBid> auctionBids = bidReader.readAll(auction.getHighestBid().getAuctionBidIdx());
-        bidProcessor.rejectAll(auctionBids);
+        List<Bidding> biddings = biddingReader.readAll(auction.getHighestBidding().getAuctionBidIdx());
+        biddingProcessor.rejectAll(biddings);
 
         paymentManager.pay(buyer, auction.getUpperPrice());
         auctionOrderAppender.append(auction, buyer);
@@ -57,10 +58,10 @@ public class AuctionProcessor {
 
         auctionManager.trade(auction, buyer);
 
-        List<AuctionBid> auctionBids = bidReader.readAll(auction.getHighestBid().getAuctionBidIdx());
-        bidProcessor.rejectAll(auctionBids);
+        List<Bidding> biddings = biddingReader.readAll(auction.getHighestBidding().getAuctionBidIdx());
+        biddingProcessor.rejectAll(biddings);
 
-        paymentManager.pay(buyer, auction.getHighestBid().getAuctionBidPrice());
+        paymentManager.pay(buyer, auction.getHighestBidding().getBiddingPrice());
         auctionOrderAppender.append(auction, buyer);
 
     }
@@ -73,5 +74,12 @@ public class AuctionProcessor {
 
         paymentManager.depositFondsToSeller(auction.getUser(), auctionOrder);
         sellerPaymentHistoryAppender.append(auction, auction.getUser(), auctionOrder);
+    }
+
+    @Transactional
+    public void updateHighestBidding(Bidding bidding) {
+        Auction auction = auctionFinder.findProgressAuction(bidding.getAuctionId());
+        auction.updateHighestBid(bidding);
+        auctionUpdater.updateAuction(auction);
     }
 }

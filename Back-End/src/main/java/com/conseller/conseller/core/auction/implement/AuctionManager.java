@@ -15,7 +15,7 @@ public class AuctionManager {
 
     public void trade(Auction auction, User buyer) {
         auction.trade();
-        auction.getHighestBid().award();
+        auction.getHighestBidding().award();
         gifticonModifier.transfer(auction.getGifticon(), buyer);
     }
 }

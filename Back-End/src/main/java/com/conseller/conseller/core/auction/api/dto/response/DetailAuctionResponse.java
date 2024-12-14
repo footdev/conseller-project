@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.auction.api.dto.response;
 
 import com.conseller.conseller.core.auction.domain.Auction;
-import com.conseller.conseller.core.bid.domain.AuctionBid;
+import com.conseller.conseller.core.bid.domain.Bidding;
 import lombok.*;
 
 @Getter
@@ -21,7 +21,7 @@ public class DetailAuctionResponse {
     private boolean deposit;
     private int lowerPrice;
     private int upperPrice;
-    private AuctionBid highestBid;
+    private Bidding highestBid;
 
     public static DetailAuctionResponse of(Auction auction) {
         return DetailAuctionResponse.builder()
@@ -38,7 +38,7 @@ public class DetailAuctionResponse {
                 .deposit(false)
                 .lowerPrice(auction.getLowerPrice())
                 .upperPrice(auction.getUpperPrice())
-                .highestBid(auction.getHighestBid())
+                .highestBid(auction.getHighestBidding())
                 .build();
     }
 }

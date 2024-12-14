@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.auction.implement;
 
 import com.conseller.conseller.core.auction.api.dto.request.AuctionListRequest;
-import com.conseller.conseller.core.auction.infrastructure.Auction;
+import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepositoryImpl;
 import com.conseller.conseller.global.exception.CustomException;
@@ -22,18 +22,18 @@ public class AuctionReader {
     @Transactional(readOnly = true)
     public com.conseller.conseller.core.auction.domain.Auction read(long auctionIdx) {
         return auctionRepository.findById(auctionIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION))
                 .toDomain();
     }
 
     @Transactional(readOnly = true)
     public List<com.conseller.conseller.core.auction.domain.Auction> read(long cursorId, AuctionListRequest auctionListRequest) {
-        Auction cursor = auctionRepository.findById(cursorId)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
+        AuctionEntity cursor = auctionRepository.findById(cursorId)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION));
 
         return auctionRepositoryImpl.findAuctionListByCursor(cursor, auctionListRequest)
                 .stream()
-                .map(Auction::toDomain)
+                .map(AuctionEntity::toDomain)
                 .collect(Collectors.toList());
     }
 }

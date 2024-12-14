@@ -3,8 +3,8 @@ package com.conseller.conseller.core.auction.domain;
 
 import com.conseller.conseller.core.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
-import com.conseller.conseller.core.bid.domain.AuctionBid;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
+import com.conseller.conseller.core.bid.domain.Bidding;
+import com.conseller.conseller.core.bid.infrastructure.BiddingEntity;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.user.domain.User;
 import lombok.Builder;
@@ -29,8 +29,8 @@ public class Auction {
     private LocalDateTime notificationCreatedDate;
     private Gifticon gifticon;
     private User user;
-    private AuctionBid highestBid;
-    private List<AuctionBidEntity> auctionBidEntityList;
+    private Bidding highestBidding;
+    private List<BiddingEntity> biddingEntityList;
     private boolean isDeleted;
 
     public static Auction of(RegistAuctionRequest registAuctionRequest, User user, Gifticon gifticon) {
@@ -44,7 +44,7 @@ public class Auction {
                 .notificationCreatedDate(LocalDateTime.now().plusDays(7))
                 .gifticon(gifticon)
                 .user(user)
-                .highestBid(null)
+                .highestBidding(null)
                 .isDeleted(false)
                 .build();
     }
@@ -68,5 +68,9 @@ public class Auction {
 
     public boolean isConfirmedBid() {
         return this.auctionStatus.equals(AuctionStatus.BID_CONFIRMED);
+    }
+
+    public void updateHighestBid(Bidding bidding) {
+        this.highestBidding = bidding;
     }
 }

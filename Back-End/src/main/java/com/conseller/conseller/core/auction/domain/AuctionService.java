@@ -1,11 +1,9 @@
 package com.conseller.conseller.core.auction.domain;
 
 import com.conseller.conseller.core.auction.api.dto.request.*;
-import com.conseller.conseller.core.auction.api.dto.response.*;
 import com.conseller.conseller.core.auction.implement.*;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
 import com.conseller.conseller.core.gifticon.implement.GifticonFinder;
-import com.conseller.conseller.core.gifticon.implement.GifticonReader;
 import com.conseller.conseller.core.gifticon.implement.GifticonUpdater;
 import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.core.user.implement.UserReader;
@@ -39,7 +37,7 @@ public class AuctionService {
         User user = userReader.read(request.getUserIdx());
         Gifticon gifticon = gifticonFinder.findKeepGifticon(request.getGifticonIdx());
 
-        gifticonUpdater.updateStatus(gifticon, GifticonStatus.AUCTION);
+        gifticonUpdater.updateToKeepStatus(gifticon, GifticonStatus.AUCTION);
         return auctionAppender.append(Auction.of(request, user, gifticon));
     }
 

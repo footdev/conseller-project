@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.auction.api.dto.response;
 
 import com.conseller.conseller.core.auction.domain.Auction;
-import com.conseller.conseller.core.bid.domain.AuctionBid;
+import com.conseller.conseller.core.bid.domain.Bidding;
 import com.conseller.conseller.core.user.domain.User;
 import lombok.*;
 
@@ -16,7 +16,7 @@ public class AuctionItemData {
     private Integer upperPrice;
     private Integer lowerPrice;
     private User seller;
-    private AuctionBid highestBid;
+    private Bidding highestBid;
 
     public static AuctionItemData of(Auction auction) {
         return AuctionItemData.builder()
@@ -29,7 +29,7 @@ public class AuctionItemData {
                 .upperPrice(auction.getUpperPrice())
                 .lowerPrice(auction.getLowerPrice())
                 .seller(auction.getUser())
-                .highestBid(auction.getHighestBid())
+                .highestBid(auction.getHighestBidding())
                 .build();
     }
 }

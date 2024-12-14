@@ -16,7 +16,7 @@ public class AuctionOrderReader {
 
     public AuctionOrder read(Auction auction, User buyer) {
         return auctionOrderRepository.findByAuctionIdxAndBuyerIdx(auction.getAuctionIdx(), buyer.getUserIdx())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_ORDER_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION_ORDER))
                 .toDomain();
     }
 }

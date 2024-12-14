@@ -22,7 +22,7 @@ public class AuctionFinder {
 
     public Auction findProgressAuction(long auctionIdx) {
         Auction auction = auctionRepository.findById(auctionIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION))
                 .toDomain();
 
         auctionValidator.isInProgress(auction);
@@ -33,7 +33,7 @@ public class AuctionFinder {
 
     public Auction findConfirmedBidAuction(long auctionIdx) {
         Auction auction = auctionRepository.findById(auctionIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION))
                 .toDomain();
 
         auctionValidator.isConfirmedBid(auction);
@@ -42,7 +42,7 @@ public class AuctionFinder {
 
     public List<Auction> findAuctionsEndingWithinOneHour(long cursorId) {
         Auction cursor = auctionRepository.findById(cursorId)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION))
                 .toDomain();
 
         return auctionRepositoryImpl.findAuctionsEndingWithinOneHour(cursor, LocalDateTime.now(), LocalDateTime.now().plusHours(1));

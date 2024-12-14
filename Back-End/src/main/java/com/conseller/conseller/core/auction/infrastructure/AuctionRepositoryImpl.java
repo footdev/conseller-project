@@ -24,7 +24,7 @@ import static com.conseller.conseller.entity.QAuction.auction;
 public class AuctionRepositoryImpl {
     private final JPAQueryFactory factory;
 
-    public List<Auction> findAuctionListByCursor(Auction cursor, AuctionListRequest req) {
+    public List<AuctionEntity> findAuctionListByCursor(AuctionEntity cursor, AuctionListRequest req) {
         return factory
                 .selectFrom(auction)
                 .innerJoin(auction.gifticon)
@@ -39,7 +39,7 @@ public class AuctionRepositoryImpl {
                 .fetch();
     }
 
-    public List<Auction> findAuctionsEndingWithinOneHour(Auction cursor, AuctionListRequest req, LocalDateTime now) {
+    public List<AuctionEntity> findAuctionsEndingWithinOneHour(AuctionEntity cursor, AuctionListRequest req, LocalDateTime now) {
         return factory
                 .selectFrom(auction)
                 .innerJoin(auction.gifticon)
@@ -56,8 +56,8 @@ public class AuctionRepositoryImpl {
     }
 
 
-    public Page<Auction> findAuctionList(AuctionListRequest request, Pageable pageable) {
-        List<Auction> content = factory
+    public Page<AuctionEntity> findAuctionList(AuctionListRequest request, Pageable pageable) {
+        List<AuctionEntity> content = factory
                 .selectFrom(auction)
                 .innerJoin(auction.gifticon)
                 .where(
@@ -115,7 +115,7 @@ public class AuctionRepositoryImpl {
         }
     }
 
-    private BooleanExpression cursorFieldAndIdx(Auction cursor, AuctionListRequest req) {
+    private BooleanExpression cursorFieldAndIdx(AuctionEntity cursor, AuctionListRequest req) {
         if (cursor == null || req.getStatus() == null) {
             return null;
         }
@@ -132,9 +132,9 @@ public class AuctionRepositoryImpl {
                         .or(auction.gifticon.gifticonEndDate.gt(cursor.getGifticonEntity().getGifticonEndDate()));
 
             case HIGHEST_BID:
-                return auction.highestBid.eq(cursor.getHighestBidEntity())
+                return auction.highestBid.eq(cursor.getHighestBiddingEntity())
                         .and(auction.auctionIdx.gt(cursor.getAuctionIdx()))
-                        .or(auction.highestBid.auctionBidPrice.gt(cursor.getHighestBidEntity().getAuctionBidPrice()));
+                        .or(auction.highestBid.auctionBidPrice.gt(cursor.getHighestBiddingEntity().getAuctionBidPrice()));
 
             case UPPER_PRICE:
                 return auction.upperPrice.eq(cursor.getUpperPrice())

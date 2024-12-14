@@ -1,10 +1,11 @@
 package com.conseller.conseller.core.auction.implement;
 
-import com.conseller.conseller.core.auction.infrastructure.Auction;
+import com.conseller.conseller.core.auction.domain.Auction;
+import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
-import com.conseller.conseller.core.bid.domain.AuctionBid;
-import com.conseller.conseller.core.bid.implement.BidReader;
-import com.conseller.conseller.core.bid.implement.BidRemover;
+import com.conseller.conseller.core.bid.domain.Bidding;
+import com.conseller.conseller.core.bid.implement.BiddingReader;
+import com.conseller.conseller.core.bid.implement.BiddingRemover;
 import com.conseller.conseller.core.gifticon.implement.GifticonUpdater;
 import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import lombok.RequiredArgsConstructor;
@@ -17,21 +18,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuctionRemover {
     private final AuctionRepository auctionRepository;
-    private final BidReader bidReader;
-    private final BidRemover bidRemover;
+    private final BiddingReader biddingReader;
+    private final BiddingRemover biddingRemover;
     private final GifticonUpdater gifticonUpdater;
     private final AuctionReader  auctionReader;
 
     @Transactional
-    public void remove(long id) {
-        com.conseller.conseller.core.auction.domain.Auction auction = auctionReader.read(id);
-        List<AuctionBid> auctionBids = bidReader.readAll(id);
+    public void remove(long auctionId) {
+        Auction auction = auctionReader.read(auctionId);
+        List<Bidding> biddings = biddingReader.readAll(auctionId);
 
         auction.delete();
-        gifticonUpdater.updateStatus(auction.getGifticon(), GifticonStatus.KEEP);
-        auctionRepository.save(Auction.of(auction));
+        gifticonUpdater.updateToKeepStatus(auction.getGifticon());
+        auctionRepository.save(AuctionEntity.of(auction));
 
-        bidRemover.removeAll(auctionBids);
-
+        biddingRemover.removeAll(biddings);
     }
 }

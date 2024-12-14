@@ -1,7 +1,8 @@
 package com.conseller.conseller.core.auction.infrastructure;
 
+import com.conseller.conseller.core.auction.domain.Auction;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
+import com.conseller.conseller.core.bid.infrastructure.BiddingEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
@@ -15,12 +16,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@SuperBuilder
-@Getter @Setter
-@DynamicUpdate
+@Getter @SuperBuilder
 @RequiredArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Auction extends BaseTimeEntity {
+public class AuctionEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionIdx;
@@ -59,10 +58,10 @@ public class Auction extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_bid_idx")
-    private AuctionBidEntity highestBidEntity;
+    private BiddingEntity highestBiddingEntity;
 
-     public com.conseller.conseller.core.auction.domain.Auction toDomain() {
-        return com.conseller.conseller.core.auction.domain.Auction.builder()
+     public Auction toDomain() {
+        return Auction.builder()
                 .auctionIdx(auctionIdx)
                 .auctionText(auctionText)
                 .lowerPrice(lowerPrice)
@@ -74,13 +73,13 @@ public class Auction extends BaseTimeEntity {
                 .notificationCreatedDate(notificationCreatedDate)
                 .gifticon(gifticonEntity.toDomain())
                 .user(userEntity.toDomain())
-                .highestBid(highestBidEntity.toDomain())
+                .highestBidding(highestBiddingEntity.toDomain())
                 .isDeleted(super.getIsDeleted())
                 .build();
     }
 
-    public static Auction of(com.conseller.conseller.core.auction.domain.Auction auction) {
-        return Auction.builder()
+    public static AuctionEntity of(Auction auction) {
+        return AuctionEntity.builder()
                 .auctionIdx(auction.getAuctionIdx())
                 .auctionText(auction.getAuctionText())
                 .lowerPrice(auction.getLowerPrice())
@@ -92,7 +91,7 @@ public class Auction extends BaseTimeEntity {
                 .notificationCreatedDate(auction.getNotificationCreatedDate())
                 .gifticonEntity(GifticonEntity.of(auction.getGifticon()))
                 .userEntity(UserEntity.of(auction.getUser()))
-                .highestBidEntity(AuctionBidEntity.of(auction.getHighestBid()))
+                .highestBiddingEntity(BiddingEntity.of(auction.getHighestBidding()))
                 .isDeleted(auction.isDeleted())
                 .build();
     }
