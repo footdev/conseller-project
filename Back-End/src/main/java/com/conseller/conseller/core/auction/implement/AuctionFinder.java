@@ -1,6 +1,7 @@
 package com.conseller.conseller.core.auction.implement;
 
 import com.conseller.conseller.core.auction.domain.Auction;
+import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepository;
 import com.conseller.conseller.core.auction.infrastructure.AuctionRepositoryImpl;
 import com.conseller.conseller.core.gifticon.implement.GifticonValidator;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -41,10 +43,12 @@ public class AuctionFinder {
     }
 
     public List<Auction> findAuctionsEndingWithinOneHour(long cursorId) {
-        Auction cursor = auctionRepository.findById(cursorId)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION))
-                .toDomain();
+        AuctionEntity cursor = auctionRepository.findById(cursorId)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION));
 
-        return auctionRepositoryImpl.findAuctionsEndingWithinOneHour(cursor, LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        return auctionRepositoryImpl.findAuctionsEndingWithinOneHour(cursor, LocalDateTime.now())
+                .stream()
+                .map(AuctionEntity::toDomain)
+                .collect(Collectors.toList());
     }
 }

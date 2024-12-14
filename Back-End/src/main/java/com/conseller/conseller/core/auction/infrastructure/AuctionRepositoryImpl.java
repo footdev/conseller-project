@@ -39,18 +39,16 @@ public class AuctionRepositoryImpl {
                 .fetch();
     }
 
-    public List<AuctionEntity> findAuctionsEndingWithinOneHour(AuctionEntity cursor, AuctionListRequest req, LocalDateTime now) {
+    public List<AuctionEntity> findAuctionsEndingWithinOneHour(AuctionEntity cursor, LocalDateTime now) {
         return factory
                 .selectFrom(auction)
                 .innerJoin(auction.gifticon)
                 .fetchJoin()
                 .where(
-                        eqCategory(req.getMainCategory(), req.getSubCategory()),
                         auction.auctionStatus.eq(AuctionStatus.IN_PROGRESS.getStatus()),
                         auction.auctionEndDate.between(now, now.plusHours(1)),
-                        cursorFieldAndIdx(cursor, req)
+                        cursorFieldAndIdx(cursor, null)
                 )
-                .orderBy(orderSpecifier(req.getStatus()), auction.auctionIdx.asc())
                 .limit(10)
                 .fetch();
     }
