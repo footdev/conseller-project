@@ -84,9 +84,9 @@ public class AuctionApi {
     }
 
     // 한시간 남은 경매 리스트
-    @GetMapping("/popular")
-    public ResponseEntity<AuctionPopularResponse> getPopularAuction() {
-        List<Auction> popularAuctions = auctionService.getAuctionWithOneDayLeft();
+    @GetMapping("/within-one-hour/{cursorId}")
+    public ResponseEntity<AuctionPopularResponse> getPopularAuction(@PathVariable long cursorId) {
+        List<Auction> popularAuctions = auctionService.getAuctionWithOneDayLeft(cursorId);
         return ResponseEntity.ok()
                 .body(new AuctionPopularResponse(
                         popularAuctions.stream()

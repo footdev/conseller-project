@@ -28,7 +28,7 @@ public class AuctionFinder {
                 .toDomain();
 
         auctionValidator.isInProgress(auction);
-        gifticonValidator.isValidGiftion(auction.getGifticon());
+        gifticonValidator.isValidRegistGiftion(auction.getGifticon());
 
         return auction;
     }

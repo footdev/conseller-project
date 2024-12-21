@@ -37,7 +37,7 @@ public class AuctionService {
         User user = userReader.read(request.getUserIdx());
         Gifticon gifticon = gifticonFinder.findKeepGifticon(request.getGifticonIdx());
 
-        gifticonUpdater.updateToKeepStatus(gifticon, GifticonStatus.AUCTION);
+        gifticonUpdater.updateToKeepStatus(gifticon);
         return auctionAppender.append(Auction.of(request, user, gifticon));
     }
 
@@ -64,8 +64,8 @@ public class AuctionService {
     }
 
     // 하루 남은 경매 목록
-    public List<Auction> getAuctionWithOneDayLeft() {
-        return auctionFinder.findAuctionsEndingWithinOneHour();
+    public List<Auction> getAuctionWithOneDayLeft(long cursorId) {
+        return auctionFinder.findAuctionsEndingWithinOneHour(cursorId);
     }
 
     // 즉시 구매 진행

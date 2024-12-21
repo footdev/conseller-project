@@ -8,7 +8,6 @@ import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
