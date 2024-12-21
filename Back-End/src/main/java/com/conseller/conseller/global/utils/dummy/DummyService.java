@@ -1,7 +1,5 @@
 package com.conseller.conseller.global.utils.dummy;
 
-import com.conseller.conseller.core.auction.domain.AuctionService;
-import com.conseller.conseller.core.auction.api.dto.mapper.AuctionMapper;
 import com.conseller.conseller.core.auction.api.dto.request.RegistAuctionRequest;
 import com.conseller.conseller.core.auction.domain.enums.AuctionStatus;
 import com.conseller.conseller.core.category.infrastructure.MainCategoryRepository;
@@ -12,7 +10,7 @@ import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.user.infrastructure.UserRepository;
 import com.conseller.conseller.core.user.api.dto.request.SignUpRequest;
@@ -226,7 +224,7 @@ public class DummyService {
 
     @Transactional
     public void createDummyAuctionsAndSaveAll() {
-        List<AuctionEntity> auctionEntities = new ArrayList<>();
+        List<AuctionEntity> auctionEntityEntities = new ArrayList<>();
         ExecutorService executor = Executors.newFixedThreadPool(10);
         List<Future<?>> futures = new ArrayList<>();
 
@@ -238,7 +236,7 @@ public class DummyService {
             Future<?> future = executor.submit(() -> {
                 // 유저 정보 조회
                 UserEntity userEntity = userRepository.findByUserIdx(userIdx)
-                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
 
                 // 유저의 기프티콘 조회
                 List<GifticonEntity> gifticonEntities = gifticonRepository.findAllByUserUserIdx(userIdx);
@@ -267,14 +265,14 @@ public class DummyService {
                     }
 
                     LocalDateTime endDate = gifticonEntities.get(j).getGifticonEndDate().minusDays(1);
-                    AuctionEntity auctionEntity = AuctionMapper.INSTANCE.registAuctionRequestToAuction(requests.get(j), userEntity, gifticonEntities.get(j));
+                    AuctionEntity auctionEntity = AuctionMapper.INSTANCE.registAuctionRequestToAuctionEntity(requests.get(j), userEntity, gifticonEntities.get(j));
                     auctionEntity.setAuctionStartDate(generateRandomDate10Month());
                     auctionEntity.setAuctionEndDate(endDate);
                     auctionEntity.setAuctionStatus(AuctionStatus.IN_PROGRESS.getStatus());
 
                     if (auctionEntity.getAuctionEndDate() == null) continue;
 
-                    auctionEntities.add(auctionEntity);
+                    auctionEntityEntities.add(auctionEntity);
                 }
             });
 
@@ -292,17 +290,17 @@ public class DummyService {
         }
 
         // 모든 작업이 완료된 후 저장
-        log.info("더미 경매글 개수 : " + auctionEntities.size());
-        log.info("기프티콘 이름 : {}", auctionEntities.get(0).getGifticonEntity().getGifticonName());
-        log.info("경매 시작일 : {}", auctionEntities.get(0).getAuctionStartDate());
-        log.info("경매 종료일 : {}", auctionEntities.get(0).getAuctionEndDate());
-        log.info("경매 하한가 : {}", auctionEntities.get(0).getLowerPrice());
-        log.info("경매 상한가 : {}", auctionEntities.get(0).getUpperPrice());
-        log.info("경매글 내용 : {}", auctionEntities.get(0).getAuctionText());
-        log.info("경매글 등록자 : {}", auctionEntities.get(0).getUserEntity().getUsername());
-        log.info("경매 기프티콘 정보 : {}", auctionEntities.get(0).getGifticonEntity().getGifticonEndDate());
-        log.info("경매 기프티콘 정보 : {}", auctionEntities.get(0).getGifticonEntity().getGifticonEndDate().minusDays(1));
-        dummyBulkRepository.saveAllAuctions(auctionEntities);
+        log.info("더미 경매글 개수 : " + auctionEntityEntities.size());
+        log.info("기프티콘 이름 : {}", auctionEntityEntities.get(0).getGifticonEntity().getGifticonName());
+        log.info("경매 시작일 : {}", auctionEntityEntities.get(0).getAuctionStartDate());
+        log.info("경매 종료일 : {}", auctionEntityEntities.get(0).getAuctionEndDate());
+        log.info("경매 하한가 : {}", auctionEntityEntities.get(0).getLowerPrice());
+        log.info("경매 상한가 : {}", auctionEntityEntities.get(0).getUpperPrice());
+        log.info("경매글 내용 : {}", auctionEntityEntities.get(0).getAuctionText());
+        log.info("경매글 등록자 : {}", auctionEntityEntities.get(0).getUserEntity().getUsername());
+        log.info("경매 기프티콘 정보 : {}", auctionEntityEntities.get(0).getGifticonEntity().getGifticonEndDate());
+        log.info("경매 기프티콘 정보 : {}", auctionEntityEntities.get(0).getGifticonEntity().getGifticonEndDate().minusDays(1));
+        dummyBulkRepository.saveAllAuctions(auctionEntityEntities);
         log.info("경매글 더미 데이터 생성 완료");
 
         // Executor 종료

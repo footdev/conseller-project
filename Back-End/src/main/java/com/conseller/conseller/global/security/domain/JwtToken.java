@@ -1,4 +1,4 @@
-package com.conseller.conseller.global.security;
+package com.conseller.conseller.global.security.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

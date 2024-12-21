@@ -1,11 +1,10 @@
 package com.conseller.conseller.core.user.api.dto.response;
 
+import com.conseller.conseller.core.user.domain.User;
 import lombok.*;
 
 @Builder
-@Getter @Setter @ToString
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class UserInfoResponse {
 
     private String userId;
@@ -17,4 +16,16 @@ public class UserInfoResponse {
     private String userAccountBank;
     private String userPhoneNumber;
 
+    public static UserInfoResponse of(User user) {
+        return UserInfoResponse.builder()
+                .userId(user.getUserId())
+                .userPassword(user.getUserPassword())
+                .userNickname(user.getUserNickname())
+                .userEmail(user.getUserEmail())
+                .userProfileUrl(user.getUserProfileUrl())
+                .userAccount(user.getUserAccount())
+                .userAccountBank(user.getUserAccountBank())
+                .userPhoneNumber(user.getUserPhoneNumber())
+                .build();
+    }
 }

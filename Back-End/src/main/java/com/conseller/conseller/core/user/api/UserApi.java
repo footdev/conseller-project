@@ -1,20 +1,12 @@
 package com.conseller.conseller.core.user.api;
 
-import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
-import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponse;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
-import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.store.api.dto.response.StoreItemData;
-import com.conseller.conseller.user.api.dto.request.*;
-import com.conseller.conseller.user.api.dto.response.*;
 import com.conseller.conseller.core.user.domain.UserService;
 import com.conseller.conseller.core.email.infrastructure.EmailService;
 import com.conseller.conseller.global.api.dto.CommonResponse;
 import com.conseller.conseller.global.api.dto.EmailResponse;
-import com.conseller.conseller.global.security.JwtTokenProvider;
+import com.conseller.conseller.global.security.infrastructure.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -34,35 +25,25 @@ public class UserApi {
     private final EmailService emailService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    //회원가입
     @PostMapping
     public ResponseEntity<UserIdxResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-
-        log.info("유저 회원가입 호출");
-
-        long userIdx = userService.register(signUpRequest).getUserIdx();
-        
+        long userIdx = userService.signUp(signUpRequest.toUser());
         return ResponseEntity.ok()
-                .body(UserIdxResponse.builder().userIdx(userIdx).build());
+                .body(new UserIdxResponse(userIdx));
     }
 
     //일반 로그인
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> logIn(@Valid @RequestBody LoginRequest loginRequest) {
 
-        LoginResponse loginResponse = userService.login(loginRequest);
-
-        log.info("user nickname : " + loginResponse.getUserNickname());
-        log.info("user accessToken : " + loginResponse.getAccessToken());
-        log.info("user refreshToken : " + loginResponse.getRefreshToken());
-
+        LoginResponse loginResponse = userService.login(loginRequest.toTargetUser());
         return ResponseEntity.ok()
                 .body(loginResponse);
     }
 
     //액세스 토큰 재발급 요청
     @GetMapping("/refresh/{userIdx}")
-    public ResponseEntity<Object> reCreateAccessToken(HttpServletRequest request,@PathVariable long userIdx) {
+    public ResponseEntity<Object> reCreateAccessToken(HttpServletRequest request, @PathVariable long userIdx) {
 
         log.info("액세스 토큰 재발급 요청");
 
@@ -74,39 +55,39 @@ public class UserApi {
     @PostMapping("/nickname")
     public ResponseEntity<Object> checkNickname(@RequestBody NicknameRequest nicknameRequest) {
 
-        InfoValidationRequest infoValidationRequest = userService.checkNickname(nicknameRequest.getUserNickname());
+        InfoValidationResponse infoValidationResponse = userService.checkNickname(nicknameRequest.getUserNickname());
 
         return ResponseEntity.ok()
-                .body(infoValidationRequest);
+                .body(infoValidationResponse);
     }
 
     //id 중복체크
     @PostMapping("/id")
     public ResponseEntity<Object> checkId(@RequestBody IdRequest idRequest) {
 
-        InfoValidationRequest infoValidationRequest = userService.checkId(idRequest.getUserId());
+        InfoValidationResponse infoValidationResponse = userService.checkId(idRequest.getUserId());
         return ResponseEntity.ok()
-                .body(infoValidationRequest);
+                .body(infoValidationResponse);
     }
 
     //이메일 중복체크
     @PostMapping("/email")
     public ResponseEntity<Object> checkEmail(@RequestBody EmailRequest emailRequest) {
 
-        InfoValidationRequest infoValidationRequest = userService.checkEmail(emailRequest.getUserEmail());
+        InfoValidationResponse infoValidationResponse = userService.checkEmail(emailRequest.getUserEmail());
 
         return ResponseEntity.ok()
-                .body(infoValidationRequest);
+                .body(infoValidationResponse);
     }
 
     //전화번호 중복체크
     @PostMapping("/phone-number")
     public ResponseEntity<Object> checkPhoneNumber(@RequestBody PhoneNumberRequest phoneNumberRequest) {
 
-        InfoValidationRequest infoValidationRequest = userService.checkPhoneNumber(phoneNumberRequest.getUserPhoneNumber());
+        InfoValidationResponse infoValidationResponse = userService.checkPhoneNumber(phoneNumberRequest.getUserPhoneNumber());
 
         return ResponseEntity.ok()
-                .body(infoValidationRequest);
+                .body(infoValidationResponse);
     }
 
     //부분 암호화된 아이디 출력
@@ -120,7 +101,7 @@ public class UserApi {
     @PatchMapping("/encode/pw")
     public ResponseEntity<Object> changeTempPassword(@RequestBody EmailAndIdRequest emailAndIdRequest) throws Exception {
 
-        String tempPassword = userService.generateTemporaryPassword(emailAndIdRequest).getTemporaryPassword();
+        String tempPassword = userService.generateTemporaryPassword(emailAndIdRequest);
 
         EmailResponse emailResponse = EmailResponse.builder()
                 .userEmail(emailAndIdRequest.getUserEmail())
@@ -147,97 +128,14 @@ public class UserApi {
     @GetMapping("/{userIdx}/userInfo")
     public ResponseEntity<UserInfoResponse> getUserInfoByUserIdx(@PathVariable long userIdx) {
         return ResponseEntity.ok()
-                .body(userService.getUserInfo(userIdx));
+                .body(UserInfoResponse.of(userService.getUserInfo(userIdx)));
     }
 
     //내 정보 변경용 비밀번호 확인
     @PostMapping("/valid")
     public ResponseEntity<CommonResponse> checkUserPassword(@RequestBody UserCheckPasswordRequest userCheckPasswordRequest) {
-
         userService.checkUserPassword(userCheckPasswordRequest);
-
         return ResponseEntity.ok().build();
-    }
-
-    //보증금 넣기
-    @PatchMapping("/{userIdx}/deposit")
-    public ResponseEntity<Void> deposit(@PathVariable long userIdx, @RequestBody Long deposit) {
-
-        userService.deposit(userIdx, deposit);
-
-        return ResponseEntity.ok().build();
-    }
-
-    //내 기프티콘 보기
-    @GetMapping("{userIdx}/gifticons")
-    public ResponseEntity<Item<List<GifticonResponse>>> getUserGifticons(@PathVariable long userIdx) {
-
-        log.info("내 기프티콘 목록 보기 호출");
-
-        Item<List<GifticonResponse>> response = new Item<>(userService.getGifticons(userIdx));
-
-        log.info("내 기프티콘 목록 보기 호출 완료");
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    //내 판매 보기
-    @GetMapping("/{userIdx}/store")
-    public ResponseEntity<Item<List<StoreItemData>>> getUserStores(@PathVariable long userIdx) {
-
-        Item<List<StoreItemData>> response = new Item<>(userService.getUserStores(userIdx));
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    //내 구매 보기
-    @GetMapping("/{userIdx}/store/purchase")
-    public ResponseEntity<Item<List<StoreItemData>>> getUserPurchaseStores(@PathVariable long userIdx) {
-        Item<List<StoreItemData>> response = new Item<>(userService.getUserPurchaseStores(userIdx));
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    //내 경매 보기
-    @GetMapping("/{userIdx}/auction")
-    public ResponseEntity<Item<List<AuctionItemData>>> getUserAuctions(@PathVariable long userIdx) {
-
-        Item<List<AuctionItemData>> response = new Item<>(userService.getUserAuctions(userIdx));
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    //내 입찰 보기
-    @GetMapping("/{userIdx}/auction-bid")
-    public ResponseEntity<Item<List<AuctionBidResponse>>> getUserAuctionBids(@PathVariable long userIdx) {
-
-        Item<List<AuctionBidResponse>> response = new Item<>(userService.getUserAuctionBids(userIdx));
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    //내 물물교환 보기
-    @GetMapping("/{userIdx}/barter")
-    public ResponseEntity<Item<List<MyBarterResponse>>> getUserBarters(@PathVariable long userIdx) {
-
-        Item<List<MyBarterResponse>> response = new Item<>(userService.getUserBarters(userIdx));
-
-        return ResponseEntity.ok()
-                .body(response);
-    }
-
-    //내 물물교환 요청 보기
-    @GetMapping("/{userIdx}/barter-request")
-    public ResponseEntity<Item<List<MyBarterRequestResponse>>> getUserBarterRequests(@PathVariable long userIdx) {
-
-        Item<List<MyBarterRequestResponse>> response = new Item<>(userService.getUserBarterRequests(userIdx));
-
-        return ResponseEntity.ok()
-                .body(response);
     }
 
     //회원 탈퇴
@@ -292,12 +190,6 @@ public class UserApi {
 
         return ResponseEntity.ok()
                 .body(loginResponse);
-    }
-
-    @PostMapping("/getgifticons")
-    public ResponseEntity<Object> getUserGifticonPages(@RequestBody GifticonRequestDTO gifticonRequestDTO) {
-        return ResponseEntity.ok()
-                .body(userService.getGifticonPage(gifticonRequestDTO));
     }
 
     // 캐시 충전 (임시)

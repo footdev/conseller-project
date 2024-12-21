@@ -1,7 +1,6 @@
-package com.conseller.conseller.core.user.domain;
+package com.conseller.conseller.core.user.implement;
 
-import com.conseller.conseller.core.user.implement.UserAppender;
-import com.conseller.conseller.core.user.implement.UserReader;
+import com.conseller.conseller.core.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

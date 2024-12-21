@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDetails loadUserWithoutPassword(String userId, String pattern) {
         UserEntity userEntity = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
 
         return (org.springframework.security.core.userdetails.User) org.springframework.security.core.userdetails.User.builder()
                 .username(userEntity.getUsername())

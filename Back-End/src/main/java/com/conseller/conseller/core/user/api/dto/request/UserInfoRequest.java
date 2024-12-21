@@ -21,11 +21,4 @@ public class UserInfoRequest {
     @NotBlank(message = "이메일을 입력해야 합니다.")
     @Email
     private String userEmail;
-
-    @NotBlank(message = "계좌번호를 입력해야 합니다.")
-    private String userAccount;
-
-    @NotBlank(message = "은행정보를 입력해야 합니다.")
-    private String userAccountBank;
-
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum UserStatus {
     RESTRICTED("제한"),
+    DELETED("탈퇴"),
     ACTIVE("정상");
 
     private final String status;

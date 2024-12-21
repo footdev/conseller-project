@@ -1,103 +1,151 @@
 package com.conseller.conseller.core.user.domain;
 
-import com.conseller.conseller.core.auction.api.dto.response.AuctionItemData;
-import com.conseller.conseller.core.bid.api.dto.response.AuctionBidResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterResponse;
-import com.conseller.conseller.core.barter.api.dto.response.MyBarterRequestResponse;
 import com.conseller.conseller.core.user.api.dto.request.*;
 import com.conseller.conseller.core.user.api.dto.response.*;
+import com.conseller.conseller.core.user.auth.implement.AuthProcessor;
+import com.conseller.conseller.core.user.implement.*;
+import com.conseller.conseller.global.exception.CustomException;
+import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
-import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.store.api.dto.response.StoreItemData;
-import com.conseller.conseller.user.api.dto.request.*;
-import com.conseller.conseller.user.api.dto.response.*;
+import com.conseller.conseller.core.user.domain.enums.LoginStatus;
+import com.conseller.conseller.global.security.implement.BlackListManager;
+import com.conseller.conseller.global.security.implement.TokenValidator;
+import com.conseller.conseller.global.security.infrastructure.JwtTokenProvider;
+import com.conseller.conseller.global.utils.TemporaryValueGenerator;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.List;
 
-public interface UserService {
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class UserService {
 
-    // 회원가입
-    public UserEntity register(SignUpRequest signUpRequest);
+    private final UserReader userReader;
+    private final UserFinder userFinder;
+    private final UserValidator userValidator;
+    private final UserAppender userAppender;
+    private final UserUpdater userUpdater;
+    private final UserProcessor userProcessor;
+    private final CashCharger cashCharger;
+    private final AuthProcessor authProcessor;
+    private final BlackListManager blackListManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenValidator tokenValidator;
 
-    //닉네임 중복체크
-    public InfoValidationRequest checkNickname(String nickname);
+    public Long signUp(User user) {
+        return userAppender.append(user);
+    }
 
-    //ID 중복체크
-    public InfoValidationRequest checkId(String id);
+    public LoginResponse login(TargetUser targetUser) {
+        User loginUser = userFinder.findLoginUser(targetUser);
+       return authProcessor.authenticateAndGetToken(loginUser, LoginStatus.GENERAL);
+    }
 
-    //이메일 중복체크
-    public InfoValidationRequest checkEmail(String email);
+    public void updateUserInfo(long userIdx, UserInfoRequest userInfoRequest) {
+        userUpdater.update(userIdx, userInfoRequest);
+    }
 
-    //전화번호 중복체크
-    public InfoValidationRequest checkPhoneNumber(String phoneNumber);
+    public String generateTemporaryPassword(EmailAndIdRequest emailAndIdRequest) {
+        String tempPassword = TemporaryValueGenerator.generateTemporaryValue();
+        userUpdater.updateTempPassword(emailAndIdRequest.getUserId(), emailAndIdRequest.getUserEmail(), tempPassword);
+        return tempPassword;
+    }
 
-    //로그인
-    public LoginResponse login(LoginRequest loginRequest);
+    public String getHiddenUserId(EmailAndNameRequest emailAndNameRequest) {
+        User user = userReader.readByNameAndEmail(emailAndNameRequest.getUserName(), emailAndNameRequest.getUserEmail());
+        return userProcessor.geneatePartialId(user);
+    }
 
-    //액세스 토큰 재발급
-    public AccessTokenResponse reCreateAccessToken(HttpServletRequest request, long userIdx);
+    public User getUserInfo(long userIdx) {
+        return userFinder.findValidUser(userIdx);
+    }
 
-    //회원정보 변경
-    public void updateUserInfo(long userIdx, UserInfoRequest userInfoRequest);
+    public void uploadProfile(long userIdx, String profileUrl) {
+        userUpdater.updateProfile(userIdx, profileUrl);
+    }
 
-    //임시 비밀번호 발급
-    public TemporaryPasswordResponse generateTemporaryPassword(EmailAndIdRequest emailAndIdRequest);
+    public void checkUserPassword(UserCheckPasswordRequest userCheckPasswordRequest) {
+        userValidator.existsUserByPassword(userCheckPasswordRequest.getUserIdx(), userCheckPasswordRequest.getUserPassword());
+    }
 
-    //암호화된 아이디 조회
-    public PartialHiddenUserIdResponse getHiddenUserId(EmailAndNameRequest emailAndNameRequest);
+    public void deleteUser(long userIdx, String token) {
+        userUpdater.deleteUser(userIdx, token);
+    }
 
-    //회원정보 조회
-    public UserInfoResponse getUserInfo(long userIdx);
+    public void setFirebaseToken(long userIdx, FirebaseRequest request) {
+        userUpdater.updateFirebaseToken(userIdx, request.getFirebaseToken());
+    }
 
-    //회원 프로필 사진 저장
-    public void uploadProfile(long userIdx, String profileUrl);
+    public void chargeCash(ChargeCashRequest chargeCashRequest) {
+        cashCharger.chargeCash(chargeCashRequest.getUserId(), chargeCashRequest.getCash());
+    }
 
-    //비밀번호 확인
-    public void checkUserPassword(UserCheckPasswordRequest userCheckPasswordRequest);
+    public AccessTokenResponse reCreateAccessToken(HttpServletRequest request, long userIdx) {
+        User user = userFinder.findValidUser(userIdx);
 
-    //보증금 입금
-    public void deposit(long userIdx, long deposit);
+        String refreshToken = jwtTokenProvider.resolveToken(request);
+        tokenValidator.validateToken(refreshToken, jwtTokenProvider.getKey());
+        Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+        tokenValidator.validate(refreshToken, user);
 
-    //내 기프티콘 불러오기
-    public List<GifticonResponse> getGifticons(long userIdx);
+        return AccessTokenResponse.builder()
+                .accessToken(jwtTokenProvider.createAccessToken(authentication))
+                .build();
+    }
 
-    //내 판매목록 불러오기
-    public List<StoreItemData> getUserStores(long userIdx);
+    public InfoValidationResponse checkNickname(String nickname) {
+        boolean isExisted = userReader.existsByUserNickname(nickname);
 
-    //내가 구매한 기프티콘에 대한 판매글 목록 불러오기
-    public List<StoreItemData> getUserPurchaseStores(long userIdx);
+        return InfoValidationResponse.builder()
+                .status(isExisted ? 0 : 1)
+                .message(isExisted ? "이미 존재하는 닉네임 입니다." : "사용할 수 있는 닉네임 입니다")
+                .build();
+    }
 
-    //내 경매목록 불러오기
-    public List<AuctionItemData> getUserAuctions(long userIdx);
+    public InfoValidationResponse checkId(String id) {
+        boolean idExists = userReader.existsById(id);
 
-    //내 입찰내역 불러오기
-    public List<AuctionBidResponse> getUserAuctionBids(long userIdx);
+        return InfoValidationResponse.builder()
+                .status(idExists ? 0 : 1)
+                .message(idExists ? "이미 존재하는 아이디 입니다." : "사용할 수 있는 아이디 입니다")
+                .build();
+    }
 
-    //내 교환목록 불러오기
-    public List<MyBarterResponse> getUserBarters(long userIdx);
+    public InfoValidationResponse checkEmail(String email) {
+        boolean emailExists = userReader.existsByUserEmail(email);
 
-    //내 교환 요청목록 불러오기
-    public List<MyBarterRequestResponse> getUserBarterRequests(long userIdx);
+        return InfoValidationResponse.builder()
+                .status(emailExists ? 0 : 1)
+                .message(emailExists ? "이미 존재하는 이메일 입니다." : "사용할 수 있는 이메일 입니다")
+                .build();
+    }
 
-    //회원탈퇴
-    public void deleteUser(long userIdx, String token);
+    public InfoValidationResponse checkPhoneNumber(String phoneNumber) {
+        boolean phoneNumberExists = userReader.existsByPhoneNumber(phoneNumber);
 
-    //fcm 토큰 발급
-    public void setFirebaseToken(Long userIdx, FirebaseRequest request);
+        return InfoValidationResponse.builder()
+                .status(phoneNumberExists ? 0 : 1)
+                .message(phoneNumberExists ? "이미 존재하는 전화번호 입니다." : "사용할 수 있는 전화번호 입니다")
+                .build();
+    }
 
-    //pattern 저장
-    public void patternRegister(@Valid UserPatternRequest userPatternRequest);
+    public void patternRegister(UserPatternRequest userPatternRequest){
+        userAppender.appendPattern(userPatternRequest.getUserIdx(), userPatternRequest.getPattern());
+    }
 
-    //pattern 로그인
-    public LoginResponse loginPattern(UserPatternRequest userPatternRequest);
+    public LoginResponse loginPattern(UserPatternRequest userPatternRequest){
+        User user = userFinder.findValidUser(userPatternRequest.getUserIdx());
+        userValidator.checkPattern(user, userPatternRequest.getPattern());
+        return authProcessor.authenticateAndGetToken(user, LoginStatus.PATTERN);
+    }
 
-    //지문 로그인
-    public LoginResponse loginFinger(long userIdx);
-
-    //기프티콘 페이지 단위로 보내주기
-    public GifticonPageResponse getGifticonPage(GifticonRequestDTO gifticonRequestDTO);
-
-    void chargeCash(ChargeCashRequest chargeCashRequest);
+    public LoginResponse loginFinger(long userIdx) {
+        User user = userFinder.findValidUser(userIdx);
+        return authProcessor.authenticateAndGetToken(user, LoginStatus.FINGER);
+    }
 }
+

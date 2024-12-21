@@ -1,12 +1,12 @@
 package com.conseller.conseller.core.user.api.dto.request;
 
+import com.conseller.conseller.core.user.domain.User;
 import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.validation.constraints.*;
 
-@ToString
-@Getter @Setter @Builder
+@Getter @Builder
 @AllArgsConstructor
 public class SignUpRequest {
 
@@ -42,4 +42,19 @@ public class SignUpRequest {
 
     @NotBlank(message = "거래은행을 선택해야 합니다.")
     private String userAccountBank;
+
+    public User toUser() {
+        return User.builder()
+                .userId(userId)
+                .userPassword(userPassword)
+                .userEmail(userEmail)
+                .userPhoneNumber(userPhoneNumber)
+                .userNickname(userNickname)
+                .userGender(userGender)
+                .userAge(userAge)
+                .userName(userName)
+                .userAccount(userAccount)
+                .userAccountBank(userAccountBank)
+                .build();
+    }
 }

@@ -23,6 +23,6 @@ public enum AccountBanks {
         return Arrays.stream(AccountBanks.values())
                 .filter(accountBanks -> accountBanks.getBank().equals(bank))
                 .findAny()
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_BANK_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_ACCOUNT_BANK));
     }
 }

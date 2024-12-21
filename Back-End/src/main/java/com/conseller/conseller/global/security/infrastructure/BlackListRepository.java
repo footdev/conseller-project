@@ -1,4 +1,4 @@
-package com.conseller.conseller.global.security;
+package com.conseller.conseller.global.security.infrastructure;
 
 import com.conseller.conseller.global.entity.BlackListEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

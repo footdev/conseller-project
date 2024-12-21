@@ -1,5 +1,8 @@
-package com.conseller.conseller.global.security;
+package com.conseller.conseller.global.security.domain;
 
+import com.conseller.conseller.global.security.implement.TokenValidator;
+import com.conseller.conseller.global.security.infrastructure.BlackListRepository;
+import com.conseller.conseller.global.security.infrastructure.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenValidator tokenValidator;
     private final BlackListRepository blackListRepository;
 
     @Override
@@ -25,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
 
         // 2. validateToken 으로 토큰 유효성 검사
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && tokenValidator.validateToken(token, jwtTokenProvider.getKey())) {
 
             //블랙리스트 토큰 확인
             if (blackListRepository.existsByAccessToken(token)) {

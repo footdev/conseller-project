@@ -2,14 +2,10 @@ package com.conseller.conseller.global.api.dto;
 
 import lombok.*;
 
-@Builder
-@Getter @Setter @ToString
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder @Getter
 @AllArgsConstructor
 public class EmailResponse {
-
     private String userName;
     private String userEmail;
     private String userPassword;
-
 }

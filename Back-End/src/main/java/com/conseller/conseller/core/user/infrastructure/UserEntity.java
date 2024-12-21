@@ -3,7 +3,7 @@ package com.conseller.conseller.core.user.infrastructure;
 import com.conseller.conseller.core.auction.infrastructure.AuctionEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterRequestEntity;
-import com.conseller.conseller.core.bid.infrastructure.AuctionBidEntity;
+import com.conseller.conseller.core.bid.infrastructure.BiddingEntity;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.user.domain.User;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Getter @Setter @Builder
+@Getter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@EqualsAndHashCode(of = "userIdx", callSuper = false)
 @Table(name = "\"USER\"")
 public class UserEntity extends BaseTimeEntity implements UserDetails {
 
@@ -60,21 +59,11 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
     @Column(name = "user_age", nullable = false)
     private Integer userAge;
 
-    @Builder.Default
-    @Column(name = "user_deposit", nullable = false)
-    private Long userDeposit = (long) 0;
-
     @Column(name = "user_deleted_date")
     private LocalDateTime userDeletedDate;
 
     @Column(name = "user_name", nullable = false)
     private String userName;
-
-    @Column(name = "user_account", nullable = false)
-    private String userAccount;
-
-    @Column(name = "user_account_bank")
-    private String userAccountBank;
 
     @Column(name = "user_cash")
     private Long userCash;
@@ -101,38 +90,6 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
 
     @Column(name = "user_pattern")
     private String userPattern;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<AuctionEntity> auctionEntities = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
-    private List<AuctionBidEntity> auctionBidEntities = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "barterHost")
-    private List<BarterEntity> barterEntityEntities = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
-    private List<BarterRequestEntity> barterRequestEntities = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
-    private List<GifticonEntity> gifticonEntities = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
-    private List<InquiryEntity> inquiries = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "user")
-    private List<StoreEntity> storeEntities = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "notificationUser")
-    private List<NotificationEntity> notificationEntities = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -197,9 +154,9 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
         this.roles.add(Authority.ADMIN.name());
     }
 
-    public void updatePassword(String password) {
+    public void updatePassword(String password, PasswordEncoder passwordEncoder) {
         this.userPassword = password;
-        encryptPassword(new BCryptPasswordEncoder());
+        encryptPassword(passwordEncoder);
     }
 
     public void updateUserInfo(UserInfoRequest userInfoRequest) {
@@ -212,12 +169,10 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
 
         this.userNickname = userInfoRequest.getUserNickname();
         this.userEmail = userInfoRequest.getUserEmail();
-        this.userAccount = userInfoRequest.getUserAccount();
-        this.userAccountBank = userInfoRequest.getUserAccountBank();
     }
 
-    public com.conseller.conseller.core.user.domain.User toDomain() {
-        return com.conseller.conseller.core.user.domain.User.builder()
+    public User toDomain() {
+        return User.builder()
                 .userIdx(this.userIdx)
                 .userId(this.userId)
                 .userPassword(this.userPassword)
@@ -226,13 +181,10 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
                 .userNickname(this.userNickname)
                 .userGender(this.userGender)
                 .userAge(this.userAge)
-                .userDeposit(this.userDeposit)
                 .userCash(this.userCash)
                 .userDeletedDate(this.userDeletedDate)
                 .userName(this.userName)
-                .userAccount(this.userAccount)
-                .userAccountBank(this.userAccountBank)
-                .userStatus(this.userStatus)
+                .userStatus(UserStatus.valueOf(this.userStatus))
                 .userRestrictEndDate(this.userRestrictEndDate)
                 .userRestrictCount(this.userRestrictCount)
                 .userProfileUrl(this.userProfileUrl)
@@ -252,13 +204,10 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
                 .userNickname(user.getUserNickname())
                 .userGender(user.getUserGender())
                 .userAge(user.getUserAge())
-                .userDeposit(user.getUserDeposit())
                 .userCash(user.getUserCash())
                 .userDeletedDate(user.getUserDeletedDate())
                 .userName(user.getUserName())
-                .userAccount(user.getUserAccount())
-                .userAccountBank(user.getUserAccountBank())
-                .userStatus(user.getUserStatus())
+                .userStatus(user.getUserStatus().getStatus())
                 .userRestrictEndDate(user.getUserRestrictEndDate())
                 .userRestrictCount(user.getUserRestrictCount())
                 .userProfileUrl(user.getUserProfileUrl())

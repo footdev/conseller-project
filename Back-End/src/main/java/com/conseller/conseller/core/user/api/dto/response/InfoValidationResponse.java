@@ -6,7 +6,7 @@ import lombok.*;
 @Getter @Setter @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InfoValidationRequest {
+public class InfoValidationResponse {
     private int status;
     private String message;
 }

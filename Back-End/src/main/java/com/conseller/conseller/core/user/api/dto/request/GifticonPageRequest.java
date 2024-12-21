@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class GifticonRequestDTO {
+public class GifticonPageRequest {
     private Long userIdx;
     private Integer page;
 }

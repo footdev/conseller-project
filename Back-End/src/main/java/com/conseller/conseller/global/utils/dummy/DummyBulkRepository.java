@@ -92,7 +92,7 @@ public class DummyBulkRepository {
 
     }
 
-    public void saveAllAuctions(List<AuctionEntity> auctionEntities) {
+    public void saveAllAuctions(List<AuctionEntity> auctionEntityEntities) {
         String sql = "INSERT INTO auction (" +
                 "auction_end_date, " +
                 "auction_start_date, " +
@@ -110,19 +110,19 @@ public class DummyBulkRepository {
                     new BatchPreparedStatementSetter() {
                         @Override
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
-                            ps.setTimestamp(1, convertTimestamp(convertString(auctionEntities.get(i).getAuctionEndDate())));
-                            ps.setTimestamp(2, convertTimestamp(convertString(auctionEntities.get(i).getAuctionStartDate())));
-                            ps.setString(3, auctionEntities.get(i).getAuctionStatus());
-                            ps.setString(4, auctionEntities.get(i).getAuctionText());
-                            ps.setInt(5, auctionEntities.get(i).getLowerPrice());
-                            ps.setInt(6, auctionEntities.get(i).getUpperPrice());
-                            ps.setLong(7, auctionEntities.get(i).getGifticonEntity().getGifticonIdx());
-                            ps.setLong(8, auctionEntities.get(i).getUserEntity().getUserIdx());
+                            ps.setTimestamp(1, convertTimestamp(convertString(auctionEntityEntities.get(i).getAuctionEndDate())));
+                            ps.setTimestamp(2, convertTimestamp(convertString(auctionEntityEntities.get(i).getAuctionStartDate())));
+                            ps.setString(3, auctionEntityEntities.get(i).getAuctionStatus());
+                            ps.setString(4, auctionEntityEntities.get(i).getAuctionText());
+                            ps.setInt(5, auctionEntityEntities.get(i).getLowerPrice());
+                            ps.setInt(6, auctionEntityEntities.get(i).getUpperPrice());
+                            ps.setLong(7, auctionEntityEntities.get(i).getGifticonEntity().getGifticonIdx());
+                            ps.setLong(8, auctionEntityEntities.get(i).getUserEntity().getUserIdx());
                         }
 
                         @Override
                         public int getBatchSize() {
-                            return auctionEntities.size();
+                            return auctionEntityEntities.size();
                         }
                     }
             );

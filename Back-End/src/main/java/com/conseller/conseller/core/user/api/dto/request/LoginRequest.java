@@ -1,5 +1,6 @@
 package com.conseller.conseller.core.user.api.dto.request;
 
+import com.conseller.conseller.core.user.domain.TargetUser;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -15,4 +16,8 @@ public class LoginRequest {
 
     @NotBlank(message = "비밀번호를 입력해야 합니다.")
     private String userPassword;
+
+    public TargetUser toTargetUser() {
+        return new TargetUser(userId, userPassword);
+    }
 }
