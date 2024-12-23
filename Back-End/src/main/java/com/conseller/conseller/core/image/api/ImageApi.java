@@ -1,5 +1,6 @@
 package com.conseller.conseller.core.image.api;
 
+import com.conseller.conseller.core.image.implement.ImageManager;
 import com.conseller.conseller.core.image.infrastructure.ImageRepository;
 import com.conseller.conseller.core.user.domain.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +17,13 @@ import java.io.IOException;
 @RequestMapping("/image")
 public class ImageApi {
 
-    private final ImageRepository imageRepository;
+    private final ImageManager imageManager;
     private final UserService userService;
 
     @PostMapping("/{userIdx}/profile")
     public ResponseEntity<Void> uploadUserProfile(@PathVariable Long userIdx, @RequestPart("file") MultipartFile file) throws IOException {
-        //S3 서버에 이미지를 업로드 한다.
-        String url = imageRepository.uploadFile(file);
-
-        //url을 저장한다.
+        String url = imageManager.uploadFile(file);
         userService.uploadProfile(userIdx, url);
-
         return ResponseEntity.ok().build();
     }
 
