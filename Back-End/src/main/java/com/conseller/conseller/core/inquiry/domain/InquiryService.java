@@ -1,17 +1,38 @@
 package com.conseller.conseller.core.inquiry.domain;
 
+import com.conseller.conseller.core.inquiry.implement.InquiryAppender;
+import com.conseller.conseller.core.inquiry.implement.InquiryReader;
+import com.conseller.conseller.core.inquiry.infrastructure.InquiryEntity;
+import com.conseller.conseller.global.exception.CustomException;
+import com.conseller.conseller.global.exception.CustomExceptionStatus;
 import com.conseller.conseller.core.inquiry.api.dto.request.AnswerInquiryRequest;
-import com.conseller.conseller.core.inquiry.api.dto.request.RegistInquiryRequest;
-import com.conseller.conseller.core.inquiry.api.dto.response.DetailInquiryResponse;
-import com.conseller.conseller.core.inquiry.api.dto.response.InquiryListResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface InquiryService {
-    public void registInquiry(RegistInquiryRequest request);
+import java.time.LocalDateTime;
+import java.util.List;
 
-    public InquiryListResponse getInquiryList();
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class InquiryService {
+    private final InquiryReader inquiryReader;
+    private final InquiryAppender inquiryAppender;
 
-    public DetailInquiryResponse detailInquiry(Long inquiryIdx);
+    public void registInquiry(long userIdx, long reportedUserIdx, AddInquiry addInquiry) {
+        inquiryAppender.append(userIdx, reportedUserIdx, addInquiry);
+    }
 
-    public void answerInquiry(Long inquiryIdx, AnswerInquiryRequest request);
+    public List<Inquiry> getInquires() {
+        return inquiryReader.readAll();
+    }
 
+    public Inquiry detailInquiry(long inquiryIdx) {
+        return inquiryReader.read(inquiryIdx);
+    }
+
+    public void answerInquiry(long inquiryIdx, AnswerInquiryRequest request) {
+        inquiryAppender.appendAnswer(inquiryIdx, request.getInquiryAnswer());
+    }
 }

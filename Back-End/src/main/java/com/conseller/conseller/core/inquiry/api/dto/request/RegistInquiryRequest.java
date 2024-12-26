@@ -1,20 +1,17 @@
 package com.conseller.conseller.core.inquiry.api.dto.request;
 
-import lombok.AllArgsConstructor;
+import com.conseller.conseller.core.inquiry.domain.AddInquiry;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class RegistInquiryRequest {
-    private Long userIdx;
-
+    private long userIdx;
+    private long reportedUserIdx;
     private String inquiryTitle;
-
     private String inquiryContent;
+    private int inquiryType;
 
-    private String inquiryType;
-
-    private Long reportedUserIdx;
+    public AddInquiry toAddInquiry() {
+        return new AddInquiry(inquiryTitle, inquiryContent, inquiryType);
+    }
 }

@@ -1,28 +1,28 @@
 package com.conseller.conseller.core.inquiry.api.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.conseller.conseller.core.inquiry.domain.Inquiry;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter@Builder
 @AllArgsConstructor
 public class DetailInquiryResponse {
-    private Long userIdx;
-
     private String inquiryTitle;
-
     private String inquiryContent;
-
     private String inquiryAnswer;
-
     private LocalDateTime inquiryAnswerDate;
-
     private String inquiryStatus;
-
     private Integer inquiryType;
+
+    public static DetailInquiryResponse of(Inquiry inquiry) {
+        return DetailInquiryResponse.builder()
+                .inquiryTitle(inquiry.getInquiryTitle())
+                .inquiryContent(inquiry.getInquiryContent())
+                .inquiryAnswer(inquiry.getInquiryAnswer())
+                .inquiryAnswerDate(inquiry.getInquiryAnswerDate())
+                .inquiryStatus(inquiry.getInquiryStatus())
+                .inquiryType(inquiry.getInquiryType())
+                .build();
+    }
 }
