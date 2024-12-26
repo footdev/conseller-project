@@ -34,7 +34,7 @@ public class InquiryApi {
     @GetMapping("/{inquiryIdx}")
     public ResponseEntity<DetailInquiryResponse> detailInquiry(@PathVariable("inquiryIdx") long inquiryIdx) {
         return ResponseEntity.ok()
-                .body(inquiryService.detailInquiry(inquiryIdx));
+                .body(DetailInquiryResponse.of(inquiryService.detailInquiry(inquiryIdx)));
     }
 
 

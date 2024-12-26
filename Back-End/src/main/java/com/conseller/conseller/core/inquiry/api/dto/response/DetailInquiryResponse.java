@@ -21,7 +21,7 @@ public class DetailInquiryResponse {
                 .inquiryContent(inquiry.getInquiryContent())
                 .inquiryAnswer(inquiry.getInquiryAnswer())
                 .inquiryAnswerDate(inquiry.getInquiryAnswerDate())
-                .inquiryStatus(inquiry.getInquiryStatus())
+                .inquiryStatus(inquiry.getInquiryStatus().getStatus())
                 .inquiryType(inquiry.getInquiryType())
                 .build();
     }
