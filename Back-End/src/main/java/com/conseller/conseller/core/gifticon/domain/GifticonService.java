@@ -1,13 +1,10 @@
 package com.conseller.conseller.core.gifticon.domain;
 
-import com.conseller.conseller.core.gifticon.implement.GifticonAppender;
-import com.conseller.conseller.core.gifticon.implement.GifticonFinder;
-import com.conseller.conseller.core.gifticon.implement.GifticonReader;
-import com.conseller.conseller.core.gifticon.implement.UsedGifticonAppender;
+import com.conseller.conseller.core.gifticon.implement.*;
 import com.conseller.conseller.core.image.implement.ImageManager;
 import com.conseller.conseller.core.gifticon.api.dto.response.ExpiringGifticonResponse;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.gifticon.api.dto.request.GifticonRegisterRequest;
+import com.conseller.conseller.core.gifticon.api.dto.request.RegisterGifticon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,25 +26,22 @@ public class GifticonService {
 
     @Transactional(readOnly = true)
     public GifticonResponse getGifticonResponse(long gifticonIdx) {
-        return gifticonReader.readGifticon(gifticonIdx).toResponse();
+        return gifticonReader.read(gifticonIdx).toResponse();
     }
 
     @Transactional
-    public void registGifticon(long userIdx, GifticonRegisterRequest gifticonRegisterRequest, MultipartFile originalFile, MultipartFile cropFile) throws IOException {
-        gifticonValidator.isValidGiftion(gifticonRegisterRequest);
+    public void registGifticon(long userIdx, RegisterGifticon registerGifticon, MultipartFile originalFile, MultipartFile cropFile) throws IOException {
+        gifticonValidator.isValidRegistGiftion(registerGifticon);
 
         String allImageUrl = imageManager.uploadFile(originalFile);
-        String dataImageUrl = null;
+        String dataImageUrl = cropFile.isEmpty() ? null : imageManager.uploadFile(cropFile);
 
-        if (!cropFile.isEmpty()) {
-            dataImageUrl = imageManager.uploadFile(cropFile);
-        }
-        gifticonAppender.append(Gifticon.of(gifticonRegisterRequest, allImageUrl, dataImageUrl, userIdx));
+        gifticonAppender.append(Gifticon.of(registerGifticon, allImageUrl, dataImageUrl, userIdx));
     }
 
     @Transactional
-    public void deleteGifticon(long gifticonIdx) {
-        Gifticon gifticon = gifticonReader.readGifticon(gifticonIdx);
+    public void useGifticon(long gifticonIdx) {
+        Gifticon gifticon = gifticonReader.read(gifticonIdx);
         usedGifticonAppender.append(new UsedGifticon(gifticon.getGifticonBarcode()));
     }
 

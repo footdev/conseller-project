@@ -1,6 +1,5 @@
 package com.conseller.conseller.core.category.infrastructure;
 
-import com.conseller.conseller.core.category.domain.SubCategory;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import javax.persistence.*;
 public class SubCategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long subCategoryIdx;
+    private Long subCategoryIdx;
 
     @Column(name = "sub_category_content", nullable = false)
     private String subCategoryContent;
@@ -25,15 +24,15 @@ public class SubCategoryEntity {
     @JoinColumn(name = "main_category_idx")
     private MainCategoryEntity mainCategoryEntity;
 
-    public SubCategory toDomain() {
-        return SubCategory.builder()
+    public com.conseller.conseller.core.category.domain.SubCategory toDomain() {
+        return com.conseller.conseller.core.category.domain.SubCategory.builder()
                 .subCategoryIdx(subCategoryIdx)
                 .subCategoryContent(subCategoryContent)
                 .mainCategory(mainCategoryEntity.toDomain())
                 .build();
     }
 
-    public static SubCategoryEntity of(SubCategory subCategory) {
+    public static SubCategoryEntity of(com.conseller.conseller.core.category.domain.SubCategory subCategory) {
         return SubCategoryEntity.builder()
                 .subCategoryIdx(subCategory.getSubCategoryIdx())
                 .subCategoryContent(subCategory.getSubCategoryContent())

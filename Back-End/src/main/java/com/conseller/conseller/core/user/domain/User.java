@@ -1,13 +1,5 @@
 package com.conseller.conseller.core.user.domain;
 
-import com.conseller.conseller.core.auction.domain.Auction;
-import com.conseller.conseller.core.barter.domain.Barter;
-import com.conseller.conseller.core.barter.domain.BarterRequest;
-import com.conseller.conseller.core.bid.infrastructure.BiddingEntity;
-import com.conseller.conseller.core.gifticon.domain.Gifticon;
-import com.conseller.conseller.core.inquiry.domain.Inquiry;
-import com.conseller.conseller.core.notification.domain.Notification;
-import com.conseller.conseller.core.store.domain.Store;
 import com.conseller.conseller.core.user.api.dto.request.UserInfoRequest;
 import com.conseller.conseller.core.user.domain.enums.UserStatus;
 import lombok.Builder;

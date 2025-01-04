@@ -1,4 +1,4 @@
-package com.conseller.conseller.core.gifticon.infrastructure.enums;
+package com.conseller.conseller.core.gifticon.domain.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

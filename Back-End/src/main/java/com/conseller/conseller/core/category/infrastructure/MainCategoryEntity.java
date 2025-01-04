@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class MainCategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mainCategoryIdx;
+    private Long mainCategoryIdx;
 
     @Column(name = "main_category_content", nullable = false)
     private String mainCategoryContent;

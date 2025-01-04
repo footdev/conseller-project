@@ -107,10 +107,10 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public void sendAuctionBidNotification(Long auctionIdx, Long userIdx, String title, Integer type) {
         AuctionEntity auctionEntity = auctionRepository.findById(auctionIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.AUCTION_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_AUCTION));
 
         UserEntity bidder = userRepository.findById(userIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
 
         UserEntity userEntity = auctionEntity.getUserEntity();
 
@@ -150,7 +150,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public void sendStoreNotification(Long storeIdx, String title, String body, Integer index, Integer type) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
 
         UserEntity userEntity = null;
         String contents = null;
@@ -352,7 +352,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public NotificationEntity createGifticonNotification(Long userIdx, Integer remainDay, String gifticionName, Long gifticonCount, Integer type) {
         UserEntity userEntity = userRepository.findById(userIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_GIFTICON));
 
 //        if(user.getFcm() == null) {
 //            log.info(user.getUserId() + ": fcm token is empty");
@@ -401,7 +401,7 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public void sendNotification(Long userIdx, String title, String body) {
         UserEntity userEntity = userRepository.findById(userIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
 
         Notification notification = Notification.builder()
                 .setTitle(title)

@@ -1,16 +1,12 @@
 package com.conseller.conseller.core.barter.infrastructure.entity;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterGuestItemRequest;
-import com.conseller.conseller.core.barter.api.dto.response.BarterRequestResponse;
 import com.conseller.conseller.core.barter.domain.BarterRequest;
 import com.conseller.conseller.core.barter.domain.enums.RequestStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
-import com.conseller.conseller.core.user.api.dto.response.UserInfoResponse;
 import com.conseller.conseller.global.entity.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

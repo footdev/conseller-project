@@ -19,7 +19,7 @@ public class BarterReader {
 
     public Barter read(long barterIdx) {
         return barterRepository.findById(barterIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_BARTER))
                 .toDomain();
     }
 

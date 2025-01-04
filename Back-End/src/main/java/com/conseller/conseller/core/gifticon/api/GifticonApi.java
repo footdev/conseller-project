@@ -1,7 +1,7 @@
 package com.conseller.conseller.core.gifticon.api;
 
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
-import com.conseller.conseller.core.gifticon.api.dto.request.GifticonRegisterRequest;
+import com.conseller.conseller.core.gifticon.api.dto.request.RegisterGifticon;
 import com.conseller.conseller.core.gifticon.domain.GifticonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +20,11 @@ public class GifticonApi {
     @PostMapping(value = "/{userIdx}", consumes = "multipart/form-data")
     public ResponseEntity<Void> registGifticon(
             @PathVariable long userIdx,
-            @RequestPart(name = "gifticonPostRequest") GifticonRegisterRequest gifticonRequest,
+            @RequestPart(name = "gifticonPostRequest") RegisterGifticon gifticonRequest,
             @RequestPart(name = "originalFile") MultipartFile originalFile,
             @RequestPart(name = "cropFile") MultipartFile cropFile
     ) throws IOException {
-        gifticonService.registGifticon(userIdx, gifticonRequest, originalFile, cropFile);
+        gifticonService.registGifticon(userIdx, gifticonRequest.toRegisterGifticon(), originalFile, cropFile);
         return ResponseEntity.ok()
                 .build();
     }
@@ -36,8 +36,8 @@ public class GifticonApi {
     }
 
     @DeleteMapping("/{gifticonIdx}")
-    public ResponseEntity<Void> deleteGifticon(@PathVariable long gifticonIdx) {
-        gifticonService.deleteGifticon(gifticonIdx);
+    public ResponseEntity<Void> useGifticon(@PathVariable long gifticonIdx) {
+        gifticonService.useGifticon(gifticonIdx);
         return ResponseEntity.ok()
                 .build();
     }

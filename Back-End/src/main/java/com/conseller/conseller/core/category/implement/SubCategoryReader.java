@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 public class SubCategoryReader {
     private SubCategoryRepository subCategoryRepository;
 
-    public SubCategory readSubCategory(long subCategoryIdx) {
+    public SubCategory read(long subCategoryIdx) {
         return subCategoryRepository.findBySubCategoryIdx(subCategoryIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.SUB_CATEGORY_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_SUB_CATEGORY))
                 .toDomain();
     }
 }

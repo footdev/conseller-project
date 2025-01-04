@@ -18,11 +18,12 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
+
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     private Boolean isDeleted;

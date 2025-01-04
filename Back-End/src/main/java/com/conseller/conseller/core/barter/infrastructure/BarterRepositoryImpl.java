@@ -1,6 +1,7 @@
 package com.conseller.conseller.core.barter.infrastructure;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterFilterRequest;
+import com.conseller.conseller.core.barter.domain.Barter;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.barter.infrastructure.entity.BarterEntity;
 import com.querydsl.core.types.Order;
@@ -24,8 +25,8 @@ import static com.conseller.conseller.entity.QBarter.barter;
 public class BarterRepositoryImpl {
     private final JPAQueryFactory factory;
 
-    public Page<com.conseller.conseller.core.barter.domain.Barter> findBarterList(BarterFilterRequest filter, Pageable pageable) {
-        List<com.conseller.conseller.core.barter.domain.Barter> content  = factory
+    public Page<Barter> findBarterList(BarterFilterRequest filter, Pageable pageable) {
+        List<Barter> content  = factory
                 .selectFrom(barter)
                 .where(
                         eqCategory(filter.getMainCategory(), filter.getSubCategory()),

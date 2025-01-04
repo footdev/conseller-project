@@ -3,12 +3,9 @@ package com.conseller.conseller.core.barter.domain;
 import com.conseller.conseller.core.barter.api.dto.request.BarterCreateRequest;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
 import com.conseller.conseller.core.category.domain.SubCategory;
-import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.user.domain.User;
-import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 

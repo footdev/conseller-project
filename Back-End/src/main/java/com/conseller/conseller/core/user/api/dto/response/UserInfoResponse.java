@@ -23,8 +23,6 @@ public class UserInfoResponse {
                 .userNickname(user.getUserNickname())
                 .userEmail(user.getUserEmail())
                 .userProfileUrl(user.getUserProfileUrl())
-                .userAccount(user.getUserAccount())
-                .userAccountBank(user.getUserAccountBank())
                 .userPhoneNumber(user.getUserPhoneNumber())
                 .build();
     }

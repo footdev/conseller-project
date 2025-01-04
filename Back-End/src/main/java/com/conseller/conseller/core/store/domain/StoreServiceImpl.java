@@ -6,7 +6,7 @@ import com.conseller.conseller.core.store.infrastructure.StoreEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import com.conseller.conseller.global.exception.CustomException;
 import com.conseller.conseller.global.exception.CustomExceptionStatus;
-import com.conseller.conseller.core.gifticon.infrastructure.enums.GifticonStatus;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.core.gifticon.infrastructure.GifticonRepository;
 import com.conseller.conseller.core.store.api.dto.mapper.StoreMapper;
 import com.conseller.conseller.core.store.api.dto.request.ModifyStoreRequest;
@@ -55,12 +55,12 @@ public class StoreServiceImpl implements StoreService {
     public Long registStore(RegistStoreRequest request) {
 
         UserEntity userEntity = userRepository.findById(request.getUserIdx())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
         GifticonEntity gifticonEntity = gifticonRepository.findById(request.getGifticonIdx())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_GIFTICON));
 
         if(!gifticonEntity.getGifticonStatus().equals(GifticonStatus.KEEP.getStatus())){
-            throw new CustomException(CustomExceptionStatus.GIFTICON_NOT_KEEP);
+            throw new CustomException(CustomExceptionStatus.NOT_KEEP_GIFTICON);
         }else {
             StoreEntity storeEntity = StoreMapper.INSTANCE.registStoreRequestToStore(request, userEntity, gifticonEntity);
 
@@ -78,7 +78,7 @@ public class StoreServiceImpl implements StoreService {
     @Transactional(readOnly = true)
     public DetailStoreResponse detailStore(Long storeIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
 
         DetailStoreResponse response = StoreMapper.INSTANCE.entityToDetailStoreResponse(storeEntity);
 
@@ -88,7 +88,7 @@ public class StoreServiceImpl implements StoreService {
     //스토어 글 수정
     public void modifyStore(Long storeIdx , ModifyStoreRequest storeRequest) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
 
         if(storeEntity.getStoreStatus().equals(StoreStatus.IN_PROGRESS.getStatus())){
             storeEntity.setStorePrice(storeRequest.getStorePrice());
@@ -102,9 +102,9 @@ public class StoreServiceImpl implements StoreService {
     // 스토어 글 삭제
     public void deleteStore(Long storeIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
         GifticonEntity gifticonEntity = gifticonRepository.findById(storeEntity.getGifticonEntity().getGifticonIdx())
-                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
+                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_GIFTICON));
 
         gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());
 
@@ -115,9 +115,9 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreTradeResponse tradeStore(Long storeIdx, Long consumerIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
         UserEntity consumer = userRepository.findById(consumerIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
 
         StoreTradeResponse response = null;
 
@@ -142,7 +142,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void cancelStore(Long storeIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
 
         // 거래 상태를 진행중으로 변경
         storeEntity.setStoreStatus(StoreStatus.IN_PROGRESS.getStatus());
@@ -155,11 +155,11 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void confirmStore(Long storeIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
         GifticonEntity gifticonEntity = gifticonRepository.findById(storeEntity.getGifticonEntity().getGifticonIdx())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_GIFTICON));
         UserEntity userEntity = userRepository.findById(storeEntity.getConsumer().getUserIdx())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.USER_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.NOT_EXIST_USER));
 
         storeEntity.setStoreStatus(StoreStatus.AWARDED.getStatus());
 
@@ -171,7 +171,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreConfirmResponse getConfirmStore(Long storeIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
 
         StoreConfirmResponse response = StoreMapper.INSTANCE.storeToComfirm(storeEntity);
 
@@ -193,9 +193,9 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void rejectStore(Long storeIdx) {
         StoreEntity storeEntity = storeRepository.findById(storeIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.STORE_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_STORE));
         GifticonEntity gifticonEntity = gifticonRepository.findById(storeEntity.getGifticonEntity().getGifticonIdx())
-                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.GIFTICON_INVALID));
+                        .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_GIFTICON));
 
         storeEntity.setStoreStatus(StoreStatus.EXPIRED.getStatus());
         gifticonEntity.setGifticonStatus(GifticonStatus.KEEP.getStatus());

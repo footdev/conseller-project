@@ -29,7 +29,6 @@ public class DetailAuctionResponse {
                 .auctionUserIdx(auction.getUser().getUserIdx())
                 .auctionUserNickname(auction.getUser().getUserNickname())
                 .auctionUserProfileUrl(auction.getUser().getUserProfileUrl())
-                .auctionUserDeposit(auction.getUser().getUserDeposit())
                 .auctionIdx(auction.getAuctionIdx())
                 .gifticonDataImageName(auction.getGifticon().getGifticonDataImageUrl())
                 .gifticonName(auction.getGifticon().getGifticonName())

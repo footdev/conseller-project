@@ -4,6 +4,7 @@ import com.conseller.conseller.core.category.infrastructure.MainCategoryEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
 import com.conseller.conseller.core.gifticon.domain.Gifticon;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.conseller.conseller.global.utils.DateTimeConverter.*;
 
@@ -111,5 +114,15 @@ public class GifticonEntity {
                 .subCategoryEntity(SubCategoryEntity.of(gifticon.getSubCategory()))
                 .mainCategoryEntity(MainCategoryEntity.of(gifticon.getMainCategory()))
                 .build();
+    }
+
+    public static List<GifticonEntity> of(List<Gifticon> gifticons) {
+        return gifticons.stream()
+                .map(GifticonEntity::of)
+                .collect(Collectors.toList());
+    }
+
+    public void updateGifticonStatus(GifticonStatus gifticonStatus) {
+        this.gifticonStatus = gifticonStatus.getStatus();
     }
 }

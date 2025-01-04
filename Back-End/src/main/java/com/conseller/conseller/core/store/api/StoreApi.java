@@ -7,7 +7,6 @@ import com.conseller.conseller.core.store.api.dto.request.ModifyStoreRequest;
 import com.conseller.conseller.core.store.api.dto.request.RegistStoreRequest;
 import com.conseller.conseller.core.store.api.dto.request.StoreConfirmRequest;
 import com.conseller.conseller.core.store.api.dto.request.StoreListRequest;
-import com.conseller.conseller.store.api.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

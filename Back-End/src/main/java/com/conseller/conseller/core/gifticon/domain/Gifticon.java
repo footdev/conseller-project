@@ -2,8 +2,9 @@ package com.conseller.conseller.core.gifticon.domain;
 
 import com.conseller.conseller.core.category.domain.MainCategory;
 import com.conseller.conseller.core.category.domain.SubCategory;
-import com.conseller.conseller.core.gifticon.api.dto.request.GifticonRegisterRequest;
+import com.conseller.conseller.core.gifticon.api.dto.request.RegisterGifticon;
 import com.conseller.conseller.core.gifticon.api.dto.response.GifticonResponse;
+import com.conseller.conseller.core.gifticon.domain.enums.GifticonStatus;
 import com.conseller.conseller.core.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter @Builder
-@RequiredArgsConstructor
 public class Gifticon {
     private long gifticonIdx;
     private String gifticonBarcode;
@@ -26,17 +26,17 @@ public class Gifticon {
     private SubCategory subCategory;
     private MainCategory mainCategory;
 
-    public static Gifticon of(GifticonRegisterRequest gifticonRegisterRequest, String allImageUrl, String cropImageUrl, long userId) {
+    public static Gifticon of(RegisterGifticon registerGifticon, String allImageUrl, String cropImageUrl, long userId) {
         return Gifticon.builder()
                 .gifticonAllImageUrl(allImageUrl)
-                .gifticonBarcode(gifticonRegisterRequest.getGifticonBarcode())
+                .gifticonBarcode(registerGifticon.getGifticonBarcode())
                 .gifticonDataImageUrl(cropImageUrl)
-                .gifticonEndDate(LocalDateTime.parse(gifticonRegisterRequest.getGifticonEndDate()))
-                .gifticonName(gifticonRegisterRequest.getGifticonName())
+                .gifticonEndDate(LocalDateTime.parse(registerGifticon.getGifticonEndDate()))
+                .gifticonName(registerGifticon.getGifticonName())
                 .gifticonStatus("ACTIVE")
                 .user(User.builder().userIdx(userId).build())
-                .subCategory(SubCategory.builder().subCategoryIdx(gifticonRegisterRequest.getSubCategory()).build())
-                .mainCategory(MainCategory.builder().mainCategoryIdx(gifticonRegisterRequest.getMainCategory()).build())
+                .subCategory(SubCategory.builder().subCategoryIdx(registerGifticon.getSubCategory()).build())
+                .mainCategory(MainCategory.builder().mainCategoryIdx(registerGifticon.getMainCategory()).build())
                 .build();
     }
 
@@ -54,5 +54,21 @@ public class Gifticon {
                 .subCategoryIdx(subCategory.getSubCategoryIdx())
                 .mainCategoryIdx(mainCategory.getMainCategoryIdx())
                 .build();
+    }
+
+    public void updateStatus(GifticonStatus gifticonStatus) {
+        this.gifticonStatus = gifticonStatus.getStatus();
+    }
+
+    public long getSubCategoryIdx() {
+        return subCategory.getSubCategoryIdx();
+    }
+
+    public void modifyUser(User user) {
+        this.user = user;
+    }
+
+    public void transfer(User buyer) {
+        this.user = buyer;
     }
 }

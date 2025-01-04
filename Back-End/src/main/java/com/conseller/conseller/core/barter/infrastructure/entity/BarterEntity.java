@@ -1,10 +1,8 @@
 package com.conseller.conseller.core.barter.infrastructure.entity;
 
 import com.conseller.conseller.core.barter.api.dto.request.BarterModifyRequest;
-import com.conseller.conseller.core.barter.api.dto.response.BarterHostItemResponse;
 import com.conseller.conseller.core.barter.domain.Barter;
 import com.conseller.conseller.core.barter.domain.enums.BarterStatus;
-import com.conseller.conseller.core.gifticon.infrastructure.GifticonEntity;
 import com.conseller.conseller.core.category.infrastructure.SubCategoryEntity;
 import com.conseller.conseller.core.user.infrastructure.UserEntity;
 import lombok.*;
@@ -14,7 +12,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static com.conseller.conseller.global.utils.DateTimeConverter.convertString;
 import static java.time.LocalDateTime.now;
 
 @Entity

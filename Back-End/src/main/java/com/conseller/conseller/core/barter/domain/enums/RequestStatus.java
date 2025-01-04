@@ -20,6 +20,6 @@ public enum RequestStatus {
         return Arrays.stream(RequestStatus.values())
                 .filter(status -> status.getStatus().equals(inputStatus))
                 .findFirst()
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.BARTER_INVALID_STATUS));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_BARTER_STATUS));
     }
 }

@@ -159,35 +159,21 @@ public class UserApi {
     // pattern 저장
     @PostMapping("/savepattern")
     public ResponseEntity<Void> patternSave(@Valid @RequestBody UserPatternRequest userPatternRequest) {
-        log.info("유저 패턴 저장");
         userService.patternRegister(userPatternRequest);
-
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/verifypattern")
     public ResponseEntity<LoginResponse> patternLogin(@Valid @RequestBody UserPatternRequest userPatternRequest){
-        log.info("유저 패턴 로그인");
-
         LoginResponse loginResponse = userService.loginPattern(userPatternRequest);
-
-        log.info("user nickname : " + loginResponse.getUserNickname());
-        log.info("user accessToken : " + loginResponse.getAccessToken());
-        log.info("user refreshToken : " + loginResponse.getRefreshToken());
-        userService.patternRegister((userPatternRequest));
-
+        userService.patternRegister(userPatternRequest);
         return ResponseEntity.ok()
                 .body(loginResponse);
-
     }
 
     @GetMapping("/finger/{userIdx}")
     public ResponseEntity<LoginResponse> fingerLogin(@PathVariable Long userIdx) {
-
-        log.info("지문 로그인");
-
         LoginResponse loginResponse = userService.loginFinger(userIdx);
-
         return ResponseEntity.ok()
                 .body(loginResponse);
     }

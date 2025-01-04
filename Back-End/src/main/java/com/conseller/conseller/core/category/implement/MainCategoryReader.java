@@ -14,7 +14,7 @@ public class MainCategoryReader {
 
     public MainCategory readMainCategory(long mainCategoryIdx) {
         return mainCategoryRepository.findByMainCategoryIdx(mainCategoryIdx)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.MAIN_CATEGORY_INVALID))
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_MAIN_CATEGORY))
                 .toDomain();
     }
 }

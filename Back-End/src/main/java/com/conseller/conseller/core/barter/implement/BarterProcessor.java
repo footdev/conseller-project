@@ -1,8 +1,6 @@
 package com.conseller.conseller.core.barter.implement;
 
-import com.conseller.conseller.core.barter.api.dto.request.BarterModifyRequest;
 import com.conseller.conseller.core.barter.domain.Gifticons;
-import com.conseller.conseller.core.category.domain.SubCategory;
 import com.conseller.conseller.core.gifticon.implement.GifticonAppender;
 import com.conseller.conseller.core.gifticon.implement.GifticonReader;
 import com.conseller.conseller.core.user.domain.User;
@@ -37,7 +35,7 @@ public class BarterProcessor {
         return selectedCategoryCount.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.SUB_CATEGORY_INVALID));
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.INVALID_SUB_CATEGORY));
     }
 
     public void exchangeGifticons(Gifticons hostGifticons, Gifticons guestGifticons, User host, User guest) {

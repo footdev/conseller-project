@@ -30,7 +30,7 @@ public class BarterHostItemValidator {
                 .filter(gifticon -> !gifticon.getGifticonStatus().equals(GifticonStatus.KEEP.getStatus()))
                 .findAny()
                 .ifPresent(gifticon -> {
-                    throw new CustomException(CustomExceptionStatus.GIFTICON_NOT_KEEP);
+                    throw new CustomException(CustomExceptionStatus.NOT_KEEP_GIFTICON);
                 });
     }
 }
